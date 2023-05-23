@@ -2,13 +2,13 @@
 //  NO 42 HEADER 
 //  NO 42 HEADER 
 
-#include Server.hpp
+#include "Server.hpp"
 
 int main(int argc, char **argv){
     try {
 
 		if (argc != 3) {
-			throw std::invalid_argument("Please type: ./ircserv <port> <password>");
+			throw std::runtime_error("Please type: ./ircserv <port> <password>");
 		}
         /* here or in Server constructor: */
         // check argv[1] numeric and < max limit ports
