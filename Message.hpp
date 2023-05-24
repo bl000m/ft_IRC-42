@@ -9,7 +9,7 @@
 	documentation: https://modern.ircdocs.horse/#message-format
 	PS: do not implement TAG
 
-	A message can have at most 15 parameter
+	A message can have at most 15 parameter, 512 byte
 	Every message ends with \r\n, but a simple \n is acceptable
 	If the \r\n is not present, it'a assumed the message is too long. The rest of the info is ignored, and it's treated as if a \r\n is at the end.
 	An empty message is ignored.

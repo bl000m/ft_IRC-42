@@ -84,7 +84,7 @@ void	Message::setSource(std::string const &input, std::string::size_type &pos)
 	if (*(input.begin()) != ':')
 		return ;
 	pos = input.find(" ", 0);
-	_src = new input.substr(0, pos);
+	_src = new input.substr(1, pos);
 	if (pos == std::string::npos)
 		return ;
 	pos = input.find_first_not_of(" ", pos);
@@ -113,7 +113,7 @@ void	Message::setParam(std::string const &input, std::string::size_type &pos)
 		end = input.find(" ", pos);
 		if (input[pos] == ':')
 		{
-			_param[i] = new input.substr(pos, std::string::npos);
+			_param[i] = new input.substr(pos + 1, std::string::npos);
 			return ;
 		}
 		_param[i] = new input.substr(pos, end);
@@ -180,3 +180,30 @@ std::string const	**Message::getParam(void) const
 	return (_param);
 }
 
+std::ostream	&operator<<(ostream &out, Message const &mess)
+{
+	std::string		*src = mess.getSource();
+	std::string		*cmd = mess.getCommand();
+	std::string		**param = mess.getParam();
+	
+	out << "message:" << std::endl << "  source: ";
+	if (src)
+		out << *src;
+	else
+		out << "(null)";
+	out << std::endl << "  command: ";
+	if (cmd)
+		out << *cmd
+	else
+		out << "(null)" << std::endl << "  param: ";
+	for (int i = 0; i < SIXTEEN; i++)
+	{
+		if (param[i])
+			out << param << ", ";
+		else
+		{
+			out << "(null)" << std::endl;
+		}
+	}
+	return (out);
+}
