@@ -10,13 +10,13 @@ Message::Message(void)
 Message::Message(Message const &mess)
 {
 	if (mess._src)
-		_src = new mess._src;
+		_src = new std::string(*mess._src);
 	if (mess._cmd)
-		_cmd = new mess._cmd;
+		_cmd = new std::string(*mess._cmd);
 	for (int i = 0; i < SIXTEEN; i++)
 	{
 		if (mess._param[i])
-			_param[i] = new mess._param[i];
+			_param[i] = new std::string(*mess._param[i]);
 	}
 }
 
@@ -45,13 +45,13 @@ Message	&Message::operator=(Message const &mess)
 		return (*this);
 	this->clear();
 	if (mess._src)
-		_src = new mess._src;
+		_src = new std::string(*mess._src);
 	if (mess._cmd)
-		_cmd = new mess._cmd;
+		_cmd = new std::string(*mess._cmd);
 	for (int i = 0; i < SIXTEEN; i++)
 	{
 		if (mess._param[i])
-			_param[i] = new mess._param[i];
+			_param[i] = new std::string(*mess._param[i]);
 	}
 	return (*this);
 }
@@ -62,13 +62,14 @@ Message	&Message::operator=(Message const &mess)
 */
 bool	Message::parse(char buffer[512])
 {
-	std::string		input;
-	std::size_type	pos;
+	std::string				input;
+	std::string::size_type	pos;
 	
 	this->clear();
 	if (buffer_empty(buffer))
 		return (false);
 	input = read_buffer(buffer);
+	std::cout << input << std::endl;
 	pos = 0;
 	this->setSource(input, pos);
 	this->setCommand(input, pos);
@@ -84,7 +85,7 @@ void	Message::setSource(std::string const &input, std::string::size_type &pos)
 	if (*(input.begin()) != ':')
 		return ;
 	pos = input.find(" ", 0);
-	_src = new input.substr(1, pos);
+	_src = new std::string(input.substr(1, pos - 1));
 	if (pos == std::string::npos)
 		return ;
 	pos = input.find_first_not_of(" ", pos);
@@ -97,7 +98,8 @@ void	Message::setCommand(std::string const &input, std::string::size_type &pos)
 	if (pos == std::string::npos)
 		return ;
 	end = input.find(" ", pos);
-	_cmd = new input.substr(pos, end - pos);
+	_cmd = new std::string(input.substr(pos, end - pos));
+	// std::cout << *_cmd << std::endl;
 	pos = end;
 }
 
@@ -113,10 +115,10 @@ void	Message::setParam(std::string const &input, std::string::size_type &pos)
 		end = input.find(" ", pos);
 		if (input[pos] == ':')
 		{
-			_param[i] = new input.substr(pos + 1, std::string::npos);
+			_param[i] = new std::string(input.substr(pos + 1, std::string::npos));
 			return ;
 		}
-		_param[i] = new input.substr(pos, end);
+		_param[i] = new std::string(input.substr(pos, end - pos));
 		i++;
 		pos = end;
 	}
@@ -128,7 +130,7 @@ void	Message::setParam(std::string const &input, std::string::size_type &pos)
 	if even \n is not present, 
 	it acts as if \r\n are at the end of buffer
 */
-std::string	Message::read_buffer(char buf[512])
+std::string	Message::read_buffer(char buff[512])
 {
 	std::string	temp;
 	int			i;
@@ -141,12 +143,12 @@ std::string	Message::read_buffer(char buf[512])
 		i++;
 	}
 	if (i == 512)
-		buf[510] = '\0';
+		buff[510] = '\0';
 	else if (buff[i - 1] == '\r')
 		buff[i - 1] = '\0';
 	else
 		buff[i] = '\0';
-	temp = buf;
+	temp = buff;
 	return (temp);
 }
 
@@ -175,16 +177,16 @@ std::string	const	*Message::getCommand(void) const
 	return (_cmd);
 }
 
-std::string const	**Message::getParam(void) const
+const std::string* const*	Message::getParam(void) const
 {
 	return (_param);
 }
 
-std::ostream	&operator<<(ostream &out, Message const &mess)
+std::ostream	&operator<<(std::ostream &out, Message const &mess)
 {
-	std::string		*src = mess.getSource();
-	std::string		*cmd = mess.getCommand();
-	std::string		**param = mess.getParam();
+	std::string const			*src = mess.getSource();
+	std::string	const			*cmd = mess.getCommand();
+	const std::string* const	*param = mess.getParam();
 	
 	out << "message:" << std::endl << "  source: ";
 	if (src)
@@ -193,16 +195,18 @@ std::ostream	&operator<<(ostream &out, Message const &mess)
 		out << "(null)";
 	out << std::endl << "  command: ";
 	if (cmd)
-		out << *cmd
+		out << *cmd;
 	else
-		out << "(null)" << std::endl << "  param: ";
+		out << "(null)";
+	out << std::endl << "  param: ";
 	for (int i = 0; i < SIXTEEN; i++)
 	{
 		if (param[i])
-			out << param << ", ";
+			out << *(param[i]) << ", ";
 		else
 		{
 			out << "(null)" << std::endl;
+			return (out);
 		}
 	}
 	return (out);

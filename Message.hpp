@@ -29,9 +29,9 @@ class Message
 		bool	parse(char buffer[512]);
 
 		/*	getters	*/
-		std::string const	*getSource(void) const;
-		std::string	const	*getCommand(void) const;
-		std::string const	**getParam(void) const;
+		std::string const			*getSource(void) const;
+		std::string	const			*getCommand(void) const;
+		const std::string* const*	getParam(void) const;
 
 	private:
 		/*	private member variable	*/
@@ -50,6 +50,6 @@ class Message
 		static bool			buffer_empty(char buf[512]);
 };
 
-std::ostream	&operator<<(ostream &out, Message const &mess);
+std::ostream	&operator<<(std::ostream &out, Message const &mess);
 
 #endif
