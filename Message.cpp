@@ -70,9 +70,12 @@ bool	Message::parse(char buffer[512])
 		return (false);
 	input = read_buffer(buffer);
 	pos = 0;
-	//get source
-	//get cmd
-	//get param
+	this->setSource(input, pos);
+	this->setCommand(input, pos);
+	this->setParam(input, pos);
+	if (_cmd == NULL)
+		return (false);
+	return (true);
 }
 
 void	Message::setSource(std::string const &input, std::string::size_type &pos)
@@ -96,16 +99,28 @@ void	Message::setCommand(std::string const &input, std::string::size_type &pos)
 	end = input.find(" ", pos);
 	_cmd = new input.substr(pos, end - pos);
 	pos = end;
-	if (pos == std::string::npod)
-		return ;
-	pos = input.find_first_not_of(" ", pos);
 }
 
 void	Message::setParam(std::string const &input, std::string::size_type &pos)
 {
+	std::string::size_type	end;
+	int						i;
 
+	i = 0;
+	while (pos != std::string::npos && i < 15)
+	{
+		pos = input.find_first_not_of(" ", pos);
+		end = input.find(" ", pos);
+		if (input[pos] == ':')
+		{
+			_param[i] = new input.substr(pos, std::string::npos);
+			return ;
+		}
+		_param[i] = new input.substr(pos, end);
+		i++;
+		pos = end;
+	}
 }
-
 
 /*
 	look for \r\n in buffer, and replace it with \0
