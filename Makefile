@@ -6,11 +6,11 @@ RM			= rm -rf
 
 OBJDIR = 	.objects
 
-FILES		= main Server
+FILES		= main Server Message
 
 SRC			= $(FILES:=.cpp)
 OBJ			= $(addprefix $(OBJDIR)/, $(FILES:=.o))
-HEADER		= Server.hpp
+HEADER		= Server.hpp Message.hpp Numerics.hpp
 
 #Colors:
 YELLOW		=	\e[1;33m
