@@ -78,5 +78,46 @@ Client::client_map const	&Client::getWhoswho(void) const
 	return (_whos_who);
 }
 
+/*	authenticate and add name to list	*/
+bool	Client::regist(int sock)
+{
+	std::string	nick;
+	std::string	real;
+	std::string	user;
 
-bool				regist(int sock);
+	this->clear();
+	//authenticate, record, verify all is good
+	_info.nick = nick;
+	_info.realname = realname;
+	_info.username = username;
+	_whos_who.insert(std::pair<std::string, t_client>(nick, _info));
+}
+
+/*	remove name from list and delete resourses	*/
+void	Client::quit(void)
+{
+	client_map::iterator	it;
+
+	it = _whos_who.find(_info.nick);
+	if (it == _whos_who.end())
+	{
+		std::cerr << "Client: " << _info.nick
+		<< " not found" << std::endl;
+		return ;
+	}
+	_whos_who.erase(it);
+	this->clear();
+}
+
+std::ostream	&operator<<(std::ostream &out, Client const &client)
+{
+	if (client.getNick() && client.getUser() && client.getReal())
+	{
+		out << "Client: " << client.getNick()
+			<< " !" << client.getUser() << "@" << client.getReal()
+			<< std::endl;
+		return (out);
+	}
+	std::cout << "Client: (empty)" << std::endl;
+	return (out);
+}
