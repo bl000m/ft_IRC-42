@@ -4,14 +4,25 @@
 
 #include "Server.hpp"
 
-Server::Server(const std::string &port, const std::string &password)
-		: _port(port), _password(password), _iport(6969) {
-	initServerPoll();
-	std::cout << "Socket init" << std::endl;
-}
+Server::Server()
+{}
 
 Server::~Server() {
 	std::for_each(_server_sockets.begin(), _server_sockets.end(), closeSocket);
+}
+
+void    Server::initServer(const std::string &port, const std::string &password)
+{
+	std::stringstream	ss;
+	
+	_password = password;
+	ss << port;
+	ss >> _iport;
+	if (ss.fail() || !(_iport > MIN_PORT && _iport < MAX_PORT))
+		throw std::runtime_error("Invalid port");
+	if (initServerPoll() == false)
+		throw std::runtime_error("Init Server Error: " + std::string(strerror(errno)));
+	std::cout << "Server Init done" << std::endl;
 }
 
 void	Server::run(void)
@@ -19,14 +30,14 @@ void	Server::run(void)
 	int		poll_ret;
 	pollfd	server_poll;
 
-	std::cout << "Running Starting" << std::endl;
+	std::cout << "Running Server" << std::endl;
 	server_poll = _server_sockets.data()[0];
 	while (1)
 	{
 		poll_ret = poll(_server_sockets.data(), _server_sockets.size(), POLL_DELAY);
 		if (poll_ret < 0)
 			perror("poll()");
-		if (!(server_poll.revents & POLLIN))
+		if (IS_POLLIN(server_poll.revents))
 			newClientPoll();
 	}
 }
