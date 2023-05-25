@@ -16,6 +16,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+#define MAX_QUEUE_CONNECTION 42
+
 class Server {
 
     public:
@@ -23,11 +25,14 @@ class Server {
         ~Server();
 
     private:
-        bool                    newPoll(void);
+        bool                    initServerPoll(void);
+        bool                    newClientPoll(void);
 
         std::string             _port;
         std::string             _password;
         unsigned short          _iport;
+
+        sockaddr_in             _addr;
         std::vector<pollfd>     _server_sockets;
 };
 
