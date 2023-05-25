@@ -14,6 +14,7 @@ int main(int argc, char **argv){
         // check argv[1] numeric and < max limit ports
         // check argv[2] valid password
 		Server server(argv[1], argv[2]);
+		server.run();
 		return 0;
 	}
 	catch (const std::exception &e) {

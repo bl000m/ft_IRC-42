@@ -15,14 +15,19 @@
 #include <poll.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <errno.h>
+#include <stdio.h>
 
-#define MAX_QUEUE_CONNECTION 42
+#define MAX_QUEUE_CONNECTION    42
+#define POLL_DELAY              5
 
 class Server {
 
     public:
         Server(const std::string &port, const std::string &password);
         ~Server();
+
+        void    run(void);
 
     private:
         bool                    initServerPoll(void);
