@@ -8,11 +8,11 @@ Client::Client(Client const &client)
 	_nick(NULL), _user(NULL), _host(NULL)
 {
 	if (client._nick)
-		_nick = new std::string(client._nick);
+		_nick = new std::string(*client._nick);
 	if (client._user)
-		_user = new std::string(client._user);
+		_user = new std::string(*client._user);
 	if (client._host)
-		_host = new std::string(client._host);
+		_host = new std::string(*client._host);
 }
 
 Client::~Client(void)
@@ -28,11 +28,11 @@ Client	&Client::operator=(Client const &client)
 	_pass = client._pass;
 	clear();
 	if (client._nick)
-		_nick = new std::string(client._nick);
+		_nick = new std::string(*client._nick);
 	if (client._user)
-		_user = new std::string(client._user);
+		_user = new std::string(*client._user);
 	if (client._host)
-		_host = new std::string(client._host);
+		_host = new std::string(*client._host);
 	return (*this);
 }
 
@@ -104,20 +104,20 @@ std::ostream	&operator<<(std::ostream &out, Client const &client)
 {
 	out << "Client: "
 		<< "  sock: " << client.getSock() << std::endl
-		<< "  pass: " << client.goodPass() << std::endl
+		<< "  pass: " << client.isPassed() << std::endl
 		<< "  nick: ";
 	if (client.getNick())
-		out << client.getNick() << std::endl;
+		out << *client.getNick() << std::endl;
 	else
 		out << "(null)" << std::endl;
 	out << "  user: ";
 	if (client.getUser())
-		out << client.getUser() << std::endl;
+		out << *client.getUser() << std::endl;
 	else
 		out << "(null)" << std::endl;
 	out << "  host: ";
 	if (client.getHost())
-		out << client.getHost() << std::endl;
+		out << *client.getHost() << std::endl;
 	else
 		out << "(null)" << std::endl;
 	return (out);
