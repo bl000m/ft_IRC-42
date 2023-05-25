@@ -4,6 +4,7 @@ Message::Message(void)
 	:_src(NULL), _cmd(NULL), _param() {}
 
 Message::Message(Message const &mess)
+	:_src(NULL), _cmd(NULL), _param()
 {
 	if (mess._src)
 		_src = new std::string(*mess._src);
@@ -168,9 +169,9 @@ int		Message::getParamNum(void) const
 
 std::ostream	&operator<<(std::ostream &out, Message const &mess)
 {
-	std::string const			*src = mess.getSource();
-	std::string	const			*cmd = mess.getCommand();
-	std::vector<std::string>	param = mess.getParam();
+	std::string const				*src = mess.getSource();
+	std::string	const				*cmd = mess.getCommand();
+	std::vector<std::string> const	param = mess.getParam();
 	
 	out << "message:" << std::endl << "  source: ";
 	if (src)
@@ -183,7 +184,7 @@ std::ostream	&operator<<(std::ostream &out, Message const &mess)
 	else
 		out << "(null)";
 	out << std::endl << "  param: ";
-	for (std::vector<std::string>::iterator i = param.begin(); i != param.end(); i++)
+	for (std::vector<std::string>::const_iterator i = param.begin(); i != param.end(); i++)
 	{
 		out << *i << ", ";
 	}
