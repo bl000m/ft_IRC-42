@@ -4,6 +4,7 @@
 # include <string>
 # include <iostream>
 # include <new>
+# include <vector>
 
 /*
 	documentation: https://modern.ircdocs.horse/#message-format
@@ -20,6 +21,9 @@
 class Message
 {
 	public:
+		/*	typedef	*/
+		typedef std::vector<std::string>	vec_str;	
+
 		/*	canon form	*/
 		Message(void);
 		Message(Message const &mess);
@@ -29,15 +33,16 @@ class Message
 		bool	parse(char buffer[512]);
 
 		/*	getters	*/
-		std::string const			*getSource(void) const;
-		std::string	const			*getCommand(void) const;
-		const std::string* const*	getParam(void) const;
+		std::string const	*getSource(void) const;
+		std::string	const	*getCommand(void) const;
+		vec_str const		&getParam(void) const;
+		int					getParamNum(void) const;
 
 	private:
 		/*	private member variable	*/
-		std::string	*_src;
-		std::string	*_cmd;
-		std::string	*_param[SIXTEEN];
+		std::string		*_src;
+		std::string		*_cmd;
+		vec_str			_param;		
 
 		/*	setters	*/
 		void	setSource(std::string const &input, std::string::size_type &pos);

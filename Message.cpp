@@ -1,11 +1,7 @@
 #include "Message.hpp"
 
 Message::Message(void)
-	:_src(NULL), _cmd(NULL)
-{
-	for (int i = 0; i < SIXTEEN; i++)
-		_param[i] = NULL;
-}
+	:_src(NULL), _cmd(NULL), _param() {}
 
 Message::Message(Message const &mess)
 {
@@ -13,11 +9,7 @@ Message::Message(Message const &mess)
 		_src = new std::string(*mess._src);
 	if (mess._cmd)
 		_cmd = new std::string(*mess._cmd);
-	for (int i = 0; i < SIXTEEN; i++)
-	{
-		if (mess._param[i])
-			_param[i] = new std::string(*mess._param[i]);
-	}
+	_param = mess._param;
 }
 
 Message::~Message(void)
@@ -31,12 +23,7 @@ void	Message::clear(void)
 	_src = NULL;
 	delete _cmd;
 	_cmd = NULL;
-	for (int i = 0; i < SIXTEEN; i++)
-	{
-		delete _param[i];
-		_param[i] = NULL;
-	}
-	return ;
+	_param.clear();
 }
 
 Message	&Message::operator=(Message const &mess)
@@ -48,11 +35,7 @@ Message	&Message::operator=(Message const &mess)
 		_src = new std::string(*mess._src);
 	if (mess._cmd)
 		_cmd = new std::string(*mess._cmd);
-	for (int i = 0; i < SIXTEEN; i++)
-	{
-		if (mess._param[i])
-			_param[i] = new std::string(*mess._param[i]);
-	}
+	_param = mess._param;
 	return (*this);
 }
 
@@ -69,7 +52,6 @@ bool	Message::parse(char buffer[512])
 	if (buffer_empty(buffer))
 		return (false);
 	input = read_buffer(buffer);
-	std::cout << input << std::endl;
 	pos = 0;
 	this->setSource(input, pos);
 	this->setCommand(input, pos);
@@ -99,27 +81,23 @@ void	Message::setCommand(std::string const &input, std::string::size_type &pos)
 		return ;
 	end = input.find(" ", pos);
 	_cmd = new std::string(input.substr(pos, end - pos));
-	// std::cout << *_cmd << std::endl;
 	pos = end;
 }
 
 void	Message::setParam(std::string const &input, std::string::size_type &pos)
 {
 	std::string::size_type	end;
-	int						i;
 
-	i = 0;
-	while (pos != std::string::npos && i < 15)
+	while (pos != std::string::npos)
 	{
 		pos = input.find_first_not_of(" ", pos);
 		end = input.find(" ", pos);
 		if (input[pos] == ':')
 		{
-			_param[i] = new std::string(input.substr(pos + 1, std::string::npos));
+			_param.push_back(input.substr(pos + 1, std::string::npos));
 			return ;
 		}
-		_param[i] = new std::string(input.substr(pos, end - pos));
-		i++;
+		_param.push_back(input.substr(pos, end - pos));
 		pos = end;
 	}
 }
@@ -177,16 +155,22 @@ std::string	const	*Message::getCommand(void) const
 	return (_cmd);
 }
 
-const std::string* const*	Message::getParam(void) const
+Message::vec_str const	&Message::getParam(void) const
 {
 	return (_param);
 }
+
+int		Message::getParamNum(void) const
+{
+	return (_param.size());
+}
+
 
 std::ostream	&operator<<(std::ostream &out, Message const &mess)
 {
 	std::string const			*src = mess.getSource();
 	std::string	const			*cmd = mess.getCommand();
-	const std::string* const	*param = mess.getParam();
+	std::vector<std::string>	param = mess.getParam();
 	
 	out << "message:" << std::endl << "  source: ";
 	if (src)
@@ -199,15 +183,11 @@ std::ostream	&operator<<(std::ostream &out, Message const &mess)
 	else
 		out << "(null)";
 	out << std::endl << "  param: ";
-	for (int i = 0; i < SIXTEEN; i++)
+	for (std::vector<std::string>::iterator i = param.begin(); i != param.end(); i++)
 	{
-		if (param[i])
-			out << *(param[i]) << ", ";
-		else
-		{
-			out << "(null)" << std::endl;
-			return (out);
-		}
+		out << *i << ", ";
 	}
+	out << "(end)" << std::endl;
+	out << "Parameter #: " << mess.getParamNum() << std::endl;
 	return (out);
 }
