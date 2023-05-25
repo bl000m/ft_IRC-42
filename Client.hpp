@@ -23,7 +23,7 @@ class Client
 		~Client(void);
 		Client	&operator=(Client const &client);
 
-		Client(int sockfd);
+		Client(int sockfd, unsigned int ip);
 		
 		/*	setters	*/
 		void	bePassed(void);
@@ -33,14 +33,17 @@ class Client
 
 		/*	getters	*/
 		int					getSock(void) const;
+		unsigned int		getIp(void) const;
 		bool				isPassed(void) const;
 		std::string const	*getNick(void) const;
 		std::string const	*getUser(void) const;
 		std::string const	*getHost(void) const;
+		bool				isRegist(void) const;
 
 	private:
 		/*	private variable	*/
 		int				_sock;
+		unsigned int	_ip;
 		bool			_pass;
 		std::string		*_nick;
 		std::string		*_user;

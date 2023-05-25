@@ -1,10 +1,11 @@
 #include "Client.hpp"
 
 Client::Client(void)
-	:_sock(-1), _pass(false), _nick(NULL), _user(NULL), _host(NULL) {}
+	:_sock(-1), _ip(0), _pass(false),
+	_nick(NULL), _user(NULL), _host(NULL) {}
 
 Client::Client(Client const &client)
-	:_sock(client._sock), _pass(client._pass),
+	:_sock(client._sock), _ip(client._ip), _pass(client._pass),
 	_nick(NULL), _user(NULL), _host(NULL)
 {
 	if (client._nick)
@@ -25,6 +26,7 @@ Client	&Client::operator=(Client const &client)
 	if (this == &client)
 		return (*this);
 	_sock = client._sock;
+	_ip = client._ip;
 	_pass = client._pass;
 	clear();
 	if (client._nick)
@@ -36,8 +38,9 @@ Client	&Client::operator=(Client const &client)
 	return (*this);
 }
 
-Client::Client(int sockfd)
-	:_sock(sockfd), _pass(false), _nick(NULL), _user(NULL), _host(NULL) {}
+Client::Client(int sockfd, unsigned int ip)
+	:_sock(sockfd), _ip(ip), _pass(false),
+	_nick(NULL), _user(NULL), _host(NULL) {}
 
 /*
 	the modification of client has certain restrictions,
@@ -89,6 +92,16 @@ bool	Client::isPassed(void) const
 {
 	return (_pass);
 }
+unsigned int	Client::getIp(void) const
+{
+	return (_ip);
+}
+bool	Client::isRegist(void) const
+{
+	if (_pass && _nick && _user && _host)
+		return (true);
+	return (false);
+}
 
 void	Client::clear(void)
 {
@@ -104,6 +117,7 @@ std::ostream	&operator<<(std::ostream &out, Client const &client)
 {
 	out << "Client: "
 		<< "  sock: " << client.getSock() << std::endl
+		<< "  ip: " << client.getIp() << std::endl
 		<< "  pass: " << client.isPassed() << std::endl
 		<< "  nick: ";
 	if (client.getNick())
