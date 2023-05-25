@@ -26,8 +26,8 @@ void	Server::run(void)
 		poll_ret = poll(_server_sockets.data(), _server_sockets.size(), POLL_DELAY);
 		if (poll_ret < 0)
 			perror("poll()");
-		if (server_poll.revents & POLLIN)
-			newClientPoll();	
+		if (!(server_poll.revents & POLLIN))
+			newClientPoll();
 	}
 }
 
@@ -48,6 +48,7 @@ bool	Server::initServerPoll(void)
 		return (close(new_socket) ,false);
 	new_poll.fd = new_socket;
 	new_poll.events = POLLIN | POLLHUP;
+	new_poll.revents = 0;
 	_server_sockets.push_back(new_poll);
 	return (true);
 }
@@ -66,7 +67,9 @@ bool	Server::newClientPoll(void)
 		return (false);
 	new_poll.fd = new_socket;
 	new_poll.events = POLLIN | POLLHUP;
+	new_poll.revents = 0;
 	_server_sockets.push_back(new_poll);
+	std::cout << "new Client connected" << std::endl;
 	return (true);
 }
 
