@@ -184,7 +184,7 @@ std::ostream	&operator<<(std::ostream &out, Message const &mess)
 	else
 		out << "(null)";
 	out << std::endl << "  param: ";
-	for (std::vector<std::string>::const_iterator i = param.begin(); i != param.end(); i++)
+	for (Message::vec_str::const_iterator i = param.begin(); i != param.end(); i++)
 	{
 		out << *i << ", ";
 	}
