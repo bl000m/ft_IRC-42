@@ -4,20 +4,27 @@
 
 #include "Server.hpp"
 
-int main(int argc, char **argv){
-    try {
+int main(int argc, char **argv)
+{
+	Server server;
 
-		if (argc != 3) {
-			throw std::runtime_error("Please type: ./ircserv <port> <password>");
-		}
-        /* here or in Server constructor: */
-        // check argv[1] numeric and < max limit ports
-        // check argv[2] valid password
-		Server server(argv[1], argv[2]);
-		return 0;
+    /* here or in Server constructor: */
+    // check argv[1] numeric and < max limit ports
+    // check argv[2] valid password
+	if (argc != MIN_ARGC)
+	{
+		std::cerr << "Please type: ./ircserv <port> <password>" << std::endl;
+		return (1);
 	}
-	catch (const std::exception &e) {
+	try
+	{
+		server.initServer(argv[1], argv[2]);
+	}
+	catch(std::exception &e)
+	{
 		std::cerr << e.what() << std::endl;
-		return 1;
+		return (1);
 	}
+	server.run();
+	return (0);
 }
