@@ -1,5 +1,26 @@
 #include "Server.hpp"
-#include "Client.hpp"
+
+void	Server::execMessage(Client const &client, Message const &mess)
+{
+	unsigned int	num;
+	std::string		*cmd;
+	
+	cmd = mess.getCommand();
+	if (!cmd)
+		return ;
+	num = getCmdNum(*(mess.getCommand()));
+}
+
+unsigned int	Server::getCmdNum(std::string const &cmd)
+{
+	if (cmd == "PASS")
+		return (PASS);
+	if (cmd == "NICK")
+		return (NICK);
+	if (cmd == "USER")
+		return (USER);
+	return (-1);
+}
 
 void	Server::send(Client const &client, std::string const &mess)
 {
