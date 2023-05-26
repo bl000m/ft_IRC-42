@@ -10,7 +10,7 @@ FILES		= main Server Message Client
 
 SRC			= $(FILES:=.cpp)
 OBJ			= $(addprefix $(OBJDIR)/, $(FILES:=.o))
-HEADER		= Server.hpp Message.hpp Numerics.hpp Client.hpp
+HEADER		= Server.hpp Message.hpp Numerics.hpp Client.hpp global.hpp
 
 #Colors:
 YELLOW		=	\e[1;33m

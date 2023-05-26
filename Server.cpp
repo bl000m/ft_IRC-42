@@ -4,6 +4,8 @@
 
 #include "Server.hpp"
 
+bool is_running = true;
+
 Server::Server()
 {}
 
@@ -32,12 +34,15 @@ void	Server::run(void)
 	char		buffer[MAX_BUFFER];
 
 	std::cout << "Running Server" << std::endl;
-	while (1)
+	while (is_running)
 	{
 		_server_sockets[0].revents = 0;
-		poll_ret = poll(_server_sockets.data(), _server_sockets.size(), -1);
+		poll_ret = poll(_server_sockets.data(), _server_sockets.size(), POLL_DELAY);
 		if (poll_ret < 0)
+		{
 			perror("poll()");
+			return ;
+		}
 		if (IS_POLLIN(_server_sockets[0].revents))
 			newClientPoll();
 		for (size_t i = 1; i < _server_sockets.size(); i++)
@@ -108,4 +113,11 @@ bool	Server::newClientPoll(void)
 void	closeSocket(pollfd pfd)
 {
 	close(pfd.fd);
+}
+
+void    sigExit(int code)
+{
+	(void)code;
+	is_running = false;
+	std::cout << "Exiting ..." << std::endl;
 }
