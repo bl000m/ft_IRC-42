@@ -7,7 +7,7 @@ Client::Client(void)
 
 Client::Client(Client const &client)
 	:_sock(client._sock), _ip(client._ip),
-	_pass(client._pass), _regist(client._regist)
+	_pass(client._pass), _regist(client._regist),
 	_nick(NULL), _user(NULL), _host(NULL)
 {
 	if (client._nick)
@@ -59,7 +59,7 @@ void	Client::setPass(bool good)
 {
 	_pass = good;
 }
-void	Client::beRegist(void) const
+void	Client::beRegist(void)
 {
 	_regist = true;
 }
@@ -124,11 +124,10 @@ void	Client::clear(void)
 /*	opeartor<< overload	*/
 std::ostream	&operator<<(std::ostream &out, Client const &client)
 {
-	out << "Client: "
-		<< "  sock: " << client.getSock() << std::endl
-		<< "  ip: " << client.getIp() << std::endl
-		<< "  pass: " << client.isPassed() << std::endl
-		<< "  regist: " << client.isRegist() << std::endl
+	out << "Client:  sock(" << client.getSock() << ")"
+		<< "  ip(" << client.getIp() << ")"
+		<< "  pass(" << client.getPass() << ")"
+		<< "  regist(" << client.isRegist() << ")" << std::endl
 		<< "  nick: ";
 	if (client.getNick())
 		out << *client.getNick() << std::endl;

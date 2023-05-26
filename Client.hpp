@@ -39,7 +39,7 @@ class Client
 		
 		/*	setters	*/
 		void	setPass(bool good);
-		void	beRegist(void) const;
+		void	beRegist(void);
 		void	setNick(std::string const &nick);
 		void	setUser(std::string const &user);
 		void	setHost(std::string const &host);
