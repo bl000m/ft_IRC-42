@@ -47,14 +47,14 @@ void	Server::run(void)
 			{
 				memset(buffer, 0, MAX_BUFFER);
 				std::cout << "new input" << std::endl;
-				if (recv(current_poll->fd, buffer, MAX_BUFFER, 0) == 0)
+				if (recv(current_poll->fd, buffer, MAX_BUFFER, 0) == CLOSE_SOCKET)
 				{
 					close(current_poll->fd);
 					_server_sockets.erase(_server_sockets.begin() + i);
 					std::cout << _server_sockets.size() << std::endl;
 				}
 				else
-					std::cout << "From: " << current_poll->fd << " " << buffer << std::endl;
+					std::cout << "From socket " << current_poll->fd << ": " << buffer << std::endl;
 			}
 		}
 	}
