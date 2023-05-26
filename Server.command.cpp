@@ -4,19 +4,21 @@ void	Server::execMessage(Client &client, Message const &mess)
 {
 	int					num;
 	std::string const	*cmd;
-	
+	std::string			reply;
+
+	reply = ":localhost unknown :command not found\r\n";
 	cmd = mess.getCommand();
 	if (!cmd)
 		return ;
 	num = getCmdNum(*(mess.getCommand()));
 	if (num == -1)
 	{
-		//reply cmd not found
+		this->reply(client, reply);
 		return ;
 	}
 	if (!client.isRegist() && !(*cmd == "PASS" || *cmd == "NICK" || *cmd == "USER"))
 	{
-		//reply cmd not found
+		this->reply(client, reply);
 		return ;
 	}
 	(this->*_cmd[num])(client, mess);
@@ -33,34 +35,31 @@ int	Server::getCmdNum(std::string const &cmd)
 	return (-1);
 }
 
-// void	Server::reply(Client const &client, std::string const &mess)
-// {
-// 	write(client.getSock(), mess.c_str, mess.size());
-// }
+void	Server::reply(Client const &client, std::string const &mess)
+{
+	send(client.getSock(), mess.c_str(), mess.size(), 0);
+}
 
 void	Server::pass(Client &client, Message const &mess)
 {	
 	std::string	reply;
 
-	if (mess.getParamNum() < 1)
-	{
-		reply = ":localhost ERR_NEEDMOREPARAMS "
-				+ *(client.getNick()) + " :Not enough parameters\r\n";
-		//this->reply(client, reply);
-		return ;
-	}
 	if (client.isRegist() || client.getNick())
 	{
-		reply = ":localhost ERR_ALREADYREGISTERED " + *(client.getNick())
-				+ " :you may not reregister\r\n";
-		//this->reply(client, reply);
+		reply.append(":localhost").append(ERR_ALREADYREGISTERED).append(*(client.getNick())).append(" :you may not reregister\r\n");
+		this->reply(client, reply);
+		return ;
+	}
+	if (mess.getParamNum() < 1)
+	{
+		reply.append(":localhost").append(ERR_NEEDMOREPARAMS).append("unknown :Not enough parameters\r\n");
+		this->reply(client, reply);
 		return ;
 	}
 	if (mess.getParam().front() != this->_password)
 	{
-		reply = ":localhost ERR_PASSWDMISMATCH " + *(client.getNick())
-				+ " :Password incorrect\r\n";
-		//this->reply(client, reply);
+		reply.append(":localhost").append(ERR_PASSWDMISMATCH).append("unknown :wrong password\r\n");
+		this->reply(client, reply);
 		client.setPass(false);
 		return ;
 	}
