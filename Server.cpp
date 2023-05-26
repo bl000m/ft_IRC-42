@@ -69,8 +69,8 @@ void	Server::run(void)
 				{
 					std::cout << "From socket " << current_poll->fd << ": " << buffer << std::endl;
 					/* TEST*/
-					mess.parse(buffer);
-					execMessage(_clients.find(current_poll->fd)->second, mess);
+					if (mess.parse(buffer))
+						execMessage(_clients.find(current_poll->fd)->second, mess);
 				}
 			}
 		}

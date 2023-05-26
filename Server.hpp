@@ -71,8 +71,10 @@ class Server {
 		void	user(Client &client, Message const &mess);
 
 		/*	cmd helper	*/
+		bool			nick_in_use(std::string const &nick) const;
 		static int		getCmdNum(std::string const &cmd);
-		void	reply(Client const &client, std::string const &mess);
+		static void		reply(Client const &client, std::string const *cmd, char const *para1, char const *para2);
+		static void		reply(Client const &client, char const *numeric, char const *para1, char const *para2);
 
 };
 
