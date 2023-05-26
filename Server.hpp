@@ -43,14 +43,14 @@
 class Server {
     public:
 		/*	typedef	*/
-		typedef void (Server::*fn) (Client const &c, Message const &m);
+		typedef void (Server::*fn) (Client &c, Message const &m);
 
         Server();
         ~Server();
 
         void    initServer(const std::string &port, const std::string &password);
         void    run(void);
-		void	execMessage(Client const &client, Message const &mess);
+		void	execMessage(Client &client, Message const &mess);
 
     private:
         bool                    initServerPoll(void);
@@ -66,9 +66,9 @@ class Server {
 		/*	commands	*/
 		fn				_cmd[CMD_NUM];
 		static int		getCmdNum(std::string const &cmd);
-		void	pass(Client const &client, Message const &mess);
-		void	nick(Client const &client, Message const &mess);
-		void	user(Client const &client, Message const &mess);
+		void	pass(Client &client, Message const &mess);
+		void	nick(Client &client, Message const &mess);
+		void	user(Client &client, Message const &mess);
 
 		/*	cmd helper	*/
 		void	reply(Client const &client, std::string const &mess);

@@ -1,6 +1,6 @@
 #include "Server.hpp"
 
-void	Server::execMessage(Client const &client, Message const &mess)
+void	Server::execMessage(Client &client, Message const &mess)
 {
 	int					num;
 	std::string const	*cmd;
@@ -38,42 +38,36 @@ int	Server::getCmdNum(std::string const &cmd)
 // 	write(client.getSock(), mess.c_str, mess.size());
 // }
 
-void	Server::pass(Client const &client, Message const &mess)
-{
-	
-	/*test*/
-	(void) client;
-	(void) mess;
-	std::cout << "pass" << std::endl;
-	return ;
-	
-	// std::string	reply;
-	// if (mess.getParamNum() < 1)
-	// {
-	// 	reply = ":localhost" + ERR_NEEDMOREPARAMS + *(client.getNick())
-	// 			+ " :Not enough parameters\r\n";
-	// 	this->reply(client, reply);
-	// 	return ;
-	// }
-	// if (client.isRegist() || client.getNick())
-	// {
-	// 	reply = ":localhost" + ERR_ALREADYREGISTERED + *(client.getNick())
-	// 			+ " :you may not reregister\r\n";
-	// 	this->reply(client, reply);
-	// 	return ;
-	// }
-	// if (mess.getParam().front() != this->_password)
-	// {
-	// 	reply = ":localhost" + ERR_PASSWDMISMATCH + *(client.getNick())
-	// 			+ " :Password incorrect\r\n";
-	// 	this->reply(client, reply);
-	// 	client.setPass(false);
-	// 	return ;
-	// }
-	// client.setPass(true);
+void	Server::pass(Client &client, Message const &mess)
+{	
+	std::string	reply;
+
+	if (mess.getParamNum() < 1)
+	{
+		reply = ":localhost ERR_NEEDMOREPARAMS "
+				+ *(client.getNick()) + " :Not enough parameters\r\n";
+		//this->reply(client, reply);
+		return ;
+	}
+	if (client.isRegist() || client.getNick())
+	{
+		reply = ":localhost ERR_ALREADYREGISTERED " + *(client.getNick())
+				+ " :you may not reregister\r\n";
+		//this->reply(client, reply);
+		return ;
+	}
+	if (mess.getParam().front() != this->_password)
+	{
+		reply = ":localhost ERR_PASSWDMISMATCH " + *(client.getNick())
+				+ " :Password incorrect\r\n";
+		//this->reply(client, reply);
+		client.setPass(false);
+		return ;
+	}
+	client.setPass(true);
 }
 
-void	Server::nick(Client const &client, Message const &mess)
+void	Server::nick(Client &client, Message const &mess)
 {
 	/*test*/
 	(void) client;
@@ -117,7 +111,7 @@ void	Server::nick(Client const &client, Message const &mess)
 	// }
 }
 
-void	Server::user(Client const &client, Message const &mess)
+void	Server::user(Client &client, Message const &mess)
 {
 	/*test*/
 	(void) client;
