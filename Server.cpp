@@ -39,7 +39,6 @@ void	Server::run(void)
 	pollfd		*current_poll;
 	char		buffer[MAX_BUFFER];
 	Message		mess;
-	Client		client;
 
 	std::cout << "Running Server" << std::endl;
 	while (is_running)
@@ -70,9 +69,8 @@ void	Server::run(void)
 				{
 					std::cout << "From socket " << current_poll->fd << ": " << buffer << std::endl;
 					/* TEST*/
-					client = _clients.find(current_poll->fd)->second;
 					mess.parse(buffer);
-					execMessage(client, mess);
+					execMessage(_clients.find(current_poll->fd)->second, mess);
 				}
 			}
 		}

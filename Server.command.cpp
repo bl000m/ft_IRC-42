@@ -65,6 +65,7 @@ void	Server::pass(Client &client, Message const &mess)
 		client.setPass(false);
 		return ;
 	}
+	this->reply(client, "password correct\r\n");
 	client.setPass(true);
 }
 
@@ -76,8 +77,9 @@ void	Server::nick(Client &client, Message const &mess)
 	
 	if (client.getNick())
 		nick = *(client.getNick());
-	if (!client.getPass())
+	if (client.getPass() == false)
 	{
+		this->reply(client, ":localhost unknown :command not found\r\n");
 		this->reply(client, ":localhost unknown :command not found\r\n");
 		return ;
 	}
@@ -107,5 +109,7 @@ void	Server::nick(Client &client, Message const &mess)
 
 void	Server::user(Client &client, Message const &mess)
 {
-	
+	(void) client;
+	(void) mess;
+	std::cout << "user" << std::endl;
 }
