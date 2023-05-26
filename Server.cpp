@@ -28,16 +28,16 @@ void    Server::initServer(const std::string &port, const std::string &password)
 void	Server::run(void)
 {
 	int		poll_ret;
-	pollfd	server_poll;
+	pollfd	*server_poll;
 
 	std::cout << "Running Server" << std::endl;
-	server_poll = _server_sockets.data()[0];
+	server_poll = &_server_sockets[0];
 	while (1)
 	{
 		poll_ret = poll(_server_sockets.data(), _server_sockets.size(), POLL_DELAY);
 		if (poll_ret < 0)
 			perror("poll()");
-		if (IS_POLLIN(server_poll.revents))
+		if (IS_POLLIN(server_poll->revents))
 			newClientPoll();
 	}
 }
