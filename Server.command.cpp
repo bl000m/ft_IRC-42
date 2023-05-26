@@ -14,6 +14,11 @@ void	Server::execMessage(Client const &client, Message const &mess)
 		//reply cmd not found
 		return ;
 	}
+	if (!client.isRegist() && !(*cmd == "PASS" || *cmd == "NICK" || *cmd == "USER"))
+	{
+		//reply cmd not found
+		return ;
+	}
 	(this->*_cmd[num])(client, mess);
 }
 
