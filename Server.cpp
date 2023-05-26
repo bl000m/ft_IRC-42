@@ -40,7 +40,7 @@ void	Server::run(void)
 			perror("poll()");
 		if (IS_POLLIN(_server_sockets[0].revents))
 			newClientPoll();
-		for (size_t i = 1; i != _server_sockets.size(); i++)
+		for (size_t i = 1; i < _server_sockets.size(); i++)
 		{
 			current_poll = &_server_sockets[i];
 			if (IS_POLLIN(current_poll->revents))
@@ -50,7 +50,8 @@ void	Server::run(void)
 				if (recv(current_poll->fd, buffer, MAX_BUFFER, 0) == 0)
 				{
 					close(current_poll->fd);
-					//_server_sockets.erase(_server_sockets.begin() + i);
+					_server_sockets.erase(_server_sockets.begin() + i);
+					std::cout << _server_sockets.size() << std::endl;
 				}
 				else
 					std::cout << "From: " << current_poll->fd << " " << buffer << std::endl;
@@ -90,7 +91,6 @@ bool	Server::newClientPoll(void)
     sockaddr_in	client_addr;
 	pollfd		new_poll;
 
-	std::cout << "new Client connected" << std::endl;
 	server_socket = _server_sockets[0].fd;
 	new_socket = accept(server_socket, reinterpret_cast<sockaddr*>(&client_addr), &client_size);
 	if (new_socket < 0)
@@ -100,6 +100,7 @@ bool	Server::newClientPoll(void)
 	new_poll.events = POLLIN | POLLHUP;
 	new_poll.revents = 0;
 	_server_sockets.push_back(new_poll);
+	std::cout << _server_sockets.size() << std::endl;
 	std::cout << "new Client connected" << std::endl;
 	return (true);
 }
