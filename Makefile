@@ -6,7 +6,7 @@ RM			= rm -rf
 
 OBJDIR = 	.objects
 
-FILES		= main Server Message Client
+FILES		= main Server Message Client Server.command
 
 SRC			= $(FILES:=.cpp)
 OBJ			= $(addprefix $(OBJDIR)/, $(FILES:=.o))

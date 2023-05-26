@@ -8,9 +8,10 @@ bool is_running = true;
 
 Server::Server()
 {
-	cmd[0] = pass;
-	cmd[1] = nick;
-	cmd[2] = user;
+	/*	init pointer to function	*/
+	_cmd[0] = &Server::pass;
+	_cmd[1] = &Server::nick;
+	_cmd[2] = &Server::user;
 }
 
 Server::~Server() {
@@ -38,6 +39,7 @@ void	Server::run(void)
 	pollfd		*current_poll;
 	char		buffer[MAX_BUFFER];
 	Message		mess;
+	Client		client;
 
 	std::cout << "Running Server" << std::endl;
 	while (is_running)
@@ -67,9 +69,10 @@ void	Server::run(void)
 				else
 				{
 					std::cout << "From socket " << current_poll->fd << ": " << buffer << std::endl;
-					/*
-					execMessage(*(_clients.find(current_poll->fd)), mess.parse(buffer));
-					*/
+					/* TEST*/
+					client = _clients.find(current_poll->fd)->second;
+					mess.parse(buffer);
+					execMessage(client, mess);
 				}
 			}
 		}

@@ -20,11 +20,13 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include <map>
 #include "global.hpp"
 
 #include "Message.hpp"
 #include "Client.hpp"
 #include "CommandNum.hpp"
+#include "Numerics.hpp"
 
 #define MAX_QUEUE_CONNECTION    42
 #define POLL_DELAY              5
@@ -40,6 +42,9 @@
 
 class Server {
     public:
+		/*	typedef	*/
+		typedef void (Server::*fn) (Client const &c, Message const &m);
+
         Server();
         ~Server();
 
@@ -59,10 +64,15 @@ class Server {
 		std::map<int, Client>	_clients;
 
 		/*	commands	*/
-		void	(*cmd[CMD_NUM])(Client const &client, Message const &mess);
+		fn				_cmd[CMD_NUM];
+		static int		getCmdNum(std::string const &cmd);
 		void	pass(Client const &client, Message const &mess);
 		void	nick(Client const &client, Message const &mess);
 		void	user(Client const &client, Message const &mess);
+
+		/*	cmd helper	*/
+		void	reply(Client const &client, std::string const &mess);
+
 };
 
 void    closeSocket(pollfd pfd);
