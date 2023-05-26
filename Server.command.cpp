@@ -10,17 +10,17 @@ void	Server::pass(Client const &client, Message const &mess)
 {
 	std::string	reply;
 	
-	if (client.isRegist() || client.getNick())
-	{
-		reply = ":localhost" + ERR_ALREADYREGISTERED + *(client.getNick())
-				+ " :you may not reregister\r\n";
-		this->send(client, reply);
-		return ;
-	}
 	if (mess.getParamNum() < 1)
 	{
 		reply = ":localhost" + ERR_NEEDMOREPARAMS + *(client.getNick())
 				+ " :Not enough parameters\r\n";
+		this->send(client, reply);
+		return ;
+	}
+	if (client.isRegist() || client.getNick())
+	{
+		reply = ":localhost" + ERR_ALREADYREGISTERED + *(client.getNick())
+				+ " :you may not reregister\r\n";
 		this->send(client, reply);
 		return ;
 	}
@@ -36,19 +36,37 @@ void	Server::pass(Client const &client, Message const &mess)
 }
 
 Server::nick(Client const &client, Message const &mess)
-{
+{	
+	std::string	nick;
+	std::string	reply;
+	
+	if (!client.getPass())
+	{
+		return ; //ignore
+	}
+	if (mess.getParamNum() < 1)
+	{
+		reply = ":localhost" + ERR_NEEDMOREPARAMS + *(client.getNick())
+				+ " :Not enough parameters\r\n";
+		this->send(client, reply);
+		return ;
+	}
+	for (map::const_iterator i = _clients.begin(); i != _clients.end(); i++)
+	{
+		if ((*i).getNick() && *((*i),getNick()) == 
+		{
+			//nick name in use
+			//return 
+		}
+	}
 	if (client.isRegist())
 	{
-		//check collision
+		//update
 		//broadcast the change to other user
 	}
 	else if (client.getPass())
 	{
-		//check collision
-	}
-	else
-	{
-		//unknown command
+		//update
 	}
 }
 
