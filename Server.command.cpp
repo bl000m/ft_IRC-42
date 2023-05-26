@@ -46,15 +46,18 @@ Server::nick(Client const &client, Message const &mess)
 	}
 	if (mess.getParamNum() < 1)
 	{
-		reply = ":localhost" + ERR_NEEDMOREPARAMS + *(client.getNick())
-				+ " :Not enough parameters\r\n";
+		reply = ":localhost" + ERR_NONICKNAMEGIVEN + *(client.getNick())
+				+ " :No nickname given\r\n";
 		this->send(client, reply);
 		return ;
 	}
+	nick = mess.getParam().front();
 	for (map::const_iterator i = _clients.begin(); i != _clients.end(); i++)
 	{
-		if ((*i).getNick() && *((*i),getNick()) == 
+		if ((*i).getNick() && *((*i),getNick()) == nick)
 		{
+			reply = ":localhost" + ERR_NEEDMOREPARAMS + *(client.getNick())
+				+ " :Not enough parameters\r\n"; 
 			//nick name in use
 			//return 
 		}
