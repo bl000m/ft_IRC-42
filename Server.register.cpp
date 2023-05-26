@@ -11,13 +11,15 @@ void	Server::execMessage(Client &client, Message const &mess)
 	num = getCmdNum(*(mess.getCommand()));
 	if (num == -1)
 	{
-		this->reply(client, ":localhost unknown :command not found\r\n");
+		note = note + ERR_UNKNOWNCOMMAND + nick + " " + *cmd + " :Unknown command\r\n";
+		this->reply(client, note);
 		return ;
 	}
 	if (!client.isRegist()
 			&& !(*cmd == "PASS" || *cmd == "NICK" || *cmd == "USER"))
 	{
-		this->reply(client, ":localhost unknown :command not found\r\n");
+		note = note + ERR_UNKNOWNCOMMAND + nick + " " + *cmd + " :Unknown command\r\n";
+		this->reply(client, note);
 		return ;
 	}
 	(this->*_cmd[num])(client, mess);
@@ -54,7 +56,7 @@ void	Server::pass(Client &client, Message const &mess)
 	}
 	if (mess.getParamNum() < 1)
 	{
-		note = note + ERR_NEEDMOREPARAMS + "unknown :Not enough parameters\r\n";
+		note = note + ERR_NEEDMOREPARAMS + "unknown PASS :Not enough parameters\r\n";
 		this->reply(client, note);
 		return ;
 	}
@@ -65,7 +67,6 @@ void	Server::pass(Client &client, Message const &mess)
 		client.setPass(false);
 		return ;
 	}
-	this->reply(client, "password correct\r\n");
 	client.setPass(true);
 }
 
@@ -79,9 +80,8 @@ void	Server::nick(Client &client, Message const &mess)
 		nick = *(client.getNick());
 	if (client.getPass() == false)
 	{
-		this->reply(client, ":localhost unknown :command not found\r\n");
-		this->reply(client, ":localhost unknown :command not found\r\n");
-		return ;
+		note = note + ERR_UNKNOWNCOMMAND + nick + " NICK :Unknown command\r\n";
+		this->reply(client, note);		return ;
 	}
 	if (mess.getParamNum() < 1)
 	{
@@ -109,7 +109,29 @@ void	Server::nick(Client &client, Message const &mess)
 
 void	Server::user(Client &client, Message const &mess)
 {
-	(void) client;
-	(void) mess;
-	std::cout << "user" << std::endl;
+	std::string	nick = "unknown";
+	std::string	note = ":localhost";
+
+	if (client.getNick())
+		nick = *(client.getNock());
+	if (client.isRegist())
+	{
+		note = note + ERR_ALREADYREGISTERED + ":You may not reregister\r\n";
+		this->reply(client, note);
+		return ;
+	}
+	if (client.getNick() == NULL)
+	{
+		note = note + ERR_UNKNOWNCOMMAND + nick + " USER :Unknown command\r\n";
+		this->reply(client, note);
+		return ;
+	}
+	if (mess.getParamNum() < 4)
+	{
+		note = note + ERR_NEEDMOREPARAMS + nick + " USER ::Not enough parameters\r\n";
+		this->reply(client, note);
+		return ;
+	}
+	//set user and host name
+	//send welcome mess etc
 }
