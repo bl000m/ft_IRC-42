@@ -27,18 +27,35 @@ void    Server::initServer(const std::string &port, const std::string &password)
 
 void	Server::run(void)
 {
-	int		poll_ret;
-	pollfd	*server_poll;
+	int			poll_ret;
+	pollfd		*current_poll;
+	char		buffer[MAX_BUFFER];
 
 	std::cout << "Running Server" << std::endl;
-	server_poll = &_server_sockets[0];
 	while (1)
 	{
-		poll_ret = poll(_server_sockets.data(), _server_sockets.size(), POLL_DELAY);
+		_server_sockets[0].revents = 0;
+		poll_ret = poll(_server_sockets.data(), _server_sockets.size(), -1);
 		if (poll_ret < 0)
 			perror("poll()");
-		if (IS_POLLIN(server_poll->revents))
+		if (IS_POLLIN(_server_sockets[0].revents))
 			newClientPoll();
+		for (size_t i = 1; i != _server_sockets.size(); i++)
+		{
+			current_poll = &_server_sockets[i];
+			if (IS_POLLIN(current_poll->revents))
+			{
+				memset(buffer, 0, MAX_BUFFER);
+				std::cout << "new input" << std::endl;
+				if (recv(current_poll->fd, buffer, MAX_BUFFER, 0) == 0)
+				{
+					close(current_poll->fd);
+					//_server_sockets.erase(_server_sockets.begin() + i);
+				}
+				else
+					std::cout << "From: " << current_poll->fd << " " << buffer << std::endl;
+			}
+		}
 	}
 }
 
@@ -50,6 +67,7 @@ bool	Server::initServerPoll(void)
 	new_socket = socket(AF_INET, SOCK_STREAM, 0);
 	if (new_socket < 0)
 		return (false);
+	fcntl(new_socket, F_SETFL, O_NONBLOCK);
 	_addr.sin_family = AF_INET;
 	_addr.sin_port = htons(_iport);
 	_addr.sin_addr.s_addr = INADDR_ANY;
@@ -58,7 +76,7 @@ bool	Server::initServerPoll(void)
 	if (listen(new_socket, MAX_QUEUE_CONNECTION) < 0)
 		return (close(new_socket) ,false);
 	new_poll.fd = new_socket;
-	new_poll.events = POLLIN | POLLHUP;
+	new_poll.events = POLLIN;
 	new_poll.revents = 0;
 	_server_sockets.push_back(new_poll);
 	return (true);
@@ -72,10 +90,12 @@ bool	Server::newClientPoll(void)
     sockaddr_in	client_addr;
 	pollfd		new_poll;
 
-	server_socket = _server_sockets.data()[0].fd;
+	std::cout << "new Client connected" << std::endl;
+	server_socket = _server_sockets[0].fd;
 	new_socket = accept(server_socket, reinterpret_cast<sockaddr*>(&client_addr), &client_size);
 	if (new_socket < 0)
 		return (false);
+	fcntl(new_socket, F_SETFL, O_NONBLOCK);
 	new_poll.fd = new_socket;
 	new_poll.events = POLLIN | POLLHUP;
 	new_poll.revents = 0;

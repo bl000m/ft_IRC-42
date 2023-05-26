@@ -26,8 +26,10 @@
 #define MIN_PORT                1023
 #define MAX_PORT                65535
 #define MIN_ARGC                3
+#define MAX_BUFFER              512
 
 #define IS_POLLIN(revents)      (revents & POLLIN)
+#define IS_POLLHUP(revents)     (revents & POLLHUP)
 
 class Server {
     public:
