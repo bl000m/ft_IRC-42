@@ -4,7 +4,11 @@ void	Server::execMessage(Client &client, Message const &mess)
 {
 	int					num;
 	std::string const	*cmd;
+	std::string			note = ":localhost";
+	std::string			nick = "unknown";
 
+	if (client.getNick())
+		nick = *(client.getNick());
 	cmd = mess.getCommand();
 	if (!cmd)
 		return ;
@@ -110,28 +114,38 @@ void	Server::nick(Client &client, Message const &mess)
 void	Server::user(Client &client, Message const &mess)
 {
 	std::string	nick = "unknown";
-	std::string	note = ":localhost";
+	std::string	src = ":localhost";
+	std::string	note;
+	std::vector<std::string>	param;
 
 	if (client.getNick())
-		nick = *(client.getNock());
+		nick = *(client.getNick());
 	if (client.isRegist())
 	{
-		note = note + ERR_ALREADYREGISTERED + ":You may not reregister\r\n";
+		note = src + ERR_ALREADYREGISTERED + ":You may not reregister\r\n";
 		this->reply(client, note);
 		return ;
 	}
 	if (client.getNick() == NULL)
 	{
-		note = note + ERR_UNKNOWNCOMMAND + nick + " USER :Unknown command\r\n";
+		note = src + ERR_UNKNOWNCOMMAND + nick + " USER :Unknown command\r\n";
 		this->reply(client, note);
 		return ;
 	}
 	if (mess.getParamNum() < 4)
 	{
-		note = note + ERR_NEEDMOREPARAMS + nick + " USER ::Not enough parameters\r\n";
+		note = src + ERR_NEEDMOREPARAMS + nick + " USER ::Not enough parameters\r\n";
 		this->reply(client, note);
 		return ;
 	}
-	//set user and host name
-	//send welcome mess etc
+	param = mess.getParam();
+	client.setUser(param[0]);
+	client.setHost(param[3]);
+	client.beRegist();
+	note = src + RPL_WELCOME + nick + " :Welcome to our network, "
+			+ nick + "!" + param[0] + "@" + param[3] + "\r\n"
+			+ src + RPL_YOURHOST + nick + " :Your host is ft_irc, this is our first push\r\n" + src + RPL_CREATED + nick + " :This version was created probably yesterday\r\n"
+			+ src + RPL_MYINFO + nick + "<servername> <version> <available user modes> <available channel modes>\r\n";
+	this->reply(client, note);
+	//send isupport
 }
