@@ -20,14 +20,18 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include "global.hpp"
 
 #define MAX_QUEUE_CONNECTION    42
 #define POLL_DELAY              5
 #define MIN_PORT                1023
 #define MAX_PORT                65535
 #define MIN_ARGC                3
+#define MAX_BUFFER              512
+#define CLOSE_SOCKET            0
 
-#define IS_POLLIN(revents)      !(revents & POLLIN)
+#define IS_POLLIN(revents)      (revents & POLLIN)
+#define IS_POLLHUP(revents)     (revents & POLLHUP)
 
 class Server {
     public:
@@ -49,5 +53,6 @@ class Server {
 };
 
 void    closeSocket(pollfd pfd);
+void    sigExit(int code);
 
 #endif
