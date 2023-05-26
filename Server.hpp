@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include "global.hpp"
 
 #define MAX_QUEUE_CONNECTION    42
 #define POLL_DELAY              5
@@ -52,5 +53,6 @@ class Server {
 };
 
 void    closeSocket(pollfd pfd);
+void    sigExit(int code);
 
 #endif
