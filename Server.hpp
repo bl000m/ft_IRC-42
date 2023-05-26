@@ -63,15 +63,15 @@ class Server {
         sockaddr_in             _addr;
         std::vector<pollfd>     _server_sockets;
 		std::map<int, Client>	_clients;
+		fn						_cmd[CMD_NUM];
 
 		/*	commands	*/
-		fn				_cmd[CMD_NUM];
-		static int		getCmdNum(std::string const &cmd);
 		void	pass(Client &client, Message const &mess);
 		void	nick(Client &client, Message const &mess);
 		void	user(Client &client, Message const &mess);
 
 		/*	cmd helper	*/
+		static int		getCmdNum(std::string const &cmd);
 		void	reply(Client const &client, std::string const &mess);
 
 };
