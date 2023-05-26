@@ -44,6 +44,7 @@ class Server {
     public:
 		/*	typedef	*/
 		typedef void (Server::*fn) (Client &c, Message const &m);
+		typedef std::map<int, Client>	map;
 
         Server();
         ~Server();
