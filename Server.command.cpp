@@ -72,7 +72,7 @@ void	Server::broadcast(Client const &client, char const *cmd, char const *p1, ch
 
 	note = ":" + src;
 	if (cmd)
-		note = note + " " + *cmd;
+		note = note + " " + cmd;
 	if (p1)
 		note = note + " " + p1;
 	if (p2)
@@ -80,7 +80,7 @@ void	Server::broadcast(Client const &client, char const *cmd, char const *p1, ch
 	note += "\r\n";
 	for (map::const_iterator i = clients.begin(); i != clients.end(); i++)
 	{
-		if (*(i->second.getNick()) == src)
+		if (i->second.getFullName() == src)
 			continue ;
 		send(client.getSock(), note.c_str(), note.size(), 0);
 	}

@@ -4,7 +4,7 @@ void	Server::pass(Client &client, Message const &mess)
 {	
 	if (client.isRegist() || client.getNick())
 	{
-		this->reply(client, ERR_ALREADYREGISTERED, ":Unknown command", NULL);
+		this->reply(client, ERR_ALREADYREGISTERED, ":You may not reregister", NULL);
 		return ;
 	}
 	if (mess.getParamNum() < 1)
@@ -36,7 +36,7 @@ void	Server::nick(Client &client, Message const &mess)
 		return ;
 	}
 	new_nick = mess.getParam().front();
-	if (!nick_valid(new_nick))
+	if (nick_valid(new_nick) == false)
 	{
 		this->reply(client, ERR_ERRONEUSNICKNAME, new_nick.c_str(), ":Erroneus nickname");
 		return ;
@@ -101,9 +101,9 @@ They SHOULD NOT contain any dot character ('.', 0x2E).
 */
 bool	Server::nick_valid(std::string const &nick)
 {
-	if (nick.find(" ,*?!@.") != std::string::npos)
+	if (nick.find_first_of(" ,*?!@.") != std::string::npos)
 		return (false);
-	if (nick.find("$:&#") == 0)
+	if (nick.find_first_of("$:&#") == 0)
 		return (false);
 	return (true);
 }
