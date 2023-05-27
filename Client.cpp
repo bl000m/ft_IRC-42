@@ -109,6 +109,22 @@ std::string const	*Client::getHost(void) const
 {
 	return (_host);
 }
+std::string		Client::getFullName(void) const
+{
+	std::string	nick = "unknown";
+	std::string	user = "unknown";
+	std::string	host = "unknown";
+
+	if (_nick)
+		nick = *_nick;
+	if (_user)
+		user = *_user;
+	if (_host)
+		host = *_host;
+	return (nick + "!" + user + "@" + host);
+}
+
+
 
 /*	private function	*/
 void	Client::clear(void)

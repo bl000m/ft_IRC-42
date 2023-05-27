@@ -27,32 +27,35 @@ void	Server::nick(Client &client, Message const &mess)
 	
 	if (client.getPass() == false)
 	{
-		this->reply(client,  ERR_UNKNOWNCOMMAND, "NICK", ":Unknown command");
+		this->reply(client, ERR_UNKNOWNCOMMAND, "NICK", ":Unknown command");
 		return ;
 	}
 	if (mess.getParamNum() < 1)
 	{
-		this->reply(client,  ERR_NONICKNAMEGIVEN, ":No nickname given", NULL);
+		this->reply(client, ERR_NONICKNAMEGIVEN, ":No nickname given", NULL);
 		return ;
 	}
 	new_nick = mess.getParam().front();
-	//check nick name valid
-	if (nick_in_use(new_nick))
+	if (!nick_valid(new_nick))
 	{
-		this->reply(client,  ERR_NICKNAMEINUSE, ":Nickname is already in use", NULL);
+		this->reply(client, ERR_ERRONEUSNICKNAME, new_nick, ":Erroneus nickname");
 		return ;
 	}
-	client.setNick(new_nick);
-	if (client.isRegist())
-	{	
-		//broadcast the change to other user
+	if (nick_in_use(new_nick))
+	{
+		this->reply(client, ERR_NICKNAMEINUSE, ":Nickname is already in use", NULL);
+		return ;
 	}
+	if (client.isRegist())
+		broadcast(client, "NICK", new_nick.c_str(), NULL);
+	client.setNick(new_nick);
 }
 
 void	Server::user(Client &client, Message const &mess)
 {
 	std::vector<std::string>	param;
 
+	param = mess.getParam();
 	if (client.isRegist())
 	{
 		this->reply(client, ERR_ALREADYREGISTERED, ":You may not reregister", NULL);
@@ -63,21 +66,15 @@ void	Server::user(Client &client, Message const &mess)
 		this->reply(client, ERR_UNKNOWNCOMMAND, "USER", ":Unknown command");
 		return ;
 	}
-	if (mess.getParamNum() < 4)
+	if (param.size() < 4 || param[0].size() < 1)
 	{
 		this->reply(client, ERR_NEEDMOREPARAMS, "USER", ":Not enough parameters");
 		return ;
 	}
-	param = mess.getParam();
-	//check if valid
 	client.setUser(param[0]);
 	client.setHost(param[3]);
 	client.beRegist();
-	this->reply(client, RPL_WELCOME, ":Welcome to our network", NULL);
-	this->reply(client, RPL_YOURHOST, ":Your host is ft_irc", NULL);
-	this->reply(client, RPL_CREATED, ":This version is created yesterday", NULL);
-	this->reply(client, RPL_MYINFO, "<servername> <version> <available user modes> <available channel modes>", NULL);
-	//send isupport
+	this->welcome_mess(client);
 }
 
 /*	helper	*/
@@ -92,4 +89,32 @@ bool	Server::nick_in_use(std::string const &nick) const
 		}
 	}
 	return (false);
+}
+
+
+/*
+They MUST NOT contain any of the following characters: space (' ', 0x20), comma (',', 0x2C), asterisk ('*', 0x2A), question mark ('?', 0x3F), exclamation mark ('!', 0x21), at sign ('@', 0x40).
+
+They MUST NOT start with any of the following characters: dollar ('$', 0x24), colon (':', 0x3A).
+
+They MUST NOT start with a character listed as a channel type prefix.
+
+They SHOULD NOT contain any dot character ('.', 0x2E).
+*/
+bool	Server::nick_valid(std::string const &nick)
+{
+	if (nick.find(" ,*?!@.") != std::string::npos)
+		return (false);
+	if (nick.find("$:&#") == 0)
+		return (false);
+	return (true);
+}
+
+void	Server::welcome_mess(Client const &client)
+{
+	reply(client, RPL_WELCOME, ":Welcome to our network", NULL);
+	reply(client, RPL_YOURHOST, ":Your host is ft_irc", NULL);
+	reply(client, RPL_CREATED, ":This version is created yesterday", NULL);
+	reply(client, RPL_MYINFO, "<servername> <version> <available user modes> <available channel modes>", NULL);
+	//send isupport
 }

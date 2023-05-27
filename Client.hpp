@@ -53,6 +53,7 @@ class Client
 		std::string const	*getNick(void) const;
 		std::string const	*getUser(void) const;
 		std::string const	*getHost(void) const;
+		std::string			getFullName(void) const;
 
 	private:
 		/*	private variable	*/
