@@ -71,6 +71,7 @@ void	Server::user(Client &client, Message const &mess)
 		this->reply(client, ERR_NEEDMOREPARAMS, "USER", ":Not enough parameters");
 		return ;
 	}
+	//trunc user name if required
 	client.setUser(param[0]);
 	client.setHost(param[3]);
 	client.beRegist();
@@ -88,7 +89,6 @@ bool	Server::nick_in_use(std::string const &nick) const
 	}
 	return (false);
 }
-
 
 /*
 They MUST NOT contain any of the following characters: space (' ', 0x20), comma (',', 0x2C), asterisk ('*', 0x2A), question mark ('?', 0x3F), exclamation mark ('!', 0x21), at sign ('@', 0x40).
@@ -114,16 +114,19 @@ void	Server::welcome_mess(Client const &client)
 	reply(client, RPL_YOURHOST, ":Your host is ft_irc", NULL);
 	reply(client, RPL_CREATED, ":This version is created yesterday", NULL);
 	reply(client, RPL_MYINFO, "<servername> <version> <available user modes> <available channel modes>", NULL);
-	//send isupport
 	reply(client, RPL_ISUPPORT, 
-		"AWAYLEN=100 CASEMAPPING=ascii CHANLIMIT=#&:  CHANNELLEN=32  CHANTYPES=#  HOSTLEN=64 KICKLEN=255 MAXTARGETS=100   NICKLEN=31", " :are supported by this server");
-	reply(client, RPL_ISUPPORT, 
-		"  ", " :are supported by this server");
+		"AWAYLEN=100 CASEMAPPING=ascii CHANLIMIT=#&: CHANNELLEN=32 CHANTYPES=# HOSTLEN=64 KICKLEN=255 MAXTARGETS=100 NICKLEN=31 TOPICLEN=307 USERLEN=18", " :are supported by this server");
+	/*
+		The value of below isupoort parameter 
+		should be decide and completed later: 
 
-	//chanmode
-	//elist
-	//maxlist
-	//modes
-	//EXCEPTS not support
-
+		chanmode
+		elist
+		maxlist
+		modes
+		prefix
+		STATUSMSG
+		TARGMAX
+		EXCEPTS
+	*/
 }
