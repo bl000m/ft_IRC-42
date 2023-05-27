@@ -38,7 +38,7 @@ void	Server::nick(Client &client, Message const &mess)
 	new_nick = mess.getParam().front();
 	if (!nick_valid(new_nick))
 	{
-		this->reply(client, ERR_ERRONEUSNICKNAME, new_nick, ":Erroneus nickname");
+		this->reply(client, ERR_ERRONEUSNICKNAME, new_nick.c_str(), ":Erroneus nickname");
 		return ;
 	}
 	if (nick_in_use(new_nick))
@@ -115,4 +115,15 @@ void	Server::welcome_mess(Client const &client)
 	reply(client, RPL_CREATED, ":This version is created yesterday", NULL);
 	reply(client, RPL_MYINFO, "<servername> <version> <available user modes> <available channel modes>", NULL);
 	//send isupport
+	reply(client, RPL_ISUPPORT, 
+		"AWAYLEN=100 CASEMAPPING=ascii CHANLIMIT=#&:  CHANNELLEN=32  CHANTYPES=#  HOSTLEN=64 KICKLEN=255 MAXTARGETS=100   NICKLEN=31", " :are supported by this server");
+	reply(client, RPL_ISUPPORT, 
+		"  ", " :are supported by this server");
+
+	//chanmode
+	//elist
+	//maxlist
+	//modes
+	//EXCEPTS not support
+
 }

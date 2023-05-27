@@ -63,7 +63,6 @@ void	Server::reply(Client const &client, char const *cmd, char const *p1, char c
 /*
 	A message from source (a client) to all other client
 	on the server
-
 */
 void	Server::broadcast(Client const &client, char const *cmd, char const *p1, char const *p2)
 {
@@ -71,7 +70,7 @@ void	Server::broadcast(Client const &client, char const *cmd, char const *p1, ch
 	std::string	src = client.getFullName();
 	map const	&clients = this->_clients;
 
-	note = ":" + source;
+	note = ":" + src;
 	if (cmd)
 		note = note + " " + *cmd;
 	if (p1)
@@ -83,7 +82,7 @@ void	Server::broadcast(Client const &client, char const *cmd, char const *p1, ch
 	{
 		if (*(i->second.getNick()) == src)
 			continue ;
-		send(source.getSock(), note.c_str(), note.size(), 0);
+		send(client.getSock(), note.c_str(), note.size(), 0);
 	}
 	return ;
 }

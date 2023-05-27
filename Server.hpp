@@ -76,7 +76,7 @@ class Server {
 		void			broadcast(Client const &source, char const *cmd, char const *p1, char const *p2);
 		static void		welcome_mess(Client const &client);
 		bool			nick_in_use(std::string const &nick) const;
-		static bool		nick_valid(std::string const &nick)
+		static bool		nick_valid(std::string const &nick);
 
 
 };
