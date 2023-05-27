@@ -66,8 +66,20 @@ void	Message::setSource(std::string const &input, std::string::size_type &pos)
 {	
 	pos = 0;
 	if (*(input.begin()) != ':')
+	{
+		pos = input.find_first_not_of(" ", pos);
 		return ;
-	pos = input.find(" ", 0);
+	}
+	pos = input.find(" ", 1);
+	if (pos == std::string::npos)
+	{
+		return ;
+	}
+	if (pos == 1)
+	{
+		pos = input.find_first_not_of(" ", pos);
+		return ;
+	}
 	_src = new std::string(input.substr(1, pos - 1));
 	if (pos == std::string::npos)
 		return ;
@@ -81,6 +93,8 @@ void	Message::setCommand(std::string const &input, std::string::size_type &pos)
 	if (pos == std::string::npos)
 		return ;
 	end = input.find(" ", pos);
+	if (pos == end)
+		return ;
 	_cmd = new std::string(input.substr(pos, end - pos));
 	pos = end;
 }
@@ -93,6 +107,8 @@ void	Message::setParam(std::string const &input, std::string::size_type &pos)
 	{
 		pos = input.find_first_not_of(" ", pos);
 		end = input.find(" ", pos);
+		if (pos == end)
+			return ;
 		if (input[pos] == ':')
 		{
 			_param.push_back(input.substr(pos + 1, std::string::npos));

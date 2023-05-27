@@ -11,6 +11,7 @@ Server::Server()
 
 Server::~Server() {
 	std::for_each(_server_sockets.begin(), _server_sockets.end(), closeSocket);
+	_clients.clear();
 }
 
 void    Server::initServer(const std::string &port, const std::string &password)
@@ -32,6 +33,7 @@ void	Server::run(void)
 	int			poll_ret;
 	pollfd		*current_poll;
 	char		buffer[MAX_BUFFER];
+	Message		mess;
 
 	std::cout << "Running Server" << std::endl;
 	while (is_running)
@@ -59,7 +61,12 @@ void	Server::run(void)
 					std::cout << _server_sockets.size() << std::endl;
 				}
 				else
+				{
 					std::cout << "From socket " << current_poll->fd << ": " << buffer << std::endl;
+					/* TEST*/
+					if (mess.parse(buffer))
+						execMessage(_clients.find(current_poll->fd)->second, mess);
+				}
 			}
 		}
 	}
@@ -105,6 +112,7 @@ bool	Server::newClientPoll(void)
 	new_poll.events = POLLIN | POLLHUP;
 	new_poll.revents = 0;
 	_server_sockets.push_back(new_poll);
+	_clients.insert(std::pair<int, Client>(new_socket, Client(new_socket, 0)));
 	std::cout << _server_sockets.size() << std::endl;
 	std::cout << "new Client connected" << std::endl;
 	return (true);
