@@ -84,9 +84,7 @@ bool	Server::nick_in_use(std::string const &nick) const
 	for (map::const_iterator i = _clients.begin(); i != _clients.end(); i++)
 	{
 		if ((i->second).getNick() && *((i->second).getNick()) == nick)
-		{
 			return (true);
-		}
 	}
 	return (false);
 }
