@@ -7,12 +7,7 @@
 bool is_running = true;
 
 Server::Server()
-{
-	/*	init pointer to function	*/
-	_cmd[0] = &Server::pass;
-	_cmd[1] = &Server::nick;
-	_cmd[2] = &Server::user;
-}
+{}
 
 Server::~Server() {
 	std::for_each(_server_sockets.begin(), _server_sockets.end(), closeSocket);

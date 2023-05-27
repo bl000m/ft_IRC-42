@@ -2,14 +2,14 @@
 
 void	Server::execMessage(Client &client, Message const &mess)
 {
-	int					num;
+	fn_ptr				cmd_ptr;
 	std::string const	*cmd;
 
 	cmd = mess.getCommand();
 	if (!cmd)
 		return ;
-	num = getCmdNum(*cmd);
-	if (num == -1)
+	cmd_ptr = getCmd(*cmd);
+	if (!cmd_ptr)
 	{
 		this->reply(client, ERR_UNKNOWNCOMMAND, cmd->c_str(), ":Unknown command");
 		return ;
@@ -20,16 +20,16 @@ void	Server::execMessage(Client &client, Message const &mess)
 		this->reply(client, ERR_UNKNOWNCOMMAND, cmd->c_str(), ":Unknown command");
 		return ;
 	}
-	(this->*_cmd[num])(client, mess);
+	(this->*cmd_ptr)(client, mess);
 }
 
-int	Server::getCmdNum(std::string const &cmd)
+Server::fn_ptr	Server::getCmd(std::string const &cmd)
 {
-	std::map<std::string, int>::const_iterator	i;
+	fn_map::const_iterator	i;
 
-	i = _cmdNum.find(cmd);
-	if (i == _cmdNum.end())
-		return (-1);
+	i = _command.find(cmd);
+	if (i == _command.end())
+		return (NULL);
 	return (i->second);
 }
 
@@ -67,7 +67,7 @@ void	Server::broadcast(Client const &client, char const *cmd, char const *p1, ch
 {
 	std::string	note;
 	std::string	src = client.getFullName();
-	map const	&clients = this->_clients;
+	client_map const	&clients = this->_clients;
 
 	note = ":" + src;
 	if (cmd)
@@ -77,7 +77,7 @@ void	Server::broadcast(Client const &client, char const *cmd, char const *p1, ch
 	if (p2)
 		note = note + " " + p2;
 	note += "\r\n";
-	for (map::const_iterator i = clients.begin(); i != clients.end(); i++)
+	for (client_map::const_iterator i = clients.begin(); i != clients.end(); i++)
 	{
 		if (i->second.getFullName() == src)
 			continue ;
@@ -86,15 +86,15 @@ void	Server::broadcast(Client const &client, char const *cmd, char const *p1, ch
 	return ;
 }
 
-std::map<std::string, int>	Server::cmdNum_init(void)
+Server::fn_map	Server::cmd_init(void)
 {
-	std::map<std::string, int>	temp;
+	std::map<std::string, Server::fn_ptr>	temp;
 
-	temp["PASS"] = 0;
-	temp["NICK"] = 1;
-	temp["USER"] = 2;
+	temp["PASS"] = &Server::pass;
+	temp["NICK"] = &Server::nick;
+	temp["USER"] = &Server::user;
 
 	return (temp);
 }
 
-std::map<std::string, int>	Server::_cmdNum = cmdNum_init();
+Server::fn_map const	Server::_command = cmd_init();

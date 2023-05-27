@@ -25,7 +25,6 @@
 
 #include "Message.hpp"
 #include "Client.hpp"
-#include "CommandNum.hpp"
 #include "Numerics.hpp"
 
 #define MAX_QUEUE_CONNECTION    42
@@ -35,7 +34,6 @@
 #define MIN_ARGC                3
 #define MAX_BUFFER              512
 #define CLOSE_SOCKET            0
-#define CMD_NUM					3 //should increase in future
 
 #define IS_POLLIN(revents)      (revents & POLLIN)
 #define IS_POLLHUP(revents)     (revents & POLLHUP)
@@ -44,7 +42,8 @@ class Server {
     public:
 		/*	typedef	*/
 		typedef void (Server::*fn_ptr) (Client &c, Message const &m);
-		typedef std::map<int, Client>	map;
+		typedef std::map<int, Client>			client_map;
+		typedef std::map<std::string, fn_ptr>	fn_map;
 
         Server();
         ~Server();
@@ -54,20 +53,19 @@ class Server {
 		void	execMessage(Client &client, Message const &mess);
 
     private:
-        bool                    initServerPoll(void);
-        bool                    newClientPoll(void);
+        bool					initServerPoll(void);
+        bool					newClientPoll(void);
 
-        std::string             _password;
-        uint16_t                _iport;
+        std::string				_password;
+        uint16_t				_iport;
 
-        sockaddr_in             			_addr;
-        std::vector<pollfd>     			_server_sockets;
-		std::map<int, Client>				_clients;
-		fn_ptr								_cmd[CMD_NUM];
-		static std::map<std::string, int>	_cmdNum;
+        sockaddr_in				_addr;
+        std::vector<pollfd>		_server_sockets;
+		client_map				_clients;
+		static fn_map const		_command;
 
 		/*	command execution	*/
-		int		getCmdNum(std::string const &cmd);
+		fn_ptr		getCmd(std::string const &cmd);
 		
 		/*	connection commands	*/
 		void	pass(Client &client, Message const &mess);
@@ -84,7 +82,7 @@ class Server {
 		void			broadcast(Client const &source, char const *cmd, char const *p1, char const *p2);
 
 		/*	static map for cmdNum initialization	*/
-		static std::map<std::string, int>	cmdNum_init(void);
+		static fn_map	cmd_init(void);
 
 };
 
