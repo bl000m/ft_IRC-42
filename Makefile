@@ -6,7 +6,7 @@ RM			= rm -rf
 
 OBJDIR = 	.objects
 
-FILES		= main Server Message Client Server.register \
+FILES		= main Server Message Client Server.connection \
 				Server.command
 
 SRC			= $(FILES:=.cpp)
