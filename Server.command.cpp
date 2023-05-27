@@ -25,13 +25,12 @@ void	Server::execMessage(Client &client, Message const &mess)
 
 int	Server::getCmdNum(std::string const &cmd)
 {
-	if (cmd == "PASS")
-		return (PASS);
-	if (cmd == "NICK")
-		return (NICK);
-	if (cmd == "USER")
-		return (USER);
-	return (-1);
+	std::map<std::string, int>::const_iterator	i;
+
+	i = _cmdNum.find(cmd);
+	if (i == _cmdNum.end())
+		return (-1);
+	return (i->second);
 }
 
 /*	
@@ -86,3 +85,16 @@ void	Server::broadcast(Client const &client, char const *cmd, char const *p1, ch
 	}
 	return ;
 }
+
+std::map<std::string, int>	Server::cmdNum_init(void)
+{
+	std::map<std::string, int>	temp;
+
+	temp["PASS"] = 0;
+	temp["NICK"] = 1;
+	temp["USER"] = 2;
+
+	return (temp);
+}
+
+std::map<std::string, int>	Server::_cmdNum = cmdNum_init();

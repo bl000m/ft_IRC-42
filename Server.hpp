@@ -43,7 +43,7 @@
 class Server {
     public:
 		/*	typedef	*/
-		typedef void (Server::*fn) (Client &c, Message const &m);
+		typedef void (Server::*fn_ptr) (Client &c, Message const &m);
 		typedef std::map<int, Client>	map;
 
         Server();
@@ -60,24 +60,31 @@ class Server {
         std::string             _password;
         uint16_t                _iport;
 
-        sockaddr_in             _addr;
-        std::vector<pollfd>     _server_sockets;
-		std::map<int, Client>	_clients;
-		fn						_cmd[CMD_NUM];
+        sockaddr_in             			_addr;
+        std::vector<pollfd>     			_server_sockets;
+		std::map<int, Client>				_clients;
+		fn_ptr								_cmd[CMD_NUM];
+		static std::map<std::string, int>	_cmdNum;
 
-		/*	commands	*/
+		/*	command execution	*/
+		int		getCmdNum(std::string const &cmd);
+		
+		/*	connection commands	*/
 		void	pass(Client &client, Message const &mess);
 		void	nick(Client &client, Message const &mess);
 		void	user(Client &client, Message const &mess);
 
-		/*	cmd helper	*/
-		static int		getCmdNum(std::string const &cmd);
-		static void		reply(Client const &client, char const *cmd, char const *para1, char const *para2);
-		void			broadcast(Client const &source, char const *cmd, char const *p1, char const *p2);
+		/*	connection command helper	*/
 		static void		welcome_mess(Client const &client);
 		bool			nick_in_use(std::string const &nick) const;
 		static bool		nick_valid(std::string const &nick);
 
+		/*	server reply	*/
+		static void		reply(Client const &client, char const *cmd, char const *p1, char const *p2);
+		void			broadcast(Client const &source, char const *cmd, char const *p1, char const *p2);
+
+		/*	static map for cmdNum initialization	*/
+		static std::map<std::string, int>	cmdNum_init(void);
 
 };
 
