@@ -78,6 +78,31 @@ void	Server::user(Client &client, Message const &mess)
 	this->welcome_mess(client);
 }
 
+void	Server::quit(Client &client, Message const &mess)
+{
+	client_map::iterator			i;
+	std::vector<pollfd>::iterator	j;		
+
+	i = this->_clients.find(client.getSock());
+	for (j = _server_sockets.begin(); j != _server_sockets.end(); j++)
+	{
+		if (j->poll.fd == client.getSock())
+			break ;
+	}
+	//send the quit message to clients of the same channel
+	//right now use broadcast instead
+	broadcast(client, "QUIT", "Quit: ", (mess.getParam())[0]);
+	//send err to client
+	reply(client, "ERROR", ":client quit", NULL);
+	//release resource
+	close(client.getSock());
+	_clients.erase(i);
+	_server_sockets.erase(j);
+}
+
+
+
+
 /*	helper	*/
 
 bool	Server::nick_in_use(std::string const &nick) const
