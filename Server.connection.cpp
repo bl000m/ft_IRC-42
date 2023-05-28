@@ -118,6 +118,21 @@ void	Server::pong(Client &client, Message const &mess)
 	(void) mess;
 }
 
+void	Server::oper(Client &client, Message const &mess)
+{
+	if (mess.getParamNum() < 2)
+	{
+		reply(client, ERR_NEEDMOREPARAMS, "OPER", ":Not enough parammeter");
+		return ;
+	}
+	if (mess.getParam()[1] != _password)
+	{
+		reply(client, ERR_PASSWDMISMATCH, ":password incorrect", NULL);
+		return ;
+	}
+	//need to modify class client to set boolen oper 
+}
+
 /*	helper	*/
 
 bool	Server::nick_in_use(std::string const &nick) const
