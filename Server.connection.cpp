@@ -92,16 +92,12 @@ void	Server::quit(Client &client, Message const &mess)
 	//send the quit message to clients of the same channel
 	//right now use broadcast instead
 	broadcast(client, "QUIT", "Quit: ", (mess.getParam())[0]);
-	//send err to client
+	//reply and release resource
 	reply(client, "ERROR", ":client quit", NULL);
-	//release resource
 	close(client.getSock());
 	_clients.erase(i);
 	_server_sockets.erase(j);
 }
-
-
-
 
 /*	helper	*/
 
