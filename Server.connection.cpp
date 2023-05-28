@@ -86,12 +86,12 @@ void	Server::quit(Client &client, Message const &mess)
 	i = this->_clients.find(client.getSock());
 	for (j = _server_sockets.begin(); j != _server_sockets.end(); j++)
 	{
-		if (j->poll.fd == client.getSock())
+		if (j->fd == client.getSock())
 			break ;
 	}
 	//send the quit message to clients of the same channel
 	//right now use broadcast instead
-	broadcast(client, "QUIT", "Quit: ", (mess.getParam())[0]);
+	broadcast(client, "QUIT", "Quit: ", (mess.getParam())[0].c_str());
 	//reply and release resource
 	reply(client, "ERROR", ":client quit", NULL);
 	close(client.getSock());
