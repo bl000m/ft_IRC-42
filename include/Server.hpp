@@ -83,6 +83,13 @@ class Server {
 		bool			nick_in_use(std::string const &nick) const;
 		static bool		nick_valid(std::string const &nick);
 
+		/*	privmsg and notice	*/
+		void	privmsg(Client &client, Message const &mess);
+		void	notice(Client &client, Message const &mess);
+		void	sendToNick(Client &client, std::string const &mess, std::string const &nick);
+		std::vector<std::string>	getTarget(std::string const &str);
+
+
 		/*	server reply	*/
 		static void		reply(Client const &client, char const *cmd, char const *p1, char const *p2);
 		void			broadcast(Client const &source, char const *cmd, char const *p1, char const *p2);
