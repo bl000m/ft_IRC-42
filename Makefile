@@ -8,12 +8,14 @@ OBJDIR = 	./objects
 SRCSDIR=	./src
 HEADDIR =  	./include
 
-FILES		= main Server Message Client Server.connection \
-				Server.command
+FILES		= main network/Server  network/Client \
+			network/Channel \
+			commands/Server.connection \
+			commands/Server.command \
+			commands/Message
 
 SRC			= $(FILES:=.cpp)
 OBJ			= $(addprefix $(OBJDIR)/, $(FILES:=.o))
-# HEADER		= Server.hpp Message.hpp Numerics.hpp Client.hpp global.hpp
 
 #Colors:
 YELLOW		=	\e[1;33m
