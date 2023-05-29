@@ -4,14 +4,16 @@ CC			= c++
 FLAGS		= -Wall -Wextra -Werror -std=c++98
 RM			= rm -rf
 
-OBJDIR = 	.objects
+OBJDIR = 	./objects
+SRCSDIR=	./src
+HEADDIR =  	./include
 
 FILES		= main Server Message Client Server.connection \
 				Server.command
 
 SRC			= $(FILES:=.cpp)
 OBJ			= $(addprefix $(OBJDIR)/, $(FILES:=.o))
-HEADER		= Server.hpp Message.hpp Numerics.hpp Client.hpp global.hpp
+# HEADER		= Server.hpp Message.hpp Numerics.hpp Client.hpp global.hpp
 
 #Colors:
 YELLOW		=	\e[1;33m
@@ -24,19 +26,19 @@ BACK_WHITE	=	\e[0m
 
 all: $(NAME)
 
-$(NAME): $(OBJ) $(HEADER) Makefile
+$(NAME): $(OBJ) Makefile
 	@$(CC) $(OBJ) -o $(NAME) #-fsanitize=address -g
-	@printf "\nI created the executable. Now you can enter $(YELLOW)./ircserv <port> <password> $(BACK_WHITE)to launch it and have fun.\n" 
-	@printf "\n\n$(BOLD_WHITE)<<<<<<<<<<<<<<<<< Not clear? Follow these steps >>>>>>>>>>>>>>>>$(BACK_WHITE)\n" 
+	@printf "\nI created the executable. Now you can enter $(YELLOW)./ircserv <port> <password> $(BACK_WHITE)to launch it and have fun.\n"
+	@printf "\n\n$(BOLD_WHITE)<<<<<<<<<<<<<<<<< Not clear? Follow these steps >>>>>>>>>>>>>>>>$(BACK_WHITE)\n"
 	@printf "\n$(UNDER_WHITE)Replace <port> with the desired port number on which the IRC server will listen for incoming connections.$(BACK_WHITE)\n"
 	@printf "\n$(UNDER_WHITE)Replace <password> with the connection password that will be required for clients to connect to your server.$(BACK_WHITE)\n"
 	@printf "\n$(BLUE)Creating and Joining Channels$(BACK_WHITE)\n"
 	@printf ".To create a channel, use the command: $(PURPLE)/join #channel_name$(BACK_WHITE)\n"
 	@printf ".To join an existing channel, use the command:  $(PURPLE)/join #channel_name$(BACK_WHITE)\n"
 
-$(OBJDIR)/%.o: %.cpp $(HEADER)
+$(OBJDIR)/%.o: $(SRCSDIR)/%.cpp
 	@mkdir -p $(dir $@)
-	@$(CC) $(FLAGS) -c $< -o $@
+	@$(CC) $(FLAGS) -I $(HEADDIR) -c $< -o $@
 
 clean:
 	@$(RM) $(OBJDIR) $(OBJ)
