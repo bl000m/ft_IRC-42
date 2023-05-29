@@ -86,7 +86,7 @@ class Server {
 
 };
 
-void    closeSocket(pollfd pfd);
+void    closeSocket(pollfd &pfd);
 void    sigExit(int code);
 
 #endif
