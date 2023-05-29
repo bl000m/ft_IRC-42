@@ -18,10 +18,10 @@ void	Server::privmsg(Client &client, Message const &mess)
 	target = getTarget(mess.getParam()[0]);
 	for (i = target.begin(); i != target.end(); i++)
 	{
-		if (i->front() == '&' || i->front() == '#')
+		if ((*i)[0] == '&' || (*i)[0] == '#')
 			;//to channel
 		else
-			sendToNick(client, mess.getParam()[1], *i);
+			sendToNick(client, mess, *i);
 	}
 }
 
@@ -41,10 +41,10 @@ void	Server::notice(Client &client, Message const &mess)
 	target = getTarget(mess.getParam()[0]);
 	for (i = target.begin(); i != target.end(); i++)
 	{
-		if (i->front() == '&' || i->front() == '#')
+		if ((*i)[0] == '&' || (*i)[0] == '#')
 			;//to channel
 		else
-			sendToNick(client, mess.getParam()[1], *i);
+			sendToNick(client, mess, *i);
 	}
 }
 
@@ -55,8 +55,8 @@ std::vector<std::string>	Server::getTarget(std::string const &str)
 	std::string::size_type		tail;
 	std::string					target;
 
-	head = str.begin();
-	while (head != str.end())
+	head = 0;
+	while (head != std::string::npos)
 	{
 		if (str[head] == ',')
 			head++;
@@ -77,15 +77,15 @@ void	Server::sendToNick(Client &client, Message const &mess, std::string const &
 	nickfd = -1;
 	for (i = _clients.begin(); i != _clients.end(); i++)
 	{
-		if (i->second.getNick() == nick)
+		if ((*i->second.getNick()) == nick)
 			nickfd = i->second.getSock();
 	}
-	if (nickfd == -1 && mess.getCmd()->c_str() == "PRIVMSG")
+	if (nickfd == -1)
 	{
-		if (mess.getCmd()->c_str() == "PRIVMSG")
-			reply(client, ERR_NOSUCHNICK, nick, ":No such nick");
+		if (*(mess.getCommand()) == "PRIVMSG")
+			reply(client, ERR_NOSUCHNICK, nick.c_str(), ":No such nick");
 		return ;
 	}
-	note = ":" + client.getFullName() + " " + *(mess.getCmd()) + " :" + mess.getParam()[1] + "\r\n";
+	note = ":" + client.getFullName() + " " + *(mess.getCommand()) + " :" + mess.getParam()[1] + "\r\n";
 	send(nickfd, note.c_str(), note.size(), 0);
 }
