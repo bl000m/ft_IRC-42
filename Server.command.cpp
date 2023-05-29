@@ -93,8 +93,19 @@ Server::fn_map	Server::cmd_init(void)
 	temp["PASS"] = &Server::pass;
 	temp["NICK"] = &Server::nick;
 	temp["USER"] = &Server::user;
-
+	temp["QUIT"] = &Server::quit;
+	temp["PING"] = &Server::ping;
+	temp["PONG"] = &Server::pong;
 	return (temp);
 }
 
 Server::fn_map const	Server::_command = cmd_init();
+
+void	Server::force_quit(int sock)
+{
+	client_map::iterator			i;
+	std::vector<pollfd>::iterator	j;
+	Client							client;
+	
+	
+}
