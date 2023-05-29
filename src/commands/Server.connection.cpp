@@ -41,6 +41,8 @@ void	Server::nick(Client &client, Message const &mess)
 		this->reply(client, ERR_ERRONEUSNICKNAME, new_nick.c_str(), ":Erroneus nickname");
 		return ;
 	}
+	if (client.getNick() && *(client.getNick()) == new_nick)
+		return ;
 	if (nick_in_use(new_nick))
 	{
 		this->reply(client, ERR_NICKNAMEINUSE, ":Nickname is already in use", NULL);
