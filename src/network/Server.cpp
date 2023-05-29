@@ -40,6 +40,8 @@ void	Server::run(void)
 	{
 		_server_sockets[0].revents = 0;
 		poll_ret = poll(_server_sockets.data(), _server_sockets.size(), POLL_DELAY);
+		if (!is_running)
+			break;
 		if (poll_ret < 0)
 		{
 			perror("poll()");
@@ -56,9 +58,10 @@ void	Server::run(void)
 				std::cout << "new input" << std::endl;
 				if (recv(current_poll->fd, buffer, MAX_BUFFER, 0) == CLOSE_SOCKET)
 				{
-					close(current_poll->fd);
-					_server_sockets.erase(_server_sockets.begin() + i);
-					std::cout << _server_sockets.size() << std::endl;
+					// close(current_poll->fd);
+					// _server_sockets.erase(_server_sockets.begin() + i);
+					// std::cout << _server_sockets.size() << std::endl;
+					force_quit(current_poll->fd);
 				}
 				else
 				{
@@ -76,14 +79,18 @@ bool	Server::initServerPoll(void)
 {
 	int			new_socket;
 	pollfd		new_poll;
+	int			opt_arg = 1;
 
 	new_socket = socket(AF_INET, SOCK_STREAM, 0);
 	if (new_socket < 0)
 		return (false);
-	fcntl(new_socket, F_SETFL, O_NONBLOCK);
 	_addr.sin_family = AF_INET;
 	_addr.sin_port = htons(_iport);
 	_addr.sin_addr.s_addr = INADDR_ANY;
+	if (setsockopt(new_socket, SOL_SOCKET, SO_REUSEADDR, &opt_arg, sizeof(int)) < 0)
+		return (close(new_socket) ,false);
+	if (setsockopt(new_socket, SOL_SOCKET, SO_REUSEPORT, &opt_arg, sizeof(int)) < 0)
+		return (close(new_socket) ,false);
 	if (bind(new_socket, reinterpret_cast<sockaddr*>(&_addr), sizeof(_addr)) < 0)
 		return (close(new_socket) ,false);
 	if (listen(new_socket, MAX_QUEUE_CONNECTION) < 0)
@@ -118,7 +125,7 @@ bool	Server::newClientPoll(void)
 	return (true);
 }
 
-void	closeSocket(pollfd pfd)
+void	closeSocket(pollfd &pfd)
 {
 	close(pfd.fd);
 }

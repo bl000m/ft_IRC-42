@@ -78,6 +78,67 @@ void	Server::user(Client &client, Message const &mess)
 	this->welcome_mess(client);
 }
 
+void	Server::quit(Client &client, Message const &mess)
+{
+	client_map::iterator			i;
+	std::vector<pollfd>::iterator	j;
+	char const						*reason;
+
+	i = _clients.find(client.getSock());
+	for (j = _server_sockets.begin(); j != _server_sockets.end(); j++)
+	{
+		if (j->fd == client.getSock())
+			break ;
+	}
+	reason = NULL;
+	if (mess.getParamNum() > 0)
+		reason = mess.getParam()[0].c_str();
+	//send the quit message to clients of the same channel
+	//right now use broadcast instead
+	broadcast(client, "QUIT", "Quit: ", reason);
+	//reply and release resource
+	reply(client, "ERROR", ":client quit", NULL);
+	close(client.getSock());
+	if (i != _clients.end())
+		_clients.erase(i);
+	if (j != _server_sockets.end())
+		_server_sockets.erase(j);
+}
+
+void	Server::ping(Client &client, Message const &mess)
+{
+	std::string	note = ":localhost PONG localhost ";
+	
+	if (mess.getParamNum() < 1)
+	{
+		reply(client, ERR_NEEDMOREPARAMS, "PING", ":Not enough parammeter");
+		return ;
+	}
+	note = note + mess.getParam()[0] + "\r\n";
+	send(client.getSock(), note.c_str(), note.size(), 0);
+}
+
+void	Server::pong(Client &client, Message const &mess)
+{
+	(void) client;
+	(void) mess;
+}
+
+// void	Server::oper(Client &client, Message const &mess)
+// {
+// 	if (mess.getParamNum() < 2)
+// 	{
+// 		reply(client, ERR_NEEDMOREPARAMS, "OPER", ":Not enough parammeter");
+// 		return ;
+// 	}
+// 	if (mess.getParam()[1] != _password)
+// 	{
+// 		reply(client, ERR_PASSWDMISMATCH, ":password incorrect", NULL);
+// 		return ;
+// 	}
+// 	//need to modify class client to set boolen oper 
+// }
+
 /*	helper	*/
 
 bool	Server::nick_in_use(std::string const &nick) const

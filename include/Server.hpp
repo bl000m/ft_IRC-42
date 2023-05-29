@@ -66,11 +66,17 @@ class Server {
 
 		/*	command execution	*/
 		fn_ptr		getCmd(std::string const &cmd);
+		void		force_quit(int sock);
+
 		
 		/*	connection commands	*/
 		void	pass(Client &client, Message const &mess);
 		void	nick(Client &client, Message const &mess);
 		void	user(Client &client, Message const &mess);
+		void	quit(Client &client, Message const &mess);
+		void	ping(Client &client, Message const &mess);
+		void	pong(Client &client, Message const &mess);
+
 
 		/*	connection command helper	*/
 		static void		welcome_mess(Client const &client);
@@ -86,7 +92,7 @@ class Server {
 
 };
 
-void    closeSocket(pollfd pfd);
+void    closeSocket(pollfd &pfd);
 void    sigExit(int code);
 
 #endif
