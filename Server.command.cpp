@@ -93,8 +93,32 @@ Server::fn_map	Server::cmd_init(void)
 	temp["PASS"] = &Server::pass;
 	temp["NICK"] = &Server::nick;
 	temp["USER"] = &Server::user;
-
+	temp["QUIT"] = &Server::quit;
+	temp["PING"] = &Server::ping;
+	temp["PONG"] = &Server::pong;
 	return (temp);
 }
 
 Server::fn_map const	Server::_command = cmd_init();
+
+void	Server::force_quit(int sock)
+{
+	client_map::iterator			i;
+	std::vector<pollfd>::iterator	j;
+	Client							client;
+
+	i = _clients.find(sock);
+	for (j = _server_sockets.begin(); j != _server_sockets.end(); j++)
+	{
+		if (j->fd == sock)
+			break ;
+	}
+	if (i != _clients.end())
+		client = i->second;
+	if (i != _clients.end())
+		_clients.erase(i);
+	if (j != _server_sockets.end())
+		_server_sockets.erase(j);
+	close(sock);
+	broadcast(client, "QUIT", ":force quit", NULL);
+}
