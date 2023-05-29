@@ -58,9 +58,10 @@ void	Server::run(void)
 				std::cout << "new input" << std::endl;
 				if (recv(current_poll->fd, buffer, MAX_BUFFER, 0) == CLOSE_SOCKET)
 				{
-					close(current_poll->fd);
-					_server_sockets.erase(_server_sockets.begin() + i);
-					std::cout << _server_sockets.size() << std::endl;
+					// close(current_poll->fd);
+					// _server_sockets.erase(_server_sockets.begin() + i);
+					// std::cout << _server_sockets.size() << std::endl;
+					force_quit(current_poll->fd);
 				}
 				else
 				{
@@ -126,7 +127,7 @@ bool	Server::newClientPoll(void)
 
 void	closeSocket(pollfd &pfd)
 {
-	close(pfd.fd)
+	close(pfd.fd);
 }
 
 void    sigExit(int code)
