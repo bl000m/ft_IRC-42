@@ -56,7 +56,7 @@ void	Server::run(void)
 			{
 				memset(buffer, 0, MAX_BUFFER);
 				std::cout << "new input" << std::endl;
-				if (recv(current_poll->fd, buffer, MAX_BUFFER, 0) == CLOSE_SOCKET)
+				if (recv(current_poll->fd, buffer, MAX_BUFFER, 0) < CLOSE_SOCKET)
 				{
 					// close(current_poll->fd);
 					// _server_sockets.erase(_server_sockets.begin() + i);
