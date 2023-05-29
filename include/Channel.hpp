@@ -1,8 +1,11 @@
 #ifndef CHANNEL_HPP
 # define CHANNEL_HPP
 
-#include <iostream>
+# include <string>
+# include <iostream>
+# include <vector>
 #include "Client.hpp"
+#include "Server.hpp"
 
 class Client;
 
@@ -13,9 +16,12 @@ class Channel {
 		~Channel();
 
 	private:
+		Channel();
 		std::string _name;
 		std::string _password;
 		Client *_superuser;
+		Channel	&operator=(Channel const &channel);
+		void clear();
 		// std::vector<Client *> _clients
 };
 
