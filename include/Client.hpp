@@ -2,9 +2,13 @@
 # define CLIENT_HPP
 
 # include <string>
+# include <cstring>
 # include <iostream>
 # include <vector>
-
+# include <sys/socket.h>
+# include <sys/socket.h>
+# include <netinet/in.h>
+# include <netinet/ip.h>
 /*
 	The default ctor creates an empty client
 
@@ -35,7 +39,7 @@ class Client
 		~Client(void);
 		Client	&operator=(Client const &client);
 
-		Client(int sockfd, unsigned int ip);
+		Client(int sockfd, socklen_t sock_size, sockaddr_in sock_addr);
 		
 		/*	setters	*/
 		void	setPass(bool good);
@@ -43,12 +47,13 @@ class Client
 		void	setNick(std::string const &nick);
 		void	setUser(std::string const &user);
 		void	setHost(std::string const &host);
+		void	serServerOp(bool yes);
 
 		/*	getters	*/
 		int					getSock(void) const;
-		unsigned int		getIp(void) const;
 		bool				getPass(void) const;
 		bool				isRegist(void) const;
+		bool				isServerOp(void) const;
 
 		std::string const	*getNick(void) const;
 		std::string const	*getUser(void) const;
@@ -58,12 +63,14 @@ class Client
 	private:
 		/*	private variable	*/
 		int				_sock;
-		unsigned int	_ip;
 		bool			_pass;
 		bool			_regist;
 		std::string		*_nick;
 		std::string		*_user;
 		std::string		*_host;
+		socklen_t		_sock_len;
+		sockaddr_in		_sock_addr;
+		bool			_server_op;
 
 		/*	private function	*/
 		void	clear(void);

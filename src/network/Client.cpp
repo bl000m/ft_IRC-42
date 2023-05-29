@@ -2,13 +2,19 @@
 
 /*	canon form	*/
 Client::Client(void)
-	:_sock(-1), _ip(0), _pass(false), _regist(false),
-	_nick(NULL), _user(NULL), _host(NULL) {}
+	:_sock(-1), _pass(false), _regist(false),
+	_nick(NULL), _user(NULL), _host(NULL),
+	_sock_len(-1), _server_op(false)
+{
+	std::memset(&_sock_addr, 0, sizeof(sockaddr_in));
+}
 
 Client::Client(Client const &client)
-	:_sock(client._sock), _ip(client._ip),
-	_pass(client._pass), _regist(client._regist),
-	_nick(NULL), _user(NULL), _host(NULL)
+	:_sock(client._sock), _pass(client._pass),
+	_regist(client._regist),
+	_nick(NULL), _user(NULL), _host(NULL),
+	_sock_len(client._sock_len),
+	_sock_addr(client._sock_addr), _server_op(false)
 {
 	if (client._nick)
 		_nick = new std::string(*client._nick);
@@ -28,9 +34,11 @@ Client	&Client::operator=(Client const &client)
 	if (this == &client)
 		return (*this);
 	_sock = client._sock;
-	_ip = client._ip;
+	_sock_len = client._sock_len;
+	_sock_addr = client._sock_addr;
 	_pass = client._pass;
 	_regist = client._regist;
+	_server_op = client._server_op;
 	clear();
 	if (client._nick)
 		_nick = new std::string(*client._nick);
@@ -42,9 +50,10 @@ Client	&Client::operator=(Client const &client)
 }
 
 /*	ctor with arguments	*/
-Client::Client(int sockfd, unsigned int ip)
-	:_sock(sockfd), _ip(ip), _pass(false), _regist(false),
-	_nick(NULL), _user(NULL), _host(NULL) {}
+Client::Client(int sockfd, socklen_t socklen, sockaddr_in sockaddr)
+	:_sock(sockfd), _pass(false), _regist(false),
+	_nick(NULL), _user(NULL), _host(NULL),
+	_sock_len(socklen), _sock_addr(sockaddr), _server_op(false) {}
 
 /*
 	the modification of client has certain restrictions,
@@ -79,15 +88,15 @@ void	Client::setHost(std::string const &host)
 	delete _host;
 	_host = new std::string(host);
 }
+void	Client::serServerOp(bool yes)
+{
+	_server_op = yes;
+}
 
 /*	getters	*/
 int		Client::getSock(void) const
 {
 	return (_sock);
-}
-unsigned int	Client::getIp(void) const
-{
-	return (_ip);
 }
 bool	Client::getPass(void) const
 {
@@ -123,7 +132,10 @@ std::string		Client::getFullName(void) const
 		host = *_host;
 	return (nick + "!" + user + "@" + host);
 }
-
+bool	Client::isServerOp(void) const
+{
+	return (_server_op);
+}
 
 
 /*	private function	*/
@@ -141,7 +153,6 @@ void	Client::clear(void)
 std::ostream	&operator<<(std::ostream &out, Client const &client)
 {
 	out << "Client:  sock(" << client.getSock() << ")"
-		<< "  ip(" << client.getIp() << ")"
 		<< "  pass(" << client.getPass() << ")"
 		<< "  regist(" << client.isRegist() << ")" << std::endl
 		<< "  nick: ";
