@@ -119,7 +119,7 @@ bool	Server::newClientPoll(void)
 	new_poll.events = POLLIN | POLLHUP;
 	new_poll.revents = 0;
 	_server_sockets.push_back(new_poll);
-	_clients.insert(std::pair<int, Client>(new_socket, Client(new_socket, 0)));
+	_clients.insert(std::pair<int, Client>(new_socket, Client(new_socket, client_size, client_addr)));
 	std::cout << _server_sockets.size() << std::endl;
 	std::cout << "new Client connected" << std::endl;
 	return (true);
