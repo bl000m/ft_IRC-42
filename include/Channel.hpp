@@ -15,6 +15,19 @@ class Channel {
 		Channel(const std::string &name, const std::string &password, Client *superuser);
 		~Channel();
 
+		/* getters */
+		std::string &getName();
+		std::string &getPassword();
+		Client *getSuperser();
+
+		/* setters */
+		void setPassword(std::string newPassword);
+
+		/* commands support function */
+		void	addUser(Client *user);
+		void	removeUser(Client *user);
+		std::vector<std::string> getNames();
+
 	private:
 		Channel();
 		std::string _name;
@@ -22,7 +35,7 @@ class Channel {
 		Client *_superuser;
 		Channel	&operator=(Channel const &channel);
 		void clear();
-		// std::vector<Client *> _clients
+		std::vector<Client *> _clients;
 };
 
 #endif
