@@ -20,8 +20,8 @@ void	Server::privmsg(Client &client, Message const &mess)
 	{
 		if ((*i)[0] == '&' || (*i)[0] == '#')
 			;//to channel
-		else
-			sendToNick(client, mess, *i);
+		else if (!sendToNick(client, mess, *i))
+			this->reply(client, ERR_NOSUCHNICK, i->c_str(), ":No such nick");
 	}
 }
 
@@ -43,8 +43,8 @@ void	Server::notice(Client &client, Message const &mess)
 	{
 		if ((*i)[0] == '&' || (*i)[0] == '#')
 			;//to channel
-		else
-			sendToNick(client, mess, *i);
+		else if (!sendToNick(client, mess, *i))
+			this->reply(client, ERR_NOSUCHNICK, i->c_str(), ":No such nick");
 	}
 }
 
@@ -68,7 +68,7 @@ std::vector<std::string>	Server::getTarget(std::string const &str)
 	return (temp);
 }
 
-void	Server::sendToNick(Client &client, Message const &mess, std::string const &nick)
+bool	Server::sendToNick(Client &client, Message const &mess, std::string const &nick)
 {
 	client_map::const_iterator	i;
 	int							nickfd;
@@ -77,15 +77,14 @@ void	Server::sendToNick(Client &client, Message const &mess, std::string const &
 	nickfd = -1;
 	for (i = _clients.begin(); i != _clients.end(); i++)
 	{
-		if ((*i->second.getNick()) == nick)
+		if ((*i->second.getNick()) == nick && i->second.isRegist())
 			nickfd = i->second.getSock();
 	}
 	if (nickfd == -1)
 	{
-		if (*(mess.getCommand()) == "PRIVMSG")
-			reply(client, ERR_NOSUCHNICK, nick.c_str(), ":No such nick");
-		return ;
+		return (false);
 	}
 	note = ":" + client.getFullName() + " " + *(mess.getCommand()) + " :" + mess.getParam()[1] + "\r\n";
 	send(nickfd, note.c_str(), note.size(), 0);
+	return (true);
 }

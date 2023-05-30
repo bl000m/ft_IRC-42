@@ -81,7 +81,7 @@ void	Server::broadcast(Client const &client, char const *cmd, char const *p1, ch
 	{
 		if (i->second.getFullName() == src)
 			continue ;
-		send(client.getSock(), note.c_str(), note.size(), 0);
+		send(i->second.getSock(), note.c_str(), note.size(), 0);
 	}
 	return ;
 }
@@ -96,7 +96,6 @@ Server::fn_map	Server::cmd_init(void)
 	temp["QUIT"] = &Server::quit;
 	temp["PING"] = &Server::ping;
 	temp["PONG"] = &Server::pong;
-
 	temp["PRIVMSG"] = &Server::privmsg; 
 	temp["NOTICE"] = &Server::notice; 
 
