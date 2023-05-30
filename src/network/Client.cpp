@@ -2,19 +2,22 @@
 
 /*	canon form	*/
 Client::Client(void)
-	:_sock(-1), _pass(false), _regist(false),
+	:_regist(false), _invisible(false),
+	_server_op(false), _wallop(true),
+	_sock(-1), _pass(false), 
 	_nick(NULL), _user(NULL), _host(NULL),
-	_sock_len(-1), _server_op(false)
+	_sock_len(-1)
 {
 	std::memset(&_sock_addr, 0, sizeof(sockaddr_in));
 }
 
 Client::Client(Client const &client)
-	:_sock(client._sock), _pass(client._pass),
-	_regist(client._regist),
+	:_regist(client._regist), _invisible(client._invisible),
+	_server_op(client._server_op), _wallop(client._wallop),
+	_sock(client._sock), _pass(client._pass), 
 	_nick(NULL), _user(NULL), _host(NULL),
 	_sock_len(client._sock_len),
-	_sock_addr(client._sock_addr), _server_op(false)
+	_sock_addr(client._sock_addr)
 {
 	if (client._nick)
 		_nick = new std::string(*client._nick);
@@ -33,12 +36,15 @@ Client	&Client::operator=(Client const &client)
 {
 	if (this == &client)
 		return (*this);
+	_regist = client._regist;
+	_invisible = client._invisible;
+	_server_op = client._server_op;
+	_wallop = client._wallop;
+
 	_sock = client._sock;
+	_pass = client._pass;
 	_sock_len = client._sock_len;
 	_sock_addr = client._sock_addr;
-	_pass = client._pass;
-	_regist = client._regist;
-	_server_op = client._server_op;
 	clear();
 	if (client._nick)
 		_nick = new std::string(*client._nick);
@@ -51,9 +57,10 @@ Client	&Client::operator=(Client const &client)
 
 /*	ctor with arguments	*/
 Client::Client(int sockfd, socklen_t socklen, sockaddr_in sockaddr)
-	:_sock(sockfd), _pass(false), _regist(false),
+	:_regist(false), _invisible(false), _server_op(false), _wallop(false),
+	_sock(sockfd), _pass(false),
 	_nick(NULL), _user(NULL), _host(NULL),
-	_sock_len(socklen), _sock_addr(sockaddr), _server_op(false) {}
+	_sock_len(socklen), _sock_addr(sockaddr) {}
 
 /*
 	the modification of client has certain restrictions,
@@ -88,9 +95,17 @@ void	Client::setHost(std::string const &host)
 	delete _host;
 	_host = new std::string(host);
 }
-void	Client::serServerOp(bool yes)
+void	Client::setServerOp(bool yes)
 {
 	_server_op = yes;
+}
+void	Client::setInvisible(bool yes)
+{
+	_invisible = yes;
+}
+void	Client::setWallop(bool yes)
+{
+	_wallop = yes;
 }
 
 /*	getters	*/
@@ -136,7 +151,14 @@ bool	Client::isServerOp(void) const
 {
 	return (_server_op);
 }
-
+bool	Client::isInvisible(void) const
+{
+	return (_invisible);
+}
+bool	Client::getWallop(void) const
+{
+	return (_wallop);
+}
 
 /*	private function	*/
 void	Client::clear(void)
