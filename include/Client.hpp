@@ -47,7 +47,7 @@ class Client
 		void	setNick(std::string const &nick);
 		void	setUser(std::string const &user);
 		void	setHost(std::string const &host);
-		void	serServerOp(bool yes);
+		void	setServerOp(bool yes);
 
 		/*	getters	*/
 		int					getSock(void) const;

@@ -88,7 +88,7 @@ void	Client::setHost(std::string const &host)
 	delete _host;
 	_host = new std::string(host);
 }
-void	Client::serServerOp(bool yes)
+void	Client::setServerOp(bool yes)
 {
 	_server_op = yes;
 }
