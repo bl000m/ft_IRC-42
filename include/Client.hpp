@@ -63,6 +63,7 @@ class Client
 		std::string const	*getUser(void) const;
 		std::string const	*getHost(void) const;
 		std::string			getFullName(void) const;
+		std::string			getMode(void) const;
 
 	private:
 		/*	user mode	*/

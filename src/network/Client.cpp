@@ -159,6 +159,20 @@ bool	Client::getWallop(void) const
 {
 	return (_wallop);
 }
+std::string		Client::getMode(void) const
+{
+	std::string	temp = "+";
+
+	if (_invisible)
+		temp += "i";
+	if (_server_op)
+		temp += "o";
+	if (_regist)
+		temp += "r";
+	if (_wallop)
+		temp += "w";
+	return (temp);
+}
 
 /*	private function	*/
 void	Client::clear(void)
