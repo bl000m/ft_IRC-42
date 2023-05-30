@@ -86,7 +86,7 @@ class Server {
 		/*	privmsg and notice	*/
 		void	privmsg(Client &client, Message const &mess);
 		void	notice(Client &client, Message const &mess);
-		void	sendToNick(Client &client, Message const &mess, std::string const &nick);
+		bool	sendToNick(Client &client, Message const &mess, std::string const &nick);
 		std::vector<std::string>	getTarget(std::string const &str);
 
 

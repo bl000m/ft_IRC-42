@@ -48,12 +48,16 @@ class Client
 		void	setUser(std::string const &user);
 		void	setHost(std::string const &host);
 		void	setServerOp(bool yes);
+		void	setInvisible(bool yes);
+		void	setWallop(bool yes);
 
 		/*	getters	*/
-		int					getSock(void) const;
-		bool				getPass(void) const;
-		bool				isRegist(void) const;
-		bool				isServerOp(void) const;
+		int		getSock(void) const;
+		bool	getPass(void) const;
+		bool	isRegist(void) const;
+		bool	isServerOp(void) const;
+		bool	isInvisible(void) const;
+		bool	getWallop(void) const;
 
 		std::string const	*getNick(void) const;
 		std::string const	*getUser(void) const;
@@ -61,16 +65,20 @@ class Client
 		std::string			getFullName(void) const;
 
 	private:
+		/*	user mode	*/
+		bool			_regist;
+		bool			_invisible;
+		bool			_server_op;
+		bool			_wallop;
+		
 		/*	private variable	*/
 		int				_sock;
 		bool			_pass;
-		bool			_regist;
 		std::string		*_nick;
 		std::string		*_user;
 		std::string		*_host;
 		socklen_t		_sock_len;
 		sockaddr_in		_sock_addr;
-		bool			_server_op;
 
 		/*	private function	*/
 		void	clear(void);
