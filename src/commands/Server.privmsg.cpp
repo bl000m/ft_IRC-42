@@ -77,7 +77,7 @@ void	Server::sendToNick(Client &client, Message const &mess, std::string const &
 	nickfd = -1;
 	for (i = _clients.begin(); i != _clients.end(); i++)
 	{
-		if ((*i->second.getNick()) == nick)
+		if ((*i->second.getNick()) == nick && i->second.isRegist())
 			nickfd = i->second.getSock();
 	}
 	if (nickfd == -1)
