@@ -57,7 +57,7 @@ Client	&Client::operator=(Client const &client)
 
 /*	ctor with arguments	*/
 Client::Client(int sockfd, socklen_t socklen, sockaddr_in sockaddr)
-	:_regist(false), _invisible(false), _server_op(false), _wallop(false),
+	:_regist(false), _invisible(false), _server_op(false), _wallop(true),
 	_sock(sockfd), _pass(false),
 	_nick(NULL), _user(NULL), _host(NULL),
 	_sock_len(socklen), _sock_addr(sockaddr) {}
@@ -106,6 +106,42 @@ void	Client::setInvisible(bool yes)
 void	Client::setWallop(bool yes)
 {
 	_wallop = yes;
+}
+bool	Client::setMode(std::string mode)
+{
+	std::string::size_type	i;
+	bool	unknown = false;
+	bool	op = true;
+
+	if (mode.size() < 1 || (mode[0] != '+' && mode[0] != '-'))
+		return (false);
+	for (i = 0; i < mode.size(); i++)
+	{
+		switch(static_cast<int>(mode[i]))
+		{
+			case '+':
+				op = true;
+				break ;
+			case '-':
+				op = false;
+				break ;
+			case 'i':
+				setInvisible(op);
+				break ;
+			case 'r':
+				break ;
+			case 'w':
+				setWallop(op);
+				break ;
+			case 'o':
+				if (op == false)
+					setServerOp(op);
+				break ;
+			default:
+				unknown = true;
+		}
+	}
+	return (unknown);
 }
 
 /*	getters	*/
@@ -159,6 +195,20 @@ bool	Client::getWallop(void) const
 {
 	return (_wallop);
 }
+std::string		Client::getMode(void) const
+{
+	std::string	temp = "+";
+
+	if (_invisible)
+		temp += "i";
+	if (_server_op)
+		temp += "o";
+	if (_regist)
+		temp += "r";
+	if (_wallop)
+		temp += "w";
+	return (temp);
+}
 
 /*	private function	*/
 void	Client::clear(void)
@@ -175,8 +225,7 @@ void	Client::clear(void)
 std::ostream	&operator<<(std::ostream &out, Client const &client)
 {
 	out << "Client:  sock(" << client.getSock() << ")"
-		<< "  pass(" << client.getPass() << ")"
-		<< "  regist(" << client.isRegist() << ")" << std::endl
+		<< client.getMode() << std::endl
 		<< "  nick: ";
 	if (client.getNick())
 		out << *client.getNick() << std::endl;

@@ -50,6 +50,7 @@ class Client
 		void	setServerOp(bool yes);
 		void	setInvisible(bool yes);
 		void	setWallop(bool yes);
+		bool	setMode(std::string mode);
 
 		/*	getters	*/
 		int		getSock(void) const;
@@ -63,6 +64,7 @@ class Client
 		std::string const	*getUser(void) const;
 		std::string const	*getHost(void) const;
 		std::string			getFullName(void) const;
+		std::string			getMode(void) const;
 
 	private:
 		/*	user mode	*/

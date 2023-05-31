@@ -96,8 +96,13 @@ Server::fn_map	Server::cmd_init(void)
 	temp["QUIT"] = &Server::quit;
 	temp["PING"] = &Server::ping;
 	temp["PONG"] = &Server::pong;
-	temp["PRIVMSG"] = &Server::privmsg; 
-	temp["NOTICE"] = &Server::notice; 
+	temp["OPER"] = &Server::oper;
+	temp["PRIVMSG"] = &Server::privmsg;
+	temp["NOTICE"] = &Server::notice;
+	temp["MODE"] = &Server::mode;
+	temp["MOTD"] = &Server::motd;
+	temp["WALLOPS"] = &Server::wallops;
+	temp["KILL"] = &Server::kill;
 
 	return (temp);
 }
@@ -107,21 +112,60 @@ Server::fn_map const	Server::_command = cmd_init();
 void	Server::force_quit(int sock)
 {
 	client_map::iterator			i;
-	std::vector<pollfd>::iterator	j;
-	Client							client;
+	Client							*client;
 
 	i = _clients.find(sock);
+	if (i == _clients.end())
+		return ;
+	client = &(i->second);
+	broadcast(*client, "QUIT", ":force quit", NULL);
+	rmClient(*client);
+	// for (j = _server_sockets.begin(); j != _server_sockets.end(); j++)
+	// {
+	// 	if (j->fd == sock)
+	// 		break ;
+	// }
+	// if (i != _clients.end())
+	// 	client = i->second;
+	// if (i != _clients.end())
+	// 	_clients.erase(i);
+	// if (j != _server_sockets.end())
+	// 	_server_sockets.erase(j);
+	//erase the client from all the channel
+	// close(sock);
+	//send the quit message to clients of the same channel
+	//right now use broadcast instead
+}
+
+Client	*Server::getClient(std::string const &nick)
+{
+	Client					*temp;
+	client_map::iterator	i;
+
+	temp = NULL;
+	for (i = _clients.begin(); i != _clients.end(); i++)
+	{
+		if (*(i->second.getNick()) == nick)
+			temp = &(i->second);
+	}
+	return (temp);
+}
+
+void	Server::rmClient(Client &client)
+{
+	client_map::iterator			i;
+	std::vector<pollfd>::iterator	j;
+
+	i = _clients.find(client.getSock());
 	for (j = _server_sockets.begin(); j != _server_sockets.end(); j++)
 	{
-		if (j->fd == sock)
+		if (j->fd == client.getSock())
 			break ;
 	}
-	if (i != _clients.end())
-		client = i->second;
+	close(client.getSock());
+	//erase clients from all the channel
 	if (i != _clients.end())
 		_clients.erase(i);
 	if (j != _server_sockets.end())
 		_server_sockets.erase(j);
-	close(sock);
-	broadcast(client, "QUIT", ":force quit", NULL);
 }

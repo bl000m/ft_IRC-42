@@ -44,7 +44,9 @@ void	Server::notice(Client &client, Message const &mess)
 		if ((*i)[0] == '&' || (*i)[0] == '#')
 			;//to channel
 		else if (!sendToNick(client, mess, *i))
-			this->reply(client, ERR_NOSUCHNICK, i->c_str(), ":No such nick");
+		{
+			;
+		}
 	}
 }
 
@@ -70,21 +72,27 @@ std::vector<std::string>	Server::getTarget(std::string const &str)
 
 bool	Server::sendToNick(Client &client, Message const &mess, std::string const &nick)
 {
-	client_map::const_iterator	i;
-	int							nickfd;
-	std::string					note;
+	Client			*target;
+	// int				nickfd;
+	std::string		note;
 
-	nickfd = -1;
-	for (i = _clients.begin(); i != _clients.end(); i++)
-	{
-		if ((*i->second.getNick()) == nick && i->second.isRegist())
-			nickfd = i->second.getSock();
-	}
-	if (nickfd == -1)
+	target = getClient(nick);
+	if (!target)
 	{
 		return (false);
 	}
+	
+	// nickfd = -1;
+	// for (i = _clients.begin(); i != _clients.end(); i++)
+	// {
+	// 	if ((*i->second.getNick()) == nick && i->second.isRegist())
+	// 		nickfd = i->second.getSock();
+	// }
+	// if (nickfd == -1)
+	// {
+	// 	return (false);
+	// }
 	note = ":" + client.getFullName() + " " + *(mess.getCommand()) + " :" + mess.getParam()[1] + "\r\n";
-	send(nickfd, note.c_str(), note.size(), 0);
+	send(target->getSock(), note.c_str(), note.size(), 0);
 	return (true);
 }

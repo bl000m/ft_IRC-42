@@ -13,7 +13,9 @@ FILES		= main network/Server  network/Client \
 			commands/Server.connection \
 			commands/Server.command \
 			commands/Message \
-			commands/Server.privmsg
+			commands/Server.privmsg \
+			commands/Server.queries \
+			commands/Server.mode
 
 SRC			= $(FILES:=.cpp)
 OBJ			= $(addprefix $(OBJDIR)/, $(FILES:=.o))

@@ -82,29 +82,18 @@ void	Server::user(Client &client, Message const &mess)
 
 void	Server::quit(Client &client, Message const &mess)
 {
-	client_map::iterator			i;
-	std::vector<pollfd>::iterator	j;
-	char const						*reason;
+	char const		*reason;
+	std::string		note;
 
-	i = _clients.find(client.getSock());
-	for (j = _server_sockets.begin(); j != _server_sockets.end(); j++)
-	{
-		if (j->fd == client.getSock())
-			break ;
-	}
 	reason = NULL;
 	if (mess.getParamNum() > 0)
 		reason = mess.getParam()[0].c_str();
 	//send the quit message to clients of the same channel
 	//right now use broadcast instead
 	broadcast(client, "QUIT", "Quit: ", reason);
-	//reply and release resource
-	reply(client, "ERROR", ":client quit", NULL);
-	close(client.getSock());
-	if (i != _clients.end())
-		_clients.erase(i);
-	if (j != _server_sockets.end())
-		_server_sockets.erase(j);
+	note = ":localhost ERROR :client quit\r\n";
+	send(client.getSock(), note.c_str(), note.size(), 0);
+	rmClient(client);
 }
 
 void	Server::ping(Client &client, Message const &mess)
@@ -126,20 +115,25 @@ void	Server::pong(Client &client, Message const &mess)
 	(void) mess;
 }
 
-// void	Server::oper(Client &client, Message const &mess)
-// {
-// 	if (mess.getParamNum() < 2)
-// 	{
-// 		reply(client, ERR_NEEDMOREPARAMS, "OPER", ":Not enough parammeter");
-// 		return ;
-// 	}
-// 	if (mess.getParam()[1] != _password)
-// 	{
-// 		reply(client, ERR_PASSWDMISMATCH, ":password incorrect", NULL);
-// 		return ;
-// 	}
-// 	//need to modify class client to set boolen oper 
-// }
+void	Server::oper(Client &client, Message const &mess)
+{
+	if (client.isServerOp())
+		return ;
+	if (mess.getParamNum() < 2)
+	{
+		reply(client, ERR_NEEDMOREPARAMS, "OPER", ":Not enough parammeter");
+		return ;
+	}
+	if (mess.getParam()[1] != _password)
+	{
+		reply(client, ERR_PASSWDMISMATCH, ":password incorrect", NULL);
+		return ;
+	}
+	client.setServerOp(true);
+	reply(client, RPL_YOUREOPER, ":You are now an IRC operator", NULL);
+	reply(client, "MODE", client.getMode().c_str(), NULL);
+}
+
 
 /*	helper	*/
 
@@ -179,6 +173,8 @@ void	Server::welcome_mess(Client const &client)
 	reply(client, RPL_MYINFO, "<servername> <version> <available user modes> <available channel modes>", NULL);
 	reply(client, RPL_ISUPPORT,
 		"AWAYLEN=100 CASEMAPPING=ascii CHANLIMIT=#&: CHANNELLEN=32 CHANTYPES=# HOSTLEN=64 KICKLEN=255 MAXTARGETS=100 NICKLEN=31 TOPICLEN=307 USERLEN=18", " :are supported by this server");
+	reply(client,  RPL_UMODEIS, client.getMode().c_str(), NULL);
+	reply(client,  ERR_NOMOTD, "no MOTD", NULL);
 	/*
 		The value of below isupoort parameter
 		should be decide and completed later:
