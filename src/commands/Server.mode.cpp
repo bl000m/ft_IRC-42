@@ -12,7 +12,7 @@ void	Server::mode(Client &client, Message const &mess)
 	target = mess.getParam()[0];
 	if (target[0] != '#' && target[0] != '&')
 	{
-		//mode_user
+		mode_user(client, mess, target);
 	}
 	else
 	{
@@ -21,7 +21,7 @@ void	Server::mode(Client &client, Message const &mess)
 }
 
 /*	helper	*/
-void	mode_user(Client &client, Message const &mess, std::string target)
+void	Server::mode_user(Client &client, Message const &mess, std::string target)
 {
 	std::string	mode;
 	
@@ -41,7 +41,8 @@ void	mode_user(Client &client, Message const &mess, std::string target)
 		return ;
 	}
 	mode = mess.getParam()[1];
-	//set mode
-	// ERR_UMODEUNKNOWNFLAG if there's unknown mode
-	reply(client, "MODE", client.getMode(), NULL);	//reply with MODE message
+	if (!client.setMode(mode))
+		reply(client, ERR_UMODEUNKNOWNFLAG, ":Unknown MODE flag", NULL);
+	reply(client, "MODE", client.getMode(), NULL);
 }
+

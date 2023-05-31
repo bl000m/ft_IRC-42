@@ -107,6 +107,42 @@ void	Client::setWallop(bool yes)
 {
 	_wallop = yes;
 }
+bool	Client::setMode(std::string mode)
+{
+	std::string::size_type	i;
+	bool	unknown = false;
+	bool	op;
+
+	if (mode.size() < 1 || (mode[0] != '+' && mode[0] != '-'))
+		return (false);
+	for (i = 0; i != std::string::npos; i++)
+	{
+		switch(static_cast<int>(mode[i]))
+		{
+			case '+':
+				op = true;
+				break ;
+			case '-':
+				op = false;
+				break ;
+			case 'i':
+				setInvisible(op);
+				break ;
+			case 'r':
+				break ;
+			case 'w':
+				setWallop(op);
+				break ;
+			case 'o':
+				if (op == false)
+					setServerOp(op);
+				break ;
+			default:
+				unknown = true;
+		}
+	}
+	return (unknown);
+}
 
 /*	getters	*/
 int		Client::getSock(void) const
@@ -189,8 +225,7 @@ void	Client::clear(void)
 std::ostream	&operator<<(std::ostream &out, Client const &client)
 {
 	out << "Client:  sock(" << client.getSock() << ")"
-		<< "  pass(" << client.getPass() << ")"
-		<< "  regist(" << client.isRegist() << ")" << std::endl
+		<< client.getMode() << std::endl
 		<< "  nick: ";
 	if (client.getNick())
 		out << *client.getNick() << std::endl;

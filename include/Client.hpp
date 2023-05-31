@@ -50,6 +50,7 @@ class Client
 		void	setServerOp(bool yes);
 		void	setInvisible(bool yes);
 		void	setWallop(bool yes);
+		bool	setMode(std::string mode);
 
 		/*	getters	*/
 		int		getSock(void) const;
