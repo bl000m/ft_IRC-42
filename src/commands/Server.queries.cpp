@@ -4,7 +4,7 @@ void	Server::motd(Client &client, Message const &mess)
 {
 	(void) client;
 	(void) mess;
-	reply(client,  ERR_NOMOTD, "no MOTD", NULL);
+	reply(client,  ERR_NOMOTD, ":no MOTD", NULL);
 }
 
 void	Server::wallops(Client &client, Message const &mess)
@@ -35,7 +35,8 @@ void	Server::wallops(Client &client, Message const &mess)
 
 void	Server::kill(Client &client, Message const &mess)
 {
-	Client	*victim;
+	Client		*victim;
+	std::string	note;
 	
 	if (mess.getParamNum() < 2)
 	{
@@ -56,6 +57,8 @@ void	Server::kill(Client &client, Message const &mess)
 	//send to everyone sharing a channel, right now use broadcast instead
 	broadcast(*victim, "QUIT :killed", client.getFullName().c_str(), mess.getParam()[1].c_str());
 	//error mess
-	reply(*victim, "ERROR :killed", client.getFullName().c_str(), mess.getParam()[1].c_str());
+	// reply(*victim, "ERROR :killed", client.getFullName().c_str(), mess.getParam()[1].c_str());
+	note = ":localhost ERROR :killed " + client.getFullName() + " " + mess.getParam()[1] + "\r\n";
+	send(client.getSock(), note.c_str(), note.size(), 0);
 	rmClient(*victim);
 }

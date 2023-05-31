@@ -82,30 +82,18 @@ void	Server::user(Client &client, Message const &mess)
 
 void	Server::quit(Client &client, Message const &mess)
 {
-	// client_map::iterator			i;
-	// std::vector<pollfd>::iterator	j;
-	char const						*reason;
+	char const		*reason;
+	std::string		note;
 
-	// i = _clients.find(client.getSock());
-	// for (j = _server_sockets.begin(); j != _server_sockets.end(); j++)
-	// {
-	// 	if (j->fd == client.getSock())
-	// 		break ;
-	// }
 	reason = NULL;
 	if (mess.getParamNum() > 0)
 		reason = mess.getParam()[0].c_str();
 	//send the quit message to clients of the same channel
 	//right now use broadcast instead
 	broadcast(client, "QUIT", "Quit: ", reason);
-	reply(client, "ERROR", ":client quit", NULL);
+	note = ":localhost ERROR :client quit\r\n";
+	send(client.getSock(), note.c_str(), note.size(), 0);
 	rmClient(client);
-	// close(client.getSock());
-	// if (i != _clients.end())
-	// 	_clients.erase(i);
-	// if (j != _server_sockets.end())
-	// 	_server_sockets.erase(j);
-	//erase clients from all the channel
 }
 
 void	Server::ping(Client &client, Message const &mess)
