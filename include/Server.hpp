@@ -77,7 +77,6 @@ class Server {
 		void	ping(Client &client, Message const &mess);
 		void	pong(Client &client, Message const &mess);
 
-
 		/*	connection command helper	*/
 		static void		welcome_mess(Client const &client);
 		bool			nick_in_use(std::string const &nick) const;
@@ -90,11 +89,11 @@ class Server {
 		std::vector<std::string>	getTarget(std::string const &str);
 
 
-		/*	server reply	*/
+		/*	common reply	*/
 		static void		reply(Client const &client, char const *cmd, char const *p1, char const *p2);
 		void			broadcast(Client const &source, char const *cmd, char const *p1, char const *p2);
 
-		/*	static map for cmdNum initialization	*/
+		/*	static map initialization	*/
 		static fn_map	cmd_init(void);
 
 		/*	should not be commited	*/
@@ -102,14 +101,12 @@ class Server {
 		void	wallops(Client &client, Message const &mess);
 		void	kill(Client &client, Message const &mess);
 		void	mode(Client &client, Message const &mess);
+		void	oper(Client &client, Message const &mess);
 		void	mode_user(Client &client, Message const &mess, std::string target);
+
+		/*	client getter and remove	*/
 		Client	*getClient(std::string const &nick);
 		void	rmClient(Client &client);
-		void	oper(Client &client, Message const &mess);
-
-
-
-
 
 };
 
