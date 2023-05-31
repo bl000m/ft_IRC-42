@@ -82,16 +82,16 @@ void	Server::user(Client &client, Message const &mess)
 
 void	Server::quit(Client &client, Message const &mess)
 {
-	client_map::iterator			i;
-	std::vector<pollfd>::iterator	j;
+	// client_map::iterator			i;
+	// std::vector<pollfd>::iterator	j;
 	char const						*reason;
 
-	i = _clients.find(client.getSock());
-	for (j = _server_sockets.begin(); j != _server_sockets.end(); j++)
-	{
-		if (j->fd == client.getSock())
-			break ;
-	}
+	// i = _clients.find(client.getSock());
+	// for (j = _server_sockets.begin(); j != _server_sockets.end(); j++)
+	// {
+	// 	if (j->fd == client.getSock())
+	// 		break ;
+	// }
 	reason = NULL;
 	if (mess.getParamNum() > 0)
 		reason = mess.getParam()[0].c_str();
@@ -99,11 +99,12 @@ void	Server::quit(Client &client, Message const &mess)
 	//right now use broadcast instead
 	broadcast(client, "QUIT", "Quit: ", reason);
 	reply(client, "ERROR", ":client quit", NULL);
-	close(client.getSock());
-	if (i != _clients.end())
-		_clients.erase(i);
-	if (j != _server_sockets.end())
-		_server_sockets.erase(j);
+	rmClient(client);
+	// close(client.getSock());
+	// if (i != _clients.end())
+	// 	_clients.erase(i);
+	// if (j != _server_sockets.end())
+	// 	_server_sockets.erase(j);
 	//erase clients from all the channel
 }
 
