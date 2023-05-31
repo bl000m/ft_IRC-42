@@ -33,3 +33,29 @@ void	Server::wallops(Client &client, Message const &mess)
 
 //who
 //kill
+void	Server::kill(Client &client, Message const &mess)
+{
+	Client	*victim;
+	
+	if (mess.getParamNum() < 2)
+	{
+		reply(client, ERR_NEEDMOREPARAMS, "KILL", ":Not enough parameters");
+		return ;
+	}
+	if (!client.isServerOp())
+	{
+		reply(client, ERR_NOPRIVILEGES, ":Permission Denied- You're not an IRC operator", NULL);
+		return ;
+	}
+	victim = getClient(mess.getParam()[0]);
+	if (!victim)
+	{
+		//no such nick
+		return ;
+	}
+	//broadcast quit
+	broadcast(victim, "QUIT :killed", client.getFullName(), mess.getParam()[1].c_str());
+	//error mess
+	reply(victim, "ERROR :killed", client.getFullName().c_str(), mess.getParam()[1].c_str());
+	//release resource, close connection
+}

@@ -128,3 +128,36 @@ void	Server::force_quit(int sock)
 	//right now use broadcast instead
 	broadcast(client, "QUIT", ":force quit", NULL);
 }
+
+Client	*Server::getClient(std::string const &nick)
+{
+	Client					*temp;
+	client_map::iterator	i;
+
+	temp = NULL;
+	for (i = _clients.begin(); i != _clients.end(), i++)
+	{
+		if (*(i->second.getNick()) == nick)
+			temp = &(i->second);
+	}
+	return (temp);
+}
+
+void	Server::rmClient(Client &client)
+{
+	client_map::iterator			i;
+	std::vector<pollfd>::iterator	j;
+
+	i = _clients.find(client.getSock());
+	for (j = _server_sockets.begin(); j != _server_sockets.end(); j++)
+	{
+		if (j->fd == client.getSock())
+			break ;
+	}
+	close(client.getSock());
+	//erase clients from all the channel
+	if (i != _clients.end())
+		_clients.erase(i);
+	if (j != _server_sockets.end())
+		_server_sockets.erase(j);
+}
