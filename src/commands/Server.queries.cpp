@@ -32,7 +32,7 @@ void	Server::wallops(Client &client, Message const &mess)
 }
 
 //who
-//kill
+
 void	Server::kill(Client &client, Message const &mess)
 {
 	Client	*victim;
@@ -53,7 +53,7 @@ void	Server::kill(Client &client, Message const &mess)
 		this->reply(client, ERR_NOSUCHNICK, mess.getParam()[0], ":No such nick");
 		return ;
 	}
-	//broadcast quit
+	//send to everyone sharing a channel, right now use broadcast instead
 	broadcast(victim, "QUIT :killed", client.getFullName(), mess.getParam()[1].c_str());
 	//error mess
 	reply(victim, "ERROR :killed", client.getFullName().c_str(), mess.getParam()[1].c_str());
