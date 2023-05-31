@@ -57,7 +57,7 @@ Client	&Client::operator=(Client const &client)
 
 /*	ctor with arguments	*/
 Client::Client(int sockfd, socklen_t socklen, sockaddr_in sockaddr)
-	:_regist(false), _invisible(false), _server_op(false), _wallop(false),
+	:_regist(false), _invisible(false), _server_op(false), _wallop(true),
 	_sock(sockfd), _pass(false),
 	_nick(NULL), _user(NULL), _host(NULL),
 	_sock_len(socklen), _sock_addr(sockaddr) {}
@@ -111,11 +111,11 @@ bool	Client::setMode(std::string mode)
 {
 	std::string::size_type	i;
 	bool	unknown = false;
-	bool	op;
+	bool	op = true;
 
 	if (mode.size() < 1 || (mode[0] != '+' && mode[0] != '-'))
 		return (false);
-	for (i = 0; i != std::string::npos; i++)
+	for (i = 0; i < mode.size(); i++)
 	{
 		switch(static_cast<int>(mode[i]))
 		{

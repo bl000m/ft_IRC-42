@@ -41,7 +41,7 @@ void	Server::mode_user(Client &client, Message const &mess, std::string target)
 		return ;
 	}
 	mode = mess.getParam()[1];
-	if (!client.setMode(mode))
+	if (client.setMode(mode))
 		reply(client, ERR_UMODEUNKNOWNFLAG, ":Unknown MODE flag", NULL);
 	reply(client, "MODE", client.getMode().c_str(), NULL);
 }

@@ -143,7 +143,7 @@ void	Server::oper(Client &client, Message const &mess)
 	}
 	client.setServerOp(true);
 	reply(client, RPL_YOUREOPER, ":You are now an IRC operator", NULL);
-	reply(client, "MODE", "+o", NULL);
+	reply(client, "MODE", client.getMode().c_str(), NULL);
 }
 
 
