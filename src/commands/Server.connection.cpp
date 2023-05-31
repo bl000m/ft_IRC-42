@@ -98,13 +98,13 @@ void	Server::quit(Client &client, Message const &mess)
 	//send the quit message to clients of the same channel
 	//right now use broadcast instead
 	broadcast(client, "QUIT", "Quit: ", reason);
-	//reply and release resource
 	reply(client, "ERROR", ":client quit", NULL);
 	close(client.getSock());
 	if (i != _clients.end())
 		_clients.erase(i);
 	if (j != _server_sockets.end())
 		_server_sockets.erase(j);
+	//erase clients from all the channel
 }
 
 void	Server::ping(Client &client, Message const &mess)

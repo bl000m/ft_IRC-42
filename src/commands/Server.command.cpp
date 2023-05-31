@@ -122,6 +122,9 @@ void	Server::force_quit(int sock)
 		_clients.erase(i);
 	if (j != _server_sockets.end())
 		_server_sockets.erase(j);
+	//erase the client from all the channel
 	close(sock);
+	//send the quit message to clients of the same channel
+	//right now use broadcast instead
 	broadcast(client, "QUIT", ":force quit", NULL);
 }
