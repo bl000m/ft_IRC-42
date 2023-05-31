@@ -96,8 +96,12 @@ Server::fn_map	Server::cmd_init(void)
 	temp["QUIT"] = &Server::quit;
 	temp["PING"] = &Server::ping;
 	temp["PONG"] = &Server::pong;
-	temp["PRIVMSG"] = &Server::privmsg; 
-	temp["NOTICE"] = &Server::notice; 
+	temp["PRIVMSG"] = &Server::privmsg;
+	temp["NOTICE"] = &Server::notice;
+	temp["MODE"] = &Server::mode;
+	temp["MOTD"] = &Server::motd;
+	temp["WALLOPS"] = &Server::wallops;
+	temp["KILL"] = &Server::kill;
 
 	return (temp);
 }
