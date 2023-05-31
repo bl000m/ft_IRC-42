@@ -23,11 +23,11 @@ void	Server::wallops(Client &client, Message const &mess)
 		return ;
 	}
 	note = ":" + client.getFullName() + " WALLOPS "
-			+ *(mess.getParam()[0]);
+			+ mess.getParam()[0];
 	for (i = _clients.begin(); i != _clients.end(); i++)
 	{
 		if (i->second.getWallop())
-			send(i->second->getSock(), note.c_str(), note.size(), 0);
+			send(i->second.getSock(), note.c_str(), note.size(), 0);
 	}
 }
 
@@ -50,12 +50,12 @@ void	Server::kill(Client &client, Message const &mess)
 	victim = getClient(mess.getParam()[0]);
 	if (!victim)
 	{
-		this->reply(client, ERR_NOSUCHNICK, mess.getParam()[0], ":No such nick");
+		this->reply(client, ERR_NOSUCHNICK, mess.getParam()[0].c_str(), ":No such nick");
 		return ;
 	}
 	//send to everyone sharing a channel, right now use broadcast instead
-	broadcast(victim, "QUIT :killed", client.getFullName(), mess.getParam()[1].c_str());
+	broadcast(*victim, "QUIT :killed", client.getFullName().c_str(), mess.getParam()[1].c_str());
 	//error mess
-	reply(victim, "ERROR :killed", client.getFullName().c_str(), mess.getParam()[1].c_str());
+	reply(*victim, "ERROR :killed", client.getFullName().c_str(), mess.getParam()[1].c_str());
 	rmClient(*victim);
 }

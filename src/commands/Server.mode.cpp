@@ -27,7 +27,7 @@ void	Server::mode_user(Client &client, Message const &mess, std::string target)
 	
 	if (!nick_in_use(target))
 	{
-		reply(client,  ERR_NOSUCHNICK, target, ":No such nick");
+		reply(client,  ERR_NOSUCHNICK, target.c_str(), ":No such nick");
 		return ;
 	}
 	if (*client.getNick() != target)
@@ -37,12 +37,12 @@ void	Server::mode_user(Client &client, Message const &mess, std::string target)
 	}
 	if (mess.getParamNum() < 2)
 	{
-		reply(client,  RPL_UMODEIS, client.getMode(), NULL);
+		reply(client,  RPL_UMODEIS, client.getMode().c_str(), NULL);
 		return ;
 	}
 	mode = mess.getParam()[1];
 	if (!client.setMode(mode))
 		reply(client, ERR_UMODEUNKNOWNFLAG, ":Unknown MODE flag", NULL);
-	reply(client, "MODE", client.getMode(), NULL);
+	reply(client, "MODE", client.getMode().c_str(), NULL);
 }
 
