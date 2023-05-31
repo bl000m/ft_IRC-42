@@ -50,12 +50,12 @@ void	Server::kill(Client &client, Message const &mess)
 	victim = getClient(mess.getParam()[0]);
 	if (!victim)
 	{
-		//no such nick
+		this->reply(client, ERR_NOSUCHNICK, mess.getParam()[0], ":No such nick");
 		return ;
 	}
 	//broadcast quit
 	broadcast(victim, "QUIT :killed", client.getFullName(), mess.getParam()[1].c_str());
 	//error mess
 	reply(victim, "ERROR :killed", client.getFullName().c_str(), mess.getParam()[1].c_str());
-	//release resource, close connection
+	rmClient(*victim);
 }
