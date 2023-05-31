@@ -97,6 +97,20 @@ class Server {
 		/*	static map for cmdNum initialization	*/
 		static fn_map	cmd_init(void);
 
+		/*	should not be commited	*/
+		void	motd(Client &client, Message const &mess);
+		void	wallops(Client &client, Message const &mess);
+		void	kill(Client &client, Message const &mess);
+		void	mode(Client &client, Message const &mess);
+		void	mode_user(Client &client, Message const &mess, std::string target);
+		Client	*getClient(std::string const &nick);
+		void	rmClient(Client &client);
+		void	oper(Client &client, Message const &mess);
+
+
+
+
+
 };
 
 void    closeSocket(pollfd &pfd);
