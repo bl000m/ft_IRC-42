@@ -112,5 +112,6 @@ class Server {
 
 void    closeSocket(pollfd &pfd);
 void    sigExit(int code);
+bool	isMatch(std::string name, std::string mask);
 
 #endif
