@@ -1,20 +1,10 @@
 #include "Channel.hpp"
 
-Channel::Channel(const std::string &name, const std::string &password, Client *superuser)
-	: _name(name), _password(password), _superuser(superuser){
+Channel::Channel(){
 }
 
 Channel::~Channel(){}
 
-/* Memo Channel Operations (based on IRC protocol doc):
-JOIN message
-PART message
-TOPIC message
-NAMES message
-LIST message
-INVITE message
-Invite list
-KICK message */
 
 /* --------------- getters ---------------- */
 
@@ -30,7 +20,6 @@ Client *Channel::getSuperser(){
 	return _superuser;
 }
 
-/* --------------- setters ---------------- */
 
 void Channel::setPassword(std::string newPassword){
 	_password = newPassword;
@@ -60,7 +49,17 @@ std::vector<std::string> Channel::getNames(){
 	}
 	return nameList;
 }
+/* --------------- modes ---------------- */
+	std::string &getName(){
 
+	}
+/*
+· i: Set/remove Invite-only channel
+· t: Set/remove the restrictions of the TOPIC command to channel operators
+· k: Set/remove the channel key (password)
+· o: Give/take channel operator privilege
+· l: Set/remove the user limit to channel
+*/
 
 /* --------------- operator= overload (private) ---------------- */
 
