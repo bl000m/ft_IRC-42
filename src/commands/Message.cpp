@@ -44,20 +44,20 @@ Message	&Message::operator=(Message const &mess)
 	return true when parsing succeed
 	return false when parsing fails (ex. empty message, in this case, it must be silently ignored)
 */
-bool	Message::parse(std::string const &input)
+bool	Message::parse(std::string cmd)
 {
 	std::string::size_type	pos;
 	
 	this->clear();
-	if (input.size() == 0
-		|| (input.size() == 1 && input[0] == '\r'))
+	if (cmd.size() == 0
+		|| (cmd.size() == 1 && cmd[0] == '\r'))
 		return (false);
-	if (input[input.size() - 1] == '\r')
-		input = input.substr(0, input.size() - 2);
+	if (cmd[cmd.size() - 1] == '\r')
+		cmd = cmd.substr(0, cmd.size() - 1);
 	pos = 0;
-	this->setSource(input, pos);
-	this->setCommand(input, pos);
-	this->setParam(input, pos);
+	this->setSource(cmd, pos);
+	this->setCommand(cmd, pos);
+	this->setParam(cmd, pos);
 	if (_cmd == NULL)
 		return (false);
 	return (true);

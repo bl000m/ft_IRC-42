@@ -28,7 +28,7 @@ class Message
 		~Message(void);
 		Message	&operator=(Message const &mess);
 
-		bool	parse(std::string const &cmd);
+		bool	parse(std::string cmd);
 
 		/*	getters	*/
 		std::string const	*getSource(void) const;

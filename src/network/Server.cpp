@@ -3,6 +3,7 @@
 //  NO 42 HEADER
 
 #include "Server.hpp"
+#include "Message.hpp"
 
 bool is_running = true;
 
