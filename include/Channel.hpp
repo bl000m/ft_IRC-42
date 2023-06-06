@@ -24,11 +24,6 @@ class Channel {
 
 
 	public:
-		#define t 1 << 1  // Bit 1 represents t mode => Set/remove the restrictions of the TOPIC command to channel operators
-		#define k 1 << 2  // Bit 2 represents k mode => Set/remove the channel key (password)
-		#define o 1 << 3  // Bit 3 represents o mode => Give/take channel operator privilege
-		#define l 1 << 4  // Bit 4 represents l mode => Set/remove the user limit to channel
-		#define i 1 << 5  // Bit 5 represents i mode => Set/remove Invite-only channel
 		typedef std::map<std::string, user> channelUsers;
 		typedef std::map<std::string, user>::iterator channelUsersIt;
 
@@ -49,9 +44,9 @@ class Channel {
 		/* commands specific to channel operators */
 
 		/* mode */
-		void	addMode(int mode);
-		void	removeMode(int mode);
-		bool	hasMode(int mode);
+		void	addMode(char mode);
+		void	removeMode(char mode);
+		bool	hasMode(char mode);
 
 		/* invite */
 		void	inviteUser(std::string nickname);
@@ -66,7 +61,7 @@ class Channel {
 		std::string	getTopic();
 
 		/* communicating */
-		void broadcast(Message message);
+		void broadcast(Message message, Server server);
 
 	private:
 		Channel();
