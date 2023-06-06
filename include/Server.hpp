@@ -26,6 +26,7 @@
 #include "Message.hpp"
 #include "Client.hpp"
 #include "Numerics.hpp"
+#include "Channel.hpp"
 
 #define MAX_QUEUE_CONNECTION    42
 #define POLL_DELAY              5
@@ -37,6 +38,8 @@
 
 #define IS_POLLIN(revents)      (revents & POLLIN)
 #define IS_POLLHUP(revents)     (revents & POLLHUP)
+
+class Channel;
 
 class Server {
     public:
@@ -56,13 +59,14 @@ class Server {
         bool					initServerPoll(void);
         bool					newClientPoll(void);
 
-        std::string				_password;
-        uint16_t				_iport;
+        std::string						_password;
+        uint16_t						_iport;
 
-        sockaddr_in				_addr;
-        std::vector<pollfd>		_server_sockets;
-		client_map				_clients;
-		static fn_map const		_command;
+        sockaddr_in						_addr;
+        std::vector<pollfd>				_server_sockets;
+		std::map<std::string, Channel>	_channels;
+		client_map						_clients;
+		static fn_map const				_command;
 
 		/*	command execution	*/
 		fn_ptr		getCmd(std::string const &cmd);
@@ -76,6 +80,7 @@ class Server {
 		void	quit(Client &client, Message const &mess);
 		void	ping(Client &client, Message const &mess);
 		void	pong(Client &client, Message const &mess);
+		void	join(Client &client, Message const &mess);
 
 		/*	connection command helper	*/
 		static void		welcome_mess(Client const &client);
@@ -88,6 +93,10 @@ class Server {
 		bool	sendToNick(Client &client, Message const &mess, std::string const &nick);
 		std::vector<std::string>	getTarget(std::string const &str);
 
+		/*Channel related methods*/
+		void	createChan(std::string &name, std::string &pass, Client &client);
+		void	joinChan(std::string &name, std::string &pass, Client *client);
+		void	checkChan(std::string &name);
 
 		/*	common reply	*/
 		static void		reply(Client const &client, char const *cmd, char const *p1, char const *p2);
@@ -107,7 +116,6 @@ class Server {
 		/*	client getter and remove	*/
 		Client	*getClient(std::string const &nick);
 		void	rmClient(Client &client);
-
 };
 
 void    closeSocket(pollfd &pfd);

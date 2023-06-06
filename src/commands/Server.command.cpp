@@ -8,6 +8,7 @@ void	Server::execMessage(Client &client, Message const &mess)
 	cmd = mess.getCommand();
 	if (!cmd)
 		return ;
+	std::cout << "COMMAND:" << *cmd << std::endl;
 	cmd_ptr = getCmd(*cmd);
 	if (!cmd_ptr)
 	{
@@ -17,7 +18,8 @@ void	Server::execMessage(Client &client, Message const &mess)
 	if (!client.isRegist()
 			&& !(*cmd == "PASS" || *cmd == "NICK" || *cmd == "USER"))
 	{
-		this->reply(client, ERR_UNKNOWNCOMMAND, cmd->c_str(), ":Unknown command");
+		std::cout << "COMMAND:" << *cmd << std::endl;
+		this->reply(client, ERR_UNKNOWNCOMMAND, cmd->c_str(), ":Unknown k command");
 		return ;
 	}
 	(this->*cmd_ptr)(client, mess);
@@ -103,6 +105,7 @@ Server::fn_map	Server::cmd_init(void)
 	temp["MOTD"] = &Server::motd;
 	temp["WALLOPS"] = &Server::wallops;
 	temp["KILL"] = &Server::kill;
+	temp["JOIN"] = &Server::join;
 
 	return (temp);
 }
