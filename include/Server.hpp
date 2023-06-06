@@ -72,6 +72,7 @@ class Server {
 		fn_ptr		getCmd(std::string const &cmd);
 		void		force_quit(int sock);
 
+		std::vector<std::string>	splitCommands(char *buffer);
 		
 		/*	connection commands	*/
 		void	pass(Client &client, Message const &mess);

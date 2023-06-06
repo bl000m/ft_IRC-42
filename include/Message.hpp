@@ -16,8 +16,6 @@
 	An empty message is ignored.
 */
 
-# define SIXTEEN 16
-
 class Message
 {
 	public:
@@ -30,7 +28,7 @@ class Message
 		~Message(void);
 		Message	&operator=(Message const &mess);
 
-		bool	parse(char buffer[512]);
+		bool	parse(std::string cmd);
 
 		/*	getters	*/
 		std::string const	*getSource(void) const;
@@ -51,8 +49,6 @@ class Message
 
 		/*	helper function	*/
 		void				clear(void);
-		static std::string	read_buffer(char buf[512]);
-		static bool			buffer_empty(char buf[512]);
 };
 
 std::ostream	&operator<<(std::ostream &out, Message const &mess);
