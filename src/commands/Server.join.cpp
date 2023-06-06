@@ -2,8 +2,16 @@
 
 void	Server::createChan(std::string &name, std::string &pass, Client &client)
 {
+	std::string	join_message;
+
 	Channel	chan(name, pass, &client);
 	_channels.insert(std::pair<std::string, Channel>(name, chan));
+	/*IRC*/
+	join_message.append(":" + *(client).getNick() + " JOIN " + name + "\r\n");
+	send(client.getSock(), join_message.c_str(), join_message.size(), 0);
+	//reply(client,  RPL_TOPIC, "", "");
+	//reply(client,  RPL_NAMREPLY	, "", "");
+	//reply(client,  RPL_ENDOFNAMES, "", "");
 }
 
 void	Server::checkChan(std::string &name)
@@ -33,7 +41,6 @@ void	Server::join(Client &client, Message const &mess)
 	}
 	while (getline(ss, parsed, ','))
 		channels.push_back(parsed);
-	keys.reserve(channels.size());
 	if (mess.getParamNum() >= 2)
 	{
 		ss.clear();
@@ -46,6 +53,8 @@ void	Server::join(Client &client, Message const &mess)
 	std::cout << keys.size() << std::endl;
 	for (size_t i = 0; i < channels.size(); i++)
 	{
+		if (keys.size() < i + 1)
+			keys.push_back("");
 		createChan(channels[i], keys[i], client);
 	}
 }
