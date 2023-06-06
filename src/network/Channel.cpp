@@ -19,7 +19,7 @@ void	Channel::addClient(Client *client){
 		std::string nickname = *(client->getNick());
 		newChannelUser.client = client;
 		newChannelUser.userMode = "";
-		newChannelUser.prefix = "";
+		newChannelUser.prefix = "+";
 		_channelUsers[nickname] = newChannelUser;
 }
 
@@ -47,6 +47,10 @@ Channel::channelUsers Channel::getChannelUsers(){
 	return _channelUsers;
 }
 
+size_t Channel::getUsersCount(){
+	return _channelUsers.size();
+}
+
 /* --------------- Channel data related setters ---------------- */
 
 void Channel::setPassword(std::string newPassword){
@@ -65,7 +69,7 @@ void	Channel::addMode(int mode){
 }
 
 void	Channel::removeMode(int mode){
-	 _modes &= ~mode;  // Perform bitwise NOT and bitwise AND assignment
+	 _modes &= ~mode;
 }
 
 bool	Channel::hasMode(int mode){
@@ -108,11 +112,11 @@ std::string	Channel::getTopic(){
 }
 
 /* --------------- broadcast ---------------- */
-
-// void 	Channel::broadcast(std::string message){
+// to access privmsg we should make it static
+// void 	Channel::broadcast(Message message){
 // 	channelUsersIt it;
-// 	for (it = _channelUsers.begin(), it != _channelUsers.end(); it++){
-// 		Server::privmsg(it->client, message);
+// 	for (it = _channelUsers.begin(); it != _channelUsers.end(); it++){
+// 		Server::privmsg(*(it->second.client), message);
 // 	}
 // }
 

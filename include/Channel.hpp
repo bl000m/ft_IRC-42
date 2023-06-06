@@ -7,17 +7,12 @@
 # include <map>
 # include "Client.hpp"
 # include "Server.hpp"
+# include "Message.hpp"
 
 
 class Client;
-
-	/* Memo Channel Operations - mqndatory :
-	∗ KICK - Eject a client from the channel
-	∗ INVITE - Invite a client to a channel
-	∗ TOPIC - Change or view the channel topic
-	∗ MODE - Change the channel’s mode:
-	*/
-
+class Message;
+class Server;
 
 typedef struct t_user{
 	Client *client;
@@ -39,14 +34,14 @@ class Channel {
 
 		Channel(Client *oper, std::string name);
 		~Channel();
-		bool checkChannelName(std::string channelName);
+		bool	checkChannelName(std::string channelName);
 		void	addClient(Client *client);
-		// check name
 
 		/* Channel data related getters*/
-		std::string  getName();
-		std::string  getPassword();
-		channelUsers getChannelUsers();
+		std::string  	getName();
+		std::string  	getPassword();
+		channelUsers 	getChannelUsers();
+		size_t			getUsersCount();
 
 		/* Channel data related setters*/
 		void setPassword(std::string newPassword);
@@ -71,7 +66,7 @@ class Channel {
 		std::string	getTopic();
 
 		/* communicating */
-		void broadcast(std::string message);
+		void broadcast(Message message);
 
 	private:
 		Channel();

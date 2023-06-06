@@ -33,10 +33,10 @@ Server::fn_ptr	Server::getCmd(std::string const &cmd)
 	return (i->second);
 }
 
-/*	
+/*
 	send to client if the message has the form:
 	:localhost command nick para1 para2
-	:localhost command nick para1 
+	:localhost command nick para1
 	:localhost command nick
 	the function simply append all together with space in between
 	add \r\n at the end
