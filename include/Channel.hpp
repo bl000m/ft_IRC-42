@@ -36,12 +36,18 @@ class Channel {
 
 
 	public:
-
+		static const int t = 1 << 0;  // Bit 0 represents t mode
+    	static const int k = 1 << 1;  // Bit 1 represents k mode
+    	static const int o = 1 << 2;  // Bit 2 represents o mode
+    	static const int l = 1 << 3;  // Bit 3 represents l mode
+    	static const int i = 1 << 4;  // Bit 4 represents i mode
 		typedef std::map<std::string, user> channelUsers;
 		typedef std::map<std::string, user>::iterator channelUsersIt;
 
 		Channel(Client *oper, std::string name);
 		~Channel();
+
+		// check name
 
 		/* Channel data related getters*/
 		std::string  getName();
@@ -54,12 +60,14 @@ class Channel {
 		/* commands specific to channel operators */
 
 		/* mode */
-		void	setMode(std::string);
-		std::string	getMode();
+		void	addMode(int mode);
+		void	removeMode(int mode);
+		bool	hasMode(int mode);
 
 		/* invite */
 		void	inviteUser(std::string nickname);
 		bool	invitedOrNot(std::string nickname);
+		void	removeUser(std::string nickname);
 
 		/* kick */
 		void	removeUser(Client *client);
@@ -78,6 +86,7 @@ class Channel {
 		std::vector<std::string>	_invitedUsers;
 		std::string 				_name;
 		std::string 				_password;
+		int							_modes;
 };
 
 #endif

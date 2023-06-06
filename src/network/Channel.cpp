@@ -33,14 +33,30 @@ void Channel::setPassword(std::string newPassword){
 	_password = newPassword;
 }
 
+
+
+
 /*  <<<<<<<<<<<<<<<< SPECIFIC TO CHANNEL OPERATORS >>>>>>>>>>>>>>>>  */
 
 /* --------------- mode ---------------- */
 
+void	Channel::addMode(int mode){
+	_modes |= mode;
+}
+
+void	Channel::removeMode(int mode){
+	 _modes &= ~mode;  // Perform bitwise NOT and bitwise AND assignment
+}
+
+bool	Channel::hasMode(int mode){
+	return (_modes & mode) == mode;
+}
+
 /* --------------- invite ---------------- */
 
 void	Channel::inviteUser(std::string nickname){
-	_invitedUsers.push_back(nickname);
+	if (!invitedOrNot(nickname))
+		_invitedUsers.push_back(nickname);
 }
 
 bool	Channel::invitedOrNot(std::string nickname){
@@ -54,15 +70,15 @@ bool	Channel::invitedOrNot(std::string nickname){
 
 /* --------------- kick ---------------- */
 
+void	Channel::removeUser(std::string nickname){
+	std::vector<std::string>::iterator it;
+	it = std::find(_invitedUsers.begin(), _invitedUsers.end(), nickname);
+	if (it != _invitedUsers.end())
+		_invitedUsers.erase(it);
+}
+
 /* --------------- topic ---------------- */
 
 
-void	Channel::removeUser(Client *client){
-	std::vector<Client *>::iterator it;
-	it = std::find(_clients.begin(), _clients.end(), user);
-	if (it != _clients.end())
-		_clients.erase(it);
-	// still to check if _clients empty and if user = _superuser
-}
 
 
