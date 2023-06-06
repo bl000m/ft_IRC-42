@@ -3,7 +3,7 @@
 
 # include <string>
 # include <iostream>
-// # include <vector>
+# include <vector>
 # include <map>
 #include "Client.hpp"
 #include "Server.hpp"
@@ -48,41 +48,36 @@ class Channel {
 		std::string  getPassword();
 		channelUsers getChannelUsers();
 
+		/* Channel data related setters*/
+		void setPassword(std::string newPassword);
+
+		/* commands specific to channel operators */
+
 		/* mode */
 		void	setMode(std::string);
 		std::string	getMode();
 
-		/* kick */
-		void	removeUser(Client *user);
-
 		/* invite */
-		void	inviteUser(Client *user);
+		void	inviteUser(std::string nickname);
+		bool	invitedOrNot(std::string nickname);
+
+		/* kick */
+		void	removeUser(Client *client);
 
 		/* topic */
 		void	setTopic(std::string newTopic);
 		std::string	getTopic();
 
-
-		/* Channel data related setters*/
-
-		/* password */
-		void setPassword(std::string newPassword);
-
-		/* commands support function */
-		void	addUser(Client *user);
-		std::vector<std::string> getNames();
-
-		void broadcast(Client *user, std::string message);
+		/* communicating */
+		void broadcast(Client *client, std::string message);
 
 	private:
 		Channel();
-		void clear();
-		Channel	&operator=(Channel const &channel);
 
-
-		channelUsers	_channelUsers;
-		std::string 	_name;
-		std::string 	_password;
+		channelUsers				_channelUsers;
+		std::vector<std::string>	_invitedUsers;
+		std::string 				_name;
+		std::string 				_password;
 };
 
 #endif
