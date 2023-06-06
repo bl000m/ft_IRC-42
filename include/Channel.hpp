@@ -38,7 +38,7 @@ class Channel {
 		void	addClient(Client *client);
 
 		/* Channel data related getters*/
-		std::string  	getName();
+		const std::string&  	getName();
 		std::string  	getPassword();
 		channelUsers 	getChannelUsers();
 		size_t			getUsersCount();

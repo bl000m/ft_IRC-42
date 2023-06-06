@@ -25,7 +25,7 @@ void	Channel::addClient(Client *client){
 
 // Check for spaces, control G / BELL, and comma in the channel name
 bool Channel::checkChannelName(std::string channelName) {
-    for (size_t counter = 0; i < channelName.length(); counter++) {
+    for (size_t counter = 0; counter < channelName.length(); counter++) {
         if (channelName[counter] == ' ' || channelName[counter] == '\x07' || channelName[counter] == ',') {
             return false;
         }
@@ -35,7 +35,7 @@ bool Channel::checkChannelName(std::string channelName) {
 
 /* --------------- Channel data related getters ---------------- */
 
-std::string  Channel::getName(){
+const std::string& Channel::getName(){
 	return _name;
 }
 
