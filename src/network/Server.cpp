@@ -69,9 +69,11 @@ void	Server::run(void)
 					/* TEST*/
 					std::vector<std::string> cmds = splitCommands(buffer);
 					for (size_t j = 0; j < cmds.size(); j++)
+					{
 						std::cout << "SINGLE COMMAND: " << cmds[j] << std::endl;
-						//if (mess.parse(cmds[j].c_str()))
-						//	execMessage(_clients.find(current_poll->fd)->second, mess);
+						if (mess.parse(cmds[j]))
+							execMessage(_clients.find(current_poll->fd)->second, mess);
+					}
 				}
 			}
 		}

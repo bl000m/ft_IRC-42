@@ -44,15 +44,14 @@ Message	&Message::operator=(Message const &mess)
 	return true when parsing succeed
 	return false when parsing fails (ex. empty message, in this case, it must be silently ignored)
 */
-bool	Message::parse(char buffer[512])
+bool	Message::parse(std::string const &input)
 {
-	std::string				input;
 	std::string::size_type	pos;
 	
 	this->clear();
-	if (buffer_empty(buffer))
+	if (input.size() == 0
+		|| (input.size() == 1 && input[0] == '\r'))
 		return (false);
-	input = read_buffer(buffer);
 	pos = 0;
 	this->setSource(input, pos);
 	this->setCommand(input, pos);
@@ -118,49 +117,6 @@ void	Message::setParam(std::string const &input, std::string::size_type &pos)
 		pos = end;
 	}
 }
-
-/*
-	look for \r\n in buffer, and replace it with \0
-	if \r\n is not present, look for \n
-	if even \n is not present, 
-	it acts as if \r\n are at the end of buffer
-*/
-std::string	Message::read_buffer(char buff[512])
-{
-	std::string	temp;
-	int			i;
-	
-	i = 0;
-	while (i < 512)
-	{
-		if (buff[i] == '\n')
-			break ;
-		i++;
-	}
-	if (i == 512)
-		buff[510] = '\0';
-	else if (buff[i - 1] == '\r')
-		buff[i - 1] = '\0';
-	else
-		buff[i] = '\0';
-	temp = buff;
-	return (temp);
-}
-
-/*
-	message is ended with \r\n,
-	if it's ended with a single \n, although incorrect,
-	must be handled as well
-*/
-bool	Message::buffer_empty(char buf[512])
-{
-	if (buf[0] == '\r' && buf[1] == '\n')
-		return (true);
-	if (buf[0] == '\n')
-		return (true);
-	return (false);
-}
-
 
 std::string const	*Message::getSource(void) const
 {
