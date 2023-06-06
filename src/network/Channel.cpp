@@ -1,33 +1,37 @@
 #include "Channel.hpp"
 
-Channel::Channel(const std::string &name, const std::string &password, Client *superuser)
-	: _name(name), _password(password), _superuser(superuser){
+Channel::Channel(Client *oper, std::string name)
+	: _name(name) {
+		user newChannelUser;
+		std::string nickname = *(oper->getNick());
+		newChannelUser.client = oper;
+		newChannelUser.userMode = "o";
+		newChannelUser.prefix = "@";
+		_channelUsers[nickname] = newChannelUser;
 }
 
 Channel::~Channel(){}
 
-/* Memo Channel Operations (based on IRC protocol doc):
-JOIN message
-PART message
-TOPIC message
-NAMES message
-LIST message
-INVITE message
-Invite list
-KICK message */
 
-/* --------------- getters ---------------- */
 
-std::string &Channel::getName(){
+/* --------------- Channel data related getters ---------------- */
+
+std::string  Channel::getName(){
 	return _name;
 }
 
-std::string &Channel::getPassword(){
+std::string Channel::getPassword(){
 	return _password;
 }
 
-Client *Channel::getSuperser(){
-	return _superuser;
+Channel::channelUsers Channel::getChannelUsers(){
+	return _channelUsers;
+}
+
+/* --------------- Channel data related setters ---------------- */
+
+void Channel::setPassword(std::string newPassword){
+	_password = newPassword;
 }
 
 /* --------------- setters ---------------- */
