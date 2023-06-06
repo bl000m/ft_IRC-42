@@ -5,8 +5,9 @@
 # include <iostream>
 # include <vector>
 # include <map>
-#include "Client.hpp"
-#include "Server.hpp"
+# include "Client.hpp"
+# include "Server.hpp"
+
 
 class Client;
 
@@ -17,14 +18,6 @@ class Client;
 	∗ MODE - Change the channel’s mode:
 	*/
 
-	/* ----- modes -----*/
-	/*
-	t: Set/remove the restrictions of the TOPIC command to channel operators
-	k: Set/remove the channel key (password)
-	o: Give/take channel operator privilege
-	l: Set/remove the user limit to channel
-	i: Set/remove Invite-only channel
-	*/
 
 typedef struct t_user{
 	Client *client;
@@ -36,17 +29,18 @@ class Channel {
 
 
 	public:
-		static const int t = 1 << 0;  // Bit 0 represents t mode
-    	static const int k = 1 << 1;  // Bit 1 represents k mode
-    	static const int o = 1 << 2;  // Bit 2 represents o mode
-    	static const int l = 1 << 3;  // Bit 3 represents l mode
-    	static const int i = 1 << 4;  // Bit 4 represents i mode
+		#define t 1 << 1  // Bit 1 represents t mode => Set/remove the restrictions of the TOPIC command to channel operators
+		#define k 1 << 2  // Bit 2 represents k mode => Set/remove the channel key (password)
+		#define o 1 << 3  // Bit 3 represents o mode => Give/take channel operator privilege
+		#define l 1 << 4  // Bit 4 represents l mode => Set/remove the user limit to channel
+		#define i 1 << 5  // Bit 5 represents i mode => Set/remove Invite-only channel
 		typedef std::map<std::string, user> channelUsers;
 		typedef std::map<std::string, user>::iterator channelUsersIt;
 
 		Channel(Client *oper, std::string name);
 		~Channel();
-
+		bool checkChannelName(std::string channelName);
+		void	addClient(Client *client);
 		// check name
 
 		/* Channel data related getters*/
@@ -77,7 +71,7 @@ class Channel {
 		std::string	getTopic();
 
 		/* communicating */
-		void broadcast(Client *client, std::string message);
+		void broadcast(std::string message);
 
 	private:
 		Channel();
@@ -86,6 +80,7 @@ class Channel {
 		std::vector<std::string>	_invitedUsers;
 		std::string 				_name;
 		std::string 				_password;
+		std::string					_topic;
 		int							_modes;
 };
 

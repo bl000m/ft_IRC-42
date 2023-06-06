@@ -1,7 +1,9 @@
 #include "Channel.hpp"
 
-Channel::Channel(Client *oper, std::string name)
-	: _name(name) {
+Channel::Channel(Client *oper, std::string name): _name(name) {
+		if (!checkChannelName(name)) {
+        throw std::invalid_argument("Invalid channel name: " + name);
+    }
 		user newChannelUser;
 		std::string nickname = *(oper->getNick());
 		newChannelUser.client = oper;
@@ -12,6 +14,24 @@ Channel::Channel(Client *oper, std::string name)
 
 Channel::~Channel(){}
 
+void	Channel::addClient(Client *client){
+		user newChannelUser;
+		std::string nickname = *(client->getNick());
+		newChannelUser.client = client;
+		newChannelUser.userMode = "";
+		newChannelUser.prefix = "";
+		_channelUsers[nickname] = newChannelUser;
+}
+
+// Check for spaces, control G / BELL, and comma in the channel name
+bool Channel::checkChannelName(std::string channelName) {
+    for (size_t counter = 0; i < channelName.length(); counter++) {
+        if (channelName[counter] == ' ' || channelName[counter] == '\x07' || channelName[counter] == ',') {
+            return false;
+        }
+    }
+    return true;
+}
 
 /* --------------- Channel data related getters ---------------- */
 
@@ -79,6 +99,20 @@ void	Channel::removeUser(std::string nickname){
 
 /* --------------- topic ---------------- */
 
+void	Channel::setTopic(std::string newTopic){
+	_topic = newTopic;
+}
 
+std::string	Channel::getTopic(){
+	return _topic;
+}
 
+/* --------------- broadcast ---------------- */
+
+// void 	Channel::broadcast(std::string message){
+// 	channelUsersIt it;
+// 	for (it = _channelUsers.begin(), it != _channelUsers.end(); it++){
+// 		Server::privmsg(it->client, message);
+// 	}
+// }
 
