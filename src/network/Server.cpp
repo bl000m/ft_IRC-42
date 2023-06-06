@@ -67,12 +67,29 @@ void	Server::run(void)
 				{
 					std::cout << "From socket " << current_poll->fd << ": " << buffer << std::endl;
 					/* TEST*/
-					if (mess.parse(buffer))
-						execMessage(_clients.find(current_poll->fd)->second, mess);
+					std::vector<std::string> cmds = splitCommands(buffer);
+					for (size_t j = 0; j < cmds.size(); j++)
+						std::cout << "SINGLE COMMAND: " << cmds[j] << std::endl;
+						//if (mess.parse(cmds[j].c_str()))
+						//	execMessage(_clients.find(current_poll->fd)->second, mess);
 				}
 			}
 		}
 	}
+}
+
+std::vector<std::string>	Server::splitCommands(char *buffer)
+{
+	std::stringstream			ss;
+	std::string					parsed;
+	std::vector<std::string>	cmds;
+
+	ss << buffer;
+	while (getline(ss, parsed, '\n'))
+	{
+		cmds.push_back(parsed);
+	}
+	return (cmds);
 }
 
 bool	Server::initServerPoll(void)
