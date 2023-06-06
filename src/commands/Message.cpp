@@ -52,6 +52,8 @@ bool	Message::parse(std::string const &input)
 	if (input.size() == 0
 		|| (input.size() == 1 && input[0] == '\r'))
 		return (false);
+	if (input[input.size() - 1] == '\r')
+		input = input.substr(0, input.size() - 2);
 	pos = 0;
 	this->setSource(input, pos);
 	this->setCommand(input, pos);
