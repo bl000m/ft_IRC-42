@@ -174,7 +174,7 @@ bool Channel::hasMode(char mode) {
     Adds the user's nickname to the list of invited users.
 */
 void	Channel::inviteUser(std::string nickname){
-	if (!invitedOrNot(nickname))
+	if (!isInvited(nickname))
 		_invitedUsers.push_back(nickname);
 }
 
@@ -183,7 +183,7 @@ void	Channel::inviteUser(std::string nickname){
     Returns true if the user's nickname is found in the list of invited users.
     Returns false otherwise.
 */
-bool	Channel::invitedOrNot(std::string nickname){
+bool	Channel::isInvited(std::string nickname){
 	std::vector<std::string>::iterator it;
 	for (it = _invitedUsers.begin(); it != _invitedUsers.end(); it++){
 		if (*it == nickname)
@@ -192,16 +192,26 @@ bool	Channel::invitedOrNot(std::string nickname){
 	return false;
 }
 
-/* --------------- kick ---------------- */
-
 /*
     Removes a user from the list of invited users.
 */
-void	Channel::removeUser(std::string nickname){
+void	Channel::removeInvitedUser(std::string nickname){
 	std::vector<std::string>::iterator it;
 	it = std::find(_invitedUsers.begin(), _invitedUsers.end(), nickname);
 	if (it != _invitedUsers.end())
 		_invitedUsers.erase(it);
+}
+
+/* --------------- kick ---------------- */
+
+/*
+    Removes a user from the list of channel users.
+*/
+void	Channel::removeChannelUser(std::string nickname){
+	channelUsersIt it;
+	it = _channelUsers.find(nickname);
+    if (it != _channelUsers.end())
+        _channelUsers.erase(it);
 }
 
 /* --------------- topic ---------------- */
