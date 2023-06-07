@@ -50,11 +50,11 @@ class Channel {
 
 		/* invite */
 		void	inviteUser(std::string nickname);
-		bool	invitedOrNot(std::string nickname);
-		void	removeUser(std::string nickname);
+		bool	isInvited(std::string nickname);
+		void	removeInvitedUser(std::string nickname);
 
 		/* kick */
-		void	removeUser(Client *client);
+		void	removeChannelUser(std::string nickname);
 
 		/* topic */
 		void	setTopic(std::string newTopic);
