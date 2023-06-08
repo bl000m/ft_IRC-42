@@ -239,10 +239,11 @@ std::string	Channel::getTopic(){
 
 /* --------------- broadcast ---------------- */
 // to access privmsg it should be public
-void 	Channel::broadcast(Message message, Server server){
+void 	Channel::broadcast(Message message, Client client, Server server){
 	channelUsersIt it;
 	for (it = _channelUsers.begin(); it != _channelUsers.end(); it++){
-		server.privmsg(*(it->second.client), message);
+		if (it->first != *(client.getNick()))
+			server.privmsg(*(it->second.client), message);
 	}
 }
 

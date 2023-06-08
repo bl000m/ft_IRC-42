@@ -62,7 +62,7 @@ class Channel {
 		std::string	getTopic();
 
 		/* communicating */
-		void broadcast(Message message, Server server);
+		void broadcast(Message message, Client client, Server server);
 
 	private:
 		Channel();
