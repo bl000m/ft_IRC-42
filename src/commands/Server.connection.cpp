@@ -136,7 +136,6 @@ void	Server::oper(Client &client, Message const &mess)
 
 
 /*	helper	*/
-
 bool	Server::nick_in_use(std::string const &nick) const
 {
 	for (client_map::const_iterator i = _clients.begin(); i != _clients.end(); i++)

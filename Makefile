@@ -14,6 +14,7 @@ FILES		= main network/Server  network/Client \
 			commands/Server.command \
 			commands/Message \
 			commands/Server.privmsg \
+			commands/Server.join \
 			commands/Server.queries \
 			commands/Server.mode
 
