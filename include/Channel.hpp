@@ -40,6 +40,7 @@ class Channel {
 
 		/* Channel data related setters*/
 		void setPassword(std::string newPassword);
+		void setUserAsOperator(std::string nickname);
 
 		/* commands specific to channel operators */
 
@@ -61,7 +62,7 @@ class Channel {
 		std::string	getTopic();
 
 		/* communicating */
-		void broadcast(Message message, Server server);
+		void broadcast(Message message, Client client, Server server);
 
 	private:
 		Channel();
