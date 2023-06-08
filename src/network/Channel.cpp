@@ -12,7 +12,7 @@ Channel::Channel(Client *oper, std::string name): _name(name), _modes(0) {
 		user newChannelUser;
 		std::string nickname = *(oper->getNick());
 		newChannelUser.client = oper;
-		newChannelUser.userMode = "o";
+		newChannelUser.userMode = oper->getMode();
 		newChannelUser.prefix = "@";
 		_channelUsers[nickname] = newChannelUser;
 }
@@ -27,7 +27,7 @@ void	Channel::addClient(Client *client){
 		user newChannelUser;
 		std::string nickname = *(client->getNick());
 		newChannelUser.client = client;
-		// newChannelUser.userMode = "";
+		newChannelUser.userMode = client->getMode();
 		newChannelUser.prefix = "+";
 		_channelUsers[nickname] = newChannelUser;
 }
@@ -44,6 +44,15 @@ bool Channel::checkChannelName(std::string channelName) {
         }
     }
     return true;
+}
+
+bool	Channel::isUserInChannel(std::string nickname){
+	channelUsersIt it;
+	it = _channelUsers.find(nickname);
+    if (it != _channelUsers.end())
+        return true;
+	else
+		return false;
 }
 
 /* --------------- Channel data related getters ---------------- */
@@ -238,12 +247,11 @@ std::string	Channel::getTopic(){
 }
 
 /* --------------- broadcast ---------------- */
-// to access privmsg it should be public
-void 	Channel::broadcast(Message message, Client client, Server server){
+void 	Channel::broadcast(std::string message, Client client){
 	channelUsersIt it;
 	for (it = _channelUsers.begin(); it != _channelUsers.end(); it++){
 		if (it->first != *(client.getNick()))
-			server.privmsg(*(it->second.client), message);
+			send(it->second.client->getSock(), message.c_str(), message.size(), 0);
 	}
 }
 

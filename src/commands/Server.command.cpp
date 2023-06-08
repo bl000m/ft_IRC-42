@@ -118,7 +118,7 @@ void	Server::force_quit(int sock)
 	if (i == _clients.end())
 		return ;
 	client = &(i->second);
-	broadcast(*client, "QUIT", ":force quit", NULL);
+	// broadcast(*client, "QUIT", ":force quit", NULL);
 	rmClient(*client);
 	// for (j = _server_sockets.begin(); j != _server_sockets.end(); j++)
 	// {

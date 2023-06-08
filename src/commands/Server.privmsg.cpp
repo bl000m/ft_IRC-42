@@ -4,7 +4,7 @@ void	Server::privmsg(Client &client, Message const &mess)
 {
 	std::vector<std::string>					target;
 	std::vector<std::string>::const_iterator	i;
-	
+
 	if (mess.getParamNum() < 1)
 	{
 		this->reply(client, ERR_NORECIPIENT, ":No recipient given PRIMSG", NULL);
@@ -29,7 +29,7 @@ void	Server::notice(Client &client, Message const &mess)
 {
 	std::vector<std::string>					target;
 	std::vector<std::string>::const_iterator	i;
-	
+
 	if (mess.getParamNum() < 1)
 	{
 		return ;
@@ -81,7 +81,7 @@ bool	Server::sendToNick(Client &client, Message const &mess, std::string const &
 	{
 		return (false);
 	}
-	
+
 	// nickfd = -1;
 	// for (i = _clients.begin(); i != _clients.end(); i++)
 	// {

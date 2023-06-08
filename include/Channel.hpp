@@ -31,6 +31,7 @@ class Channel {
 		~Channel();
 		bool	checkChannelName(std::string channelName);
 		void	addClient(Client *client);
+		bool	isUserInChannel(std::string nickname);
 
 		/* Channel data related getters*/
 		const std::string&  	getName();
@@ -62,7 +63,7 @@ class Channel {
 		std::string	getTopic();
 
 		/* communicating */
-		void broadcast(Message message, Client client, Server server);
+		void broadcast(std::string message, Client client);
 
 	private:
 		Channel();
