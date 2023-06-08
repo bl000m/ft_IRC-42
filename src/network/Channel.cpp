@@ -1,6 +1,6 @@
 #include "Channel.hpp"
 
- /* 
+ /*
  	Initializes a new channel with a name and an operator (oper).
 	Checks if the channel name is valid.
 	Adds the operator to the channel's user list with operator privileges.
@@ -22,7 +22,7 @@ Channel::~Channel(){}
  /*
 	Creates a new channel user with default user mode and prefix.
 	Inserts the client into the channel's user list.
- */ 
+ */
 void	Channel::addClient(Client *client){
 		user newChannelUser;
 		std::string nickname = *(client->getNick());
@@ -36,7 +36,7 @@ void	Channel::addClient(Client *client){
 	Checks if the channel name is valid.
 	Returns true if the channel name does not contain spaces, control G/BELL characters, or commas.
 	Returns false otherwise.
- */ 
+ */
 bool Channel::checkChannelName(std::string channelName) {
     for (size_t counter = 0; counter < channelName.length(); counter++) {
         if (channelName[counter] == ' ' || channelName[counter] == '\x07' || channelName[counter] == ',') {
@@ -85,7 +85,12 @@ void Channel::setPassword(std::string newPassword){
 	_password = newPassword;
 }
 
-
+void Channel::setUserAsOperator(std::string nickname){
+	channelUsersIt it;
+	it = _channelUsers.find(nickname);
+    if (it != _channelUsers.end())
+        it->second.prefix = "@";
+}
 
 
 /*  <<<<<<<<<<<<<<<< SPECIFIC TO CHANNEL OPERATORS >>>>>>>>>>>>>>>>  */

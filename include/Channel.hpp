@@ -40,6 +40,7 @@ class Channel {
 
 		/* Channel data related setters*/
 		void setPassword(std::string newPassword);
+		void setUserAsOperator(std::string nickname);
 
 		/* commands specific to channel operators */
 
