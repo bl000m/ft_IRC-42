@@ -32,6 +32,7 @@ class Channel {
 		bool	checkChannelName(std::string channelName);
 		void	addClient(Client *client);
 		bool	isUserInChannel(const std::string nickname);
+		bool	isUserOperator(const std::string nickname);
 
 		/* Channel data related getters*/
 		const std::string&  	getName();
