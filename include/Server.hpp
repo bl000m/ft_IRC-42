@@ -1,7 +1,3 @@
-//  NO 42 HEADER
-//  NO 42 HEADER
-//  NO 42 HEADER
-
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
@@ -26,6 +22,7 @@
 #include "Message.hpp"
 #include "Client.hpp"
 #include "Numerics.hpp"
+#include "Channel.hpp"
 
 #define MAX_QUEUE_CONNECTION    42
 #define POLL_DELAY              5
@@ -38,12 +35,16 @@
 #define IS_POLLIN(revents)      (revents & POLLIN)
 #define IS_POLLHUP(revents)     (revents & POLLHUP)
 
+class Channel;
+
 class Server {
     public:
 		/*	typedef	*/
 		typedef void (Server::*fn_ptr) (Client &c, Message const &m);
 		typedef std::map<int, Client>			client_map;
 		typedef std::map<std::string, fn_ptr>	fn_map;
+		typedef std::map<std::string, Channel>	channelList;
+		typedef std::map<std::string, Channel>::iterator channelListIt;
 
         Server();
         ~Server();
@@ -55,6 +56,7 @@ class Server {
     private:
         bool					initServerPoll(void);
         bool					newClientPoll(void);
+		channelList				_channels;
 
         std::string				_password;
         uint16_t				_iport;
@@ -111,6 +113,9 @@ class Server {
 		/*	client getter and remove	*/
 		Client	*getClient(std::string const &nick);
 		void	rmClient(Client &client);
+
+		/* channel getter */
+		Channel *getChannel(const std::string &channelName);
 
 };
 
