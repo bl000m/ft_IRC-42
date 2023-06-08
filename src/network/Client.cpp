@@ -9,6 +9,7 @@ Client::Client(void)
 	_sock_len(-1)
 {
 	std::memset(&_sock_addr, 0, sizeof(sockaddr_in));
+	memset(_buff, 0, 512);
 }
 
 Client::Client(Client const &client)
@@ -25,6 +26,7 @@ Client::Client(Client const &client)
 		_user = new std::string(*client._user);
 	if (client._host)
 		_host = new std::string(*client._host);
+	memset(_buff, 0, 512);
 }
 
 Client::~Client(void)

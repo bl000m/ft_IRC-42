@@ -65,6 +65,7 @@ class Client
 		std::string const	*getHost(void) const;
 		std::string			getFullName(void) const;
 		std::string			getMode(void) const;
+		char			_buff[512];
 
 	private:
 		/*	user mode	*/
