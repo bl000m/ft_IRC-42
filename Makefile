@@ -18,7 +18,8 @@ FILES		= main network/Server  network/Client \
 			commands/Server.queries \
 			commands/Server.mode \
 			commands/Server.channel \
-			commands/Server.invite
+			commands/Server.invite \
+			commands/Server.kick
 
 SRC			= $(FILES:=.cpp)
 OBJ			= $(addprefix $(OBJDIR)/, $(FILES:=.o))

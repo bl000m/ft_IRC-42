@@ -36,7 +36,7 @@ void Server::kick(Client &client, const Message &mess) {
         return;
     }
 
-	std::string reason = mess.getParamNum().size() > 2 ? mess.getParam()[2] : "";
+	std::string reason = mess.getParamNum() > 2 ? mess.getParam()[2] : "";
 
 	/**
 	*/
