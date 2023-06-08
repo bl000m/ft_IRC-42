@@ -4,38 +4,75 @@
 # include <string>
 # include <iostream>
 # include <vector>
-#include "Client.hpp"
-#include "Server.hpp"
+# include <map>
+# include "Client.hpp"
+# include "Server.hpp"
+# include "Message.hpp"
+
 
 class Client;
+class Message;
+class Server;
+
+typedef struct t_user{
+	Client *client;
+	std::string userMode;
+	std::string prefix;
+} user;
 
 class Channel {
 
+
 	public:
-		Channel(const std::string &name, const std::string &password, Client *superuser);
+		typedef std::map<std::string, user> channelUsers;
+		typedef std::map<std::string, user>::iterator channelUsersIt;
+
+		Channel(Client *oper, std::string name);
 		~Channel();
+		bool	checkChannelName(std::string channelName);
+		void	addClient(Client *client);
 
-		/* getters */
-		std::string &getName();
-		std::string &getPassword();
-		Client *getSuperser();
+		/* Channel data related getters*/
+		const std::string&  	getName();
+		std::string  	getPassword();
+		channelUsers 	getChannelUsers();
+		size_t			getUsersCount();
 
-		/* setters */
+		/* Channel data related setters*/
 		void setPassword(std::string newPassword);
+		void setUserAsOperator(std::string nickname);
 
-		/* commands support function */
-		void	addUser(Client *user);
-		void	removeUser(Client *user);
-		std::vector<std::string> getNames();
+		/* commands specific to channel operators */
+
+		/* mode */
+		void	addMode(char mode);
+		void	removeMode(char mode);
+		bool	hasMode(char mode);
+
+		/* invite */
+		void	inviteUser(std::string nickname);
+		bool	isInvited(std::string nickname);
+		void	removeInvitedUser(std::string nickname);
+
+		/* kick */
+		void	removeChannelUser(std::string nickname);
+
+		/* topic */
+		void	setTopic(std::string newTopic);
+		std::string	getTopic();
+
+		/* communicating */
+		void broadcast(Message message, Client client, Server server);
 
 	private:
 		Channel();
-		std::string _name;
-		std::string _password;
-		Client *_superuser;
-		Channel	&operator=(Channel const &channel);
-		void clear();
-		std::vector<Client *> _clients;
+
+		channelUsers				_channelUsers;
+		std::vector<std::string>	_invitedUsers;
+		std::string 				_name;
+		std::string 				_password;
+		std::string					_topic;
+		int							_modes;
 };
 
 #endif

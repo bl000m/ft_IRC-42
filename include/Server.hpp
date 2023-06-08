@@ -1,5 +1,5 @@
-//  NO 42 HEADER 
-//  NO 42 HEADER 
+//  NO 42 HEADER
+//  NO 42 HEADER
 //  NO 42 HEADER
 
 #ifndef SERVER_HPP
@@ -54,6 +54,7 @@ class Server {
         void    initServer(const std::string &port, const std::string &password);
         void    run(void);
 		void	execMessage(Client &client, Message const &mess);
+		void	privmsg(Client &client, Message const &mess);
 
     private:
         bool					initServerPoll(void);
@@ -73,7 +74,7 @@ class Server {
 		void		force_quit(int sock);
 
 		std::vector<std::string>	splitCommands(char *buffer);
-		
+
 		/*	connection commands	*/
 		void	pass(Client &client, Message const &mess);
 		void	nick(Client &client, Message const &mess);
@@ -89,7 +90,6 @@ class Server {
 		static bool		nick_valid(std::string const &nick);
 
 		/*	privmsg and notice	*/
-		void	privmsg(Client &client, Message const &mess);
 		void	notice(Client &client, Message const &mess);
 		bool	sendToNick(Client &client, Message const &mess, std::string const &nick);
 		std::vector<std::string>	getTarget(std::string const &str);
