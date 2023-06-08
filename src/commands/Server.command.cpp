@@ -107,6 +107,7 @@ Server::fn_map	Server::cmd_init(void)
 	temp["KILL"] = &Server::kill;
 	temp["JOIN"] = &Server::join;
 	temp["INVITE"] = &Server::invite;
+	temp["KICK"] = &Server::kick;
 
 	return (temp);
 }
