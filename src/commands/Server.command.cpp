@@ -106,6 +106,7 @@ Server::fn_map	Server::cmd_init(void)
 	temp["WALLOPS"] = &Server::wallops;
 	temp["KILL"] = &Server::kill;
 	temp["JOIN"] = &Server::join;
+	temp["INVITE"] = &Server::invite;
 
 	return (temp);
 }
