@@ -48,6 +48,10 @@ void Server::invite(Client &client, const Message &mess) {
         return;
     }
 
+    /**
+    Adds the client to the channel invite list
+	*/
+    channel->inviteUser(nickname);
 	/**
 	Sends a reply to the sender indicating that an invite is being sent
 	*/
