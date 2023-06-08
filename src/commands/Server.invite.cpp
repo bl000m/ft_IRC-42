@@ -6,19 +6,19 @@ Invites a client to join a channel on the server.
 @param message The message containing the invite command and parameters.
 @param server The server on which the invite is being sent.
 */
-void Server::invite(Client client, const Message &message, Server *server) {
-    if (message.getParamNum() < 2) {
+void Server::invite(Client &client, const Message &mess) {
+    if (mess.getParamNum() < 2) {
         this->reply(client,  ERR_NEEDMOREPARAMS, "INVITE", ":Not enough parameters");
         return;
     }
 
-    const std::string nickname = message.getParam()[0];
-    const std::string channelName = message.getParam()[1];
+    const std::string nickname = mess.getParam()[0];
+    const std::string channelName = mess.getParam()[1];
 
 	/**
 	Checks if the number of parameters in the invite message is sufficient.
 	*/
-    Channel *channel = server->getChannel(channelName);
+    Channel *channel = this->getChannel(channelName);
     if (channel == NULL) {
         this->reply(client,  ERR_NOSUCHCHANNEL, channelName.c_str(), ":No such channel");
         return;

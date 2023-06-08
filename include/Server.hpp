@@ -82,7 +82,7 @@ class Server {
 		void	join(Client &client, Message const &mess);
 
 		/* channel operators related commands */
-		void 	invite(Client client, const Message &message, Server *server);
+		void 	invite(Client &client, Message const &mess);
 
 		/*	connection command helper	*/
 		static void		welcome_mess(Client const &client);
