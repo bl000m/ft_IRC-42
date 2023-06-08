@@ -1,29 +1,30 @@
 #include <Server.hpp>
 
-void	Server::createChan(std::string &name, std::string &pass, Client &client)
+bool	Server::createChan(std::string &name, std::string &pass, Client &client)
 {
 	std::string	join_message;
 
-	Channel	chan(name, pass, &client);
+	Channel	chan(&client, name);
+	if (chan.checkChannelName(name) == false)
+		return (false);
+	chan.setPassword(pass);
 	_channels.insert(std::pair<std::string, Channel>(name, chan));
 	/*IRC*/
 	join_message.append(":" + *(client).getNick() + " JOIN " + name + "\r\n");
 	send(client.getSock(), join_message.c_str(), join_message.size(), 0);
-	reply(client,  RPL_TOPIC, "", "");
-	reply(client,  RPL_NAMREPLY	, "", "");
-	reply(client,  RPL_ENDOFNAMES, "", "");
+	reply(client, RPL_TOPIC, "", "");
+	reply(client, RPL_NAMREPLY , "", "");
+	reply(client, RPL_ENDOFNAMES, "", "");
+	std::cout << "SIZE:  " << _channels.size() << std::endl;
+	return (true);
 }
 
-void	Server::checkChan(std::string &name)
+void	Server::joinChan(std::string &name, std::string &pass, Client &client)
 {
-	(void)name;
-}
-
-void	joinChan(std::string &name, std::string &pass, Client *client)
-{
-	(void)name;
 	(void)pass;
-	(void)client;
+
+	_channels.at(name).addClient(&client);
+	std::cout << "SIZE:  " << _channels.size() << std::endl;
 }
 
 void	Server::join(Client &client, Message const &mess)
@@ -55,6 +56,12 @@ void	Server::join(Client &client, Message const &mess)
 	{
 		if (keys.size() < i + 1)
 			keys.push_back("");
-		createChan(channels[i], keys[i], client);
+		if (_channels.find(channels[i]) == _channels.end())
+		{
+			if (createChan(channels[i], keys[i], client) == false)
+				std::cout << "bad name" << std::endl;
+		}
+		else
+			joinChan(channels[i], keys[i], client);
 	}
 }

@@ -95,9 +95,8 @@ class Server {
 		std::vector<std::string>	getTarget(std::string const &str);
 
 		/*Channel related methods*/
-		void	createChan(std::string &name, std::string &pass, Client &client);
-		void	joinChan(std::string &name, std::string &pass, Client *client);
-		void	checkChan(std::string &name);
+		bool	createChan(std::string &name, std::string &pass, Client &client);
+		void	joinChan(std::string &name, std::string &pass, Client &client);
 
 		/*	common reply	*/
 		static void		reply(Client const &client, char const *cmd, char const *p1, char const *p2);
