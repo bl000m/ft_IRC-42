@@ -56,14 +56,13 @@ class Server {
     private:
         bool					initServerPoll(void);
         bool					newClientPoll(void);
-		channelList				_channels;
 
         std::string						_password;
         uint16_t						_iport;
 
         sockaddr_in						_addr;
         std::vector<pollfd>				_server_sockets;
-		std::map<std::string, Channel>	_channels;
+		channelList						_channels;
 		client_map						_clients;
 		static fn_map const				_command;
 
