@@ -51,7 +51,6 @@ class Server {
         void    initServer(const std::string &port, const std::string &password);
         void    run(void);
 		void	execMessage(Client &client, Message const &mess);
-		void	privmsg(Client &client, Message const &mess);
 
     private:
         bool					initServerPoll(void);
@@ -79,12 +78,16 @@ class Server {
 		void	ping(Client &client, Message const &mess);
 		void	pong(Client &client, Message const &mess);
 
+		/* channel operators related commands */
+		void 	invite(Client client, const Message &message, Server *server);
+
 		/*	connection command helper	*/
 		static void		welcome_mess(Client const &client);
 		bool			nick_in_use(std::string const &nick) const;
 		static bool		nick_valid(std::string const &nick);
 
 		/*	privmsg and notice	*/
+		void	privmsg(Client &client, Message const &mess);
 		void	notice(Client &client, Message const &mess);
 		bool	sendToNick(Client &client, Message const &mess, std::string const &nick);
 		std::vector<std::string>	getTarget(std::string const &str);
