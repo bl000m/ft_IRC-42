@@ -4,7 +4,6 @@
 Invites a client to join a channel on the server.
 @param client The client to be invited.
 @param message The message containing the invite command and parameters.
-@param server The server on which the invite is being sent.
 */
 void Server::invite(Client &client, const Message &mess) {
     if (mess.getParamNum() < 2) {
