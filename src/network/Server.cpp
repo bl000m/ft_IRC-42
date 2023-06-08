@@ -109,8 +109,8 @@ bool	Server::initServerPoll(void)
 	_addr.sin_addr.s_addr = INADDR_ANY;
 	if (setsockopt(new_socket, SOL_SOCKET, SO_REUSEADDR, &opt_arg, sizeof(int)) < 0)
 		return (close(new_socket) ,false);
-	if (setsockopt(new_socket, SOL_SOCKET, SO_REUSEPORT, &opt_arg, sizeof(int)) < 0)
-		return (close(new_socket) ,false);
+	//if (setsockopt(new_socket, SOL_SOCKET, SO_REUSEPORT, &opt_arg, sizeof(int)) < 0)
+	//	return (close(new_socket) ,false);
 	if (bind(new_socket, reinterpret_cast<sockaddr*>(&_addr), sizeof(_addr)) < 0)
 		return (close(new_socket) ,false);
 	if (listen(new_socket, MAX_QUEUE_CONNECTION) < 0)

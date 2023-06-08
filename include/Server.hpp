@@ -58,13 +58,14 @@ class Server {
         bool					newClientPoll(void);
 		channelList				_channels;
 
-        std::string				_password;
-        uint16_t				_iport;
+        std::string						_password;
+        uint16_t						_iport;
 
-        sockaddr_in				_addr;
-        std::vector<pollfd>		_server_sockets;
-		client_map				_clients;
-		static fn_map const		_command;
+        sockaddr_in						_addr;
+        std::vector<pollfd>				_server_sockets;
+		std::map<std::string, Channel>	_channels;
+		client_map						_clients;
+		static fn_map const				_command;
 
 		/*	command execution	*/
 		fn_ptr		getCmd(std::string const &cmd);
@@ -79,6 +80,7 @@ class Server {
 		void	quit(Client &client, Message const &mess);
 		void	ping(Client &client, Message const &mess);
 		void	pong(Client &client, Message const &mess);
+		void	join(Client &client, Message const &mess);
 
 		/* channel operators related commands */
 		void 	invite(Client client, const Message &message, Server *server);
@@ -94,6 +96,9 @@ class Server {
 		bool	sendToNick(Client &client, Message const &mess, std::string const &nick);
 		std::vector<std::string>	getTarget(std::string const &str);
 
+		/*Channel related methods*/
+		bool	createChan(std::string &name, std::string &pass, Client &client);
+		void	joinChan(std::string &name, std::string &pass, Client &client);
 
 		/*	common reply	*/
 		static void		reply(Client const &client, char const *cmd, char const *p1, char const *p2);
