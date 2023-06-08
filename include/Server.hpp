@@ -1,7 +1,3 @@
-//  NO 42 HEADER
-//  NO 42 HEADER
-//  NO 42 HEADER
-
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
@@ -47,6 +43,8 @@ class Server {
 		typedef void (Server::*fn_ptr) (Client &c, Message const &m);
 		typedef std::map<int, Client>			client_map;
 		typedef std::map<std::string, fn_ptr>	fn_map;
+		typedef std::map<std::string, Channel>	channelList;
+		typedef std::map<std::string, Channel>::iterator channelListIt;
 
         Server();
         ~Server();
@@ -58,6 +56,7 @@ class Server {
     private:
         bool					initServerPoll(void);
         bool					newClientPoll(void);
+		channelList				_channels;
 
         std::string						_password;
         uint16_t						_iport;
@@ -119,6 +118,10 @@ class Server {
 		/*	client getter and remove	*/
 		Client	*getClient(std::string const &nick);
 		void	rmClient(Client &client);
+
+		/* channel getter */
+		Channel *getChannel(const std::string &channelName);
+
 };
 
 void    closeSocket(pollfd &pfd);
