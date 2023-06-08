@@ -9,9 +9,9 @@ void	Server::createChan(std::string &name, std::string &pass, Client &client)
 	/*IRC*/
 	join_message.append(":" + *(client).getNick() + " JOIN " + name + "\r\n");
 	send(client.getSock(), join_message.c_str(), join_message.size(), 0);
-	//reply(client,  RPL_TOPIC, "", "");
-	//reply(client,  RPL_NAMREPLY	, "", "");
-	//reply(client,  RPL_ENDOFNAMES, "", "");
+	reply(client,  RPL_TOPIC, "", "");
+	reply(client,  RPL_NAMREPLY	, "", "");
+	reply(client,  RPL_ENDOFNAMES, "", "");
 }
 
 void	Server::checkChan(std::string &name)
