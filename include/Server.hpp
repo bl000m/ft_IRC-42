@@ -98,6 +98,8 @@ class Server {
 		/*Channel related methods*/
 		bool	createChan(std::string &name, std::string &pass, Client &client);
 		void	joinChan(std::string &name, std::string &pass, Client &client);
+		/* channel getter */
+		Channel *getChannel(const std::string &channelName);
 
 		/*	common reply	*/
 		static void		reply(Client const &client, char const *cmd, char const *p1, char const *p2);
@@ -118,8 +120,6 @@ class Server {
 		Client	*getClient(std::string const &nick);
 		void	rmClient(Client &client);
 
-		/* channel getter */
-		Channel *getChannel(const std::string &channelName);
 
 };
 

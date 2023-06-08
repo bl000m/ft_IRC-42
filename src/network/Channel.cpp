@@ -55,6 +55,15 @@ bool	Channel::isUserInChannel(const std::string nickname){
 		return false;
 }
 
+bool	Channel::isUserOperator(const std::string nickname){
+	channelUsersIt it;
+	it = _channelUsers.find(nickname);
+	if (it->second.prefix == "@")
+        return true;
+	else
+		return false;
+}
+
 /* --------------- Channel data related getters ---------------- */
 
 /*
