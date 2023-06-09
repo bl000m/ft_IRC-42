@@ -1,7 +1,3 @@
-//  NO 42 HEADER
-//  NO 42 HEADER
-//  NO 42 HEADER
-
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
@@ -46,6 +42,8 @@ class Server {
 		typedef void (Server::*fn_ptr) (Client &c, Message const &m);
 		typedef std::map<int, Client>			client_map;
 		typedef std::map<std::string, fn_ptr>	fn_map;
+		typedef std::map<std::string, Channel>	channelList;
+		typedef std::map<std::string, Channel>::iterator channelListIt;
 
         Server();
         ~Server();
@@ -63,7 +61,7 @@ class Server {
 
         sockaddr_in						_addr;
         std::vector<pollfd>				_server_sockets;
-		std::map<std::string, Channel>	_channels;
+		channelList						_channels;
 		client_map						_clients;
 		static fn_map const				_command;
 
@@ -83,7 +81,8 @@ class Server {
 		void	join(Client &client, Message const &mess);
 
 		/* channel operators related commands */
-		void 	invite(Client client, const Message &message, Server *server);
+		void 	invite(Client &client, Message const &mess);
+		void 	kick(Client &client, Message const &mess);
 
 		/*	connection command helper	*/
 		static void		welcome_mess(Client const &client);
@@ -99,6 +98,8 @@ class Server {
 		/*Channel related methods*/
 		bool	createChan(std::string &name, std::string &pass, Client &client);
 		void	joinChan(std::string &name, std::string &pass, Client &client);
+		/* channel getter */
+		Channel *getChannel(const std::string &channelName);
 
 		/*	common reply	*/
 		static void		reply(Client const &client, char const *cmd, char const *p1, char const *p2);
@@ -118,6 +119,8 @@ class Server {
 		/*	client getter and remove	*/
 		Client	*getClient(std::string const &nick);
 		void	rmClient(Client &client);
+
+
 };
 
 void    closeSocket(pollfd &pfd);

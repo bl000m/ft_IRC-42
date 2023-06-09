@@ -31,13 +31,15 @@ class Channel {
 		~Channel();
 		bool	checkChannelName(std::string channelName);
 		void	addClient(Client *client);
-		bool	isUserInChannel(std::string nickname);
+		bool	isUserInChannel(const std::string nickname);
+		bool	isUserOperator(const std::string nickname);
 
 		/* Channel data related getters*/
 		const std::string&  	getName();
 		std::string  	getPassword();
 		channelUsers 	getChannelUsers();
 		size_t			getUsersCount();
+
 
 		/* Channel data related setters*/
 		void setPassword(std::string newPassword);
