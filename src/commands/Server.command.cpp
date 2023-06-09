@@ -126,7 +126,7 @@ void	Server::force_quit(int sock, bool err)
 	std::string str_err;
 	if(err)
 	{
-		str_err.append(ERR_INPUTTOOLONG + (client->getFullName()) + std::string(":Input line was too long"));
+		str_err.append(ERR_INPUTTOOLONG + (client->getFullName()) + std::string(":Input line was too long\n"));
 		send(sock, str_err.c_str(), str_err.size(), 0);
 	}
 	// broadcast(*client, "QUIT", ":force quit", NULL);
