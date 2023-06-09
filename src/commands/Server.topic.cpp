@@ -22,6 +22,13 @@ void Server::topic(Client &client, const Message &mess) {
         return;
     }
 
+	/**
+	Checks if Client trying to set the topic is a channel member.
+	*/
+    if (!channel->isUserInChannel(*(client.getNick()))) {
+        this->reply(client,  ERR_NOTONCHANNEL, channelName.c_str(), ":You're not on that channel");
+        return;
+    }
 
 	/**
 	Checks if the number of parameters in the invite message is sufficient.
@@ -31,13 +38,6 @@ void Server::topic(Client &client, const Message &mess) {
         return;
     }
 
-	/**
-	Checks if Client sending the invitation is a channel member.
-	*/
-    if (!channel->isUserInChannel(*(client.getNick()))) {
-        this->reply(client,  ERR_NOTONCHANNEL, channelName.c_str(), ":You're not on that channel");
-        return;
-    }
 
 	/**
 	Checks if the client invited is already a channel member.

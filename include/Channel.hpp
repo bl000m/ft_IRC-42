@@ -62,7 +62,9 @@ class Channel {
 
 		/* topic */
 		void	setTopic(std::string newTopic);
-		std::string	getTopic();
+		// std::string	getTopic();
+		// getTimeCreationTopic();
+		std::string getNickCreationTopic();
 
 		/* communicating */
 		void broadcast(std::string message, Client client);
