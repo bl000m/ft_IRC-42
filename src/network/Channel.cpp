@@ -189,6 +189,21 @@ bool Channel::hasMode(char mode) {
     }
 }
 
+std::string	Channel::getMode(){
+	std::string	res = "";
+
+	if (hasMode('t'))
+		res += "t";
+	if (hasMode('k'))
+		res += "k";
+	if (hasMode('o'))
+		res += "o";
+	if (hasMode('l'))
+		res += "l";
+	if (hasMode('i'))
+		res += "i";
+	return (res);
+}
 
 /* --------------- invite ---------------- */
 
