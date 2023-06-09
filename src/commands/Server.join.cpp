@@ -22,8 +22,21 @@ bool	Server::createChan(std::string &name, std::string &pass, Client &client)
 void	Server::joinChan(std::string &name, std::string &pass, Client &client)
 {
 	(void)pass;
+	std::string	join_message;
 
+	if (pass != _channels.at(name).getPassword())
+	{
+		std::string	err;
+		err.append(*(client).getNick() + " " + name);
+		reply(client, ERR_BADCHANNELKEY, err.c_str(), ":Cannot join channel (+k)");
+		return ;
+	}
 	_channels.at(name).addClient(&client);
+	join_message.append(":" + *(client).getNick() + " JOIN " + name + "\r\n");
+	send(client.getSock(), join_message.c_str(), join_message.size(), 0);
+	reply(client, RPL_TOPIC, "", "");
+	reply(client, RPL_NAMREPLY , "", "");
+	reply(client, RPL_ENDOFNAMES, "", "");
 	std::cout << "SIZE:  " << _channels.size() << std::endl;
 }
 
