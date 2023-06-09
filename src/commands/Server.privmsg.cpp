@@ -19,7 +19,7 @@ void	Server::privmsg(Client &client, Message const &mess)
 	for (i = target.begin(); i != target.end(); i++)
 	{
 		if ((*i)[0] == '&' || (*i)[0] == '#')
-			;//
+			sendToChan(client, mess, *i);
 		else if (!sendToNick(client, mess, *i))
 			this->reply(client, ERR_NOSUCHNICK, i->c_str(), ":No such nick");
 	}
@@ -42,7 +42,7 @@ void	Server::notice(Client &client, Message const &mess)
 	for (i = target.begin(); i != target.end(); i++)
 	{
 		if ((*i)[0] == '&' || (*i)[0] == '#')
-			;//to channel
+			sendToChan(client, mess, *i);
 		else if (!sendToNick(client, mess, *i))
 		{
 			;
@@ -87,9 +87,9 @@ bool	Server::sendToNick(Client &client, Message const &mess, std::string const &
 
 void	Server::sendToChan(Client &client, Message const &mess, std::string const &name)
 {
+	bool		response;
 	Channel		*chan;
 	std::string	note;
-	bool		response;
 	
 	response = true;
 	if (*mess.getCommand() == "NOTICE")
@@ -98,10 +98,16 @@ void	Server::sendToChan(Client &client, Message const &mess, std::string const &
 	if (chan == NULL)
 	{
 		if (response)
-			reply(client, ERR_NOSUCHCHANNEL, ":NO suck channel");
+			reply(client, ERR_NOSUCHCHANNEL, ":NO suck channel", NULL);
 		return ;
 	}
-	if (chan->hasMode('n') && )
-	
-	
+	if (chan->hasMode('n') && chan->isUserInChannel(*client.getNick()) == false)
+	{
+		if (response)
+			reply(client, ERR_CANNOTSENDTOCHAN, ":cannot send to channel", NULL);
+		return ;
+	}
+	note = ":" + client.getFullName() + " " + *mess.getCommand() \
+			+ " " + name + " :" + mess.getParam()[1] + "\r\n";
+	chan->broadcast(note, client);
 }
