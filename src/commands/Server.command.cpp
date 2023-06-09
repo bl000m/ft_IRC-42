@@ -119,6 +119,7 @@ void	Server::force_quit(int sock)
 	client_map::iterator			i;
 	Client							*client;
 
+	send(sock, "recv error close socket", 24, 0);
 	i = _clients.find(sock);
 	if (i == _clients.end())
 		return ;

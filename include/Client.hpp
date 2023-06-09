@@ -66,7 +66,8 @@ class Client
 		std::string const	*getHost(void) const;
 		std::string			getFullName(void) const;
 		std::string			getMode(void) const;
-		char				*getBuff(void);
+		std::string			&getBuff(void);
+		void				clearBuff(void);
 		void				catBuff(char *buff, int size);
 
 	private:
@@ -85,6 +86,7 @@ class Client
 		socklen_t		_sock_len;
 		sockaddr_in		_sock_addr;
 		char			_buff[MAX_BUFFER];
+		std::string		_strbuff;
 
 		/*	private function	*/
 		void	clear(void);
