@@ -47,5 +47,12 @@ void	Server::mode_user(Client &client, Message const &mess, std::string target)
 }
 
 void	Server::mode_channel(Client &client, Message const &mess, std::string target){
+	std::string	mode;
+	Channel *channel = this->getChannel(target);
 
+	 if (channel == NULL) {
+        this->reply(client,  ERR_NOSUCHCHANNEL, target.c_str(), ":No such channel");
+        return;
+    }
+	mode = mess.getParam()[1];
 }
