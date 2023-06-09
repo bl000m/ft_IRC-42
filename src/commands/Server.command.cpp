@@ -174,3 +174,23 @@ void	Server::rmClient(Client &client)
 	if (j != _server_sockets.end())
 		_server_sockets.erase(j);
 }
+
+Channel		*Server::getChan(std::string const &chan)
+{
+	channelListIt	i;
+	
+	i = _channels.find(chan);
+	if (i == _channels.end())
+		return (NULL);
+	return (&(i->second));
+}
+
+void	Server::rmChan(std::string const &chan)
+{
+	channelListIt	i;
+	
+	i = _channels.find(chan);
+	if (i == _channels.end())
+		return ;
+	_channels.erase(i);
+}
