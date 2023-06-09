@@ -61,13 +61,16 @@ class Channel {
 		void	removeChannelUser(std::string nickname);
 
 		/* topic */
-		void	setTopic(std::string newTopic);
+		void	setTopic(std::string newTopic, std::string &nickname);
 		std::string	getTopic();
-		// getTimeCreationTopic();
-		// std::string getNickCreationTopic();
+		std::string getTimeCreationTopic();
+		std::string getNickCreationTopic();
 
 		/* communicating */
 		void broadcast(std::string message, Client client);
+
+		/* utils */
+		std::string getCurrentTime();
 
 	private:
 		Channel();
@@ -77,6 +80,8 @@ class Channel {
 		std::string 				_name;
 		std::string 				_password;
 		std::string					_topic;
+		std::string					_topicCreationTime;
+		std::string					_topicCreatedBy;
 		int							_modes;
 };
 
