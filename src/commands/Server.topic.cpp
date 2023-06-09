@@ -7,9 +7,7 @@ Sets a topic for a channel.
 */
 void Server::topic(Client &client, const Message &mess) {
     const std::string channelName = mess.getParam()[0];
-    const std::string topic = mess.getParam()[1];
     Channel *channel = this->getChannel(channelName);
-
 	/**
 	Checks if the topic is in present in parameters. If not  the client is notified:
 	- if the channel has already a topic, which topic
@@ -28,7 +26,9 @@ void Server::topic(Client &client, const Message &mess) {
         }
         return;
     }
+	std::cout << "HERRRRRREEE:" << mess.getParam()[0] << std::endl;
 
+    std::string topic = mess.getParam()[1];
 	/**
 	Checks if the channel exist
 	*/

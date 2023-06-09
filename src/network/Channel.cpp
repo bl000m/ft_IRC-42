@@ -5,7 +5,7 @@
 	Checks if the channel name is valid.
 	Adds the operator to the channel's user list with operator privileges.
 */
-Channel::Channel(Client *oper, std::string name): _name(name), _modes(0) {
+Channel::Channel(Client *oper, std::string name): _name(name), _topic(""), _modes(0){
 		if (!checkChannelName(name)) {
         throw std::invalid_argument("Invalid channel name: " + name);
     }
@@ -269,7 +269,12 @@ void	Channel::setTopic(std::string newTopic, std::string nickname){
 
 */
 std::string	Channel::getTopic(){
-	return _topic;
+	 if (_topic.empty()) {
+		std::cout << "TOPIC IS EMPTYYYY" << std::endl;
+        return NULL;
+    } else {
+        return _topic;
+    }
 }
 
 std::string Channel::getTimeCreationTopic(){
