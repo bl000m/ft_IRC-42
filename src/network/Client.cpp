@@ -212,9 +212,14 @@ std::string		Client::getMode(void) const
 	return (temp);
 }
 
-char	*Client::getBuff(void)
+std::string	&Client::getBuff(void)
 {
-	return (_buff);
+	return (_strbuff);
+}
+
+void	Client::clearBuff(void)
+{
+	_strbuff.clear();
 }
 
 void	Client::catBuff(char *buff, int size)
@@ -222,14 +227,8 @@ void	Client::catBuff(char *buff, int size)
 	int	nbuff_size;
 
 	nbuff_size = size + strlen(_buff);
-	if (nbuff_size > MAX_BUFFER)
-	{
-		strncat(_buff, buff, nbuff_size - MAX_BUFFER);
-		_buff[MAX_BUFFER - 1] = '\r';
-		_buff[MAX_BUFFER - 2] = '\n';
-		return ;
-	}
-	strcat(_buff, buff);
+	(void)nbuff_size;
+	_strbuff += buff;
 }
 
 /*	private function	*/

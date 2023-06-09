@@ -33,7 +33,7 @@ void	Server::run(void)
 {
 	int			poll_ret;
 	pollfd		*current_poll;
-	char		buffer[MAX_BUFFER * 2];
+	char		buffer[MAX_BUFFER + 1];
 	Message		mess;
 
 	std::cout << "Running Server" << std::endl;
@@ -55,18 +55,18 @@ void	Server::run(void)
 			current_poll = &_server_sockets[i];
 			if (IS_POLLIN(current_poll->revents))
 			{
-				memset(buffer, 0, MAX_BUFFER);
+				memset(buffer, 0, MAX_BUFFER + 1);
 				std::cout << "new input" << std::endl;
 				int	ret;
-				ret = recv(current_poll->fd, buffer, MAX_BUFFER, 0);
+				ret = recv(current_poll->fd, buffer, MAX_BUFFER + 1, 0);
 				if (strchr(buffer, '\n') || ret <= CLOSE_SOCKET)
 				{
 					std::cout << "lets exec" << std::endl;
-					if (ret == CLOSE_SOCKET)
-						force_quit(current_poll->fd);
+					if (ret == CLOSE_SOCKET || ret >= MAX_BUFFER)
+						force_quit(current_poll->fd, false);
 					else
 					{
-						std::cout << "From socket " << current_poll->fd << ": " << buffer << std::endl;
+						std::cout << "From socket " << current_poll->fd << ": size: " << ret << " buf: " << buffer << std::endl;
 						_clients.find(current_poll->fd)->second.catBuff(buffer, ret);
 						/* TEST*/
 						std::vector<std::string> cmds = splitCommands(_clients.find(current_poll->fd)->second.getBuff());
@@ -75,10 +75,12 @@ void	Server::run(void)
 							std::cout << "SINGLE COMMAND: " << cmds[j] << std::endl;
 							if (mess.parse(cmds[j]))
 								execMessage(_clients.find(current_poll->fd)->second, mess);
-							memset(_clients.find(current_poll->fd)->second.getBuff(), 0, MAX_BUFFER);
+							_clients.find(current_poll->fd)->second.clearBuff();
 						}
 					}
 				}
+				else if (ret >= MAX_BUFFER)
+					force_quit(current_poll->fd, true);
 				else
 					_clients.find(current_poll->fd)->second.catBuff(buffer, ret);
 			}
@@ -86,7 +88,7 @@ void	Server::run(void)
 	}
 }
 
-std::vector<std::string>	Server::splitCommands(char *buffer)
+std::vector<std::string>	Server::splitCommands(std::string &buffer)
 {
 	std::stringstream			ss;
 	std::string					parsed;
@@ -114,8 +116,8 @@ bool	Server::initServerPoll(void)
 	_addr.sin_addr.s_addr = INADDR_ANY;
 	if (setsockopt(new_socket, SOL_SOCKET, SO_REUSEADDR, &opt_arg, sizeof(int)) < 0)
 		return (close(new_socket) ,false);
-	//if (setsockopt(new_socket, SOL_SOCKET, SO_REUSEPORT, &opt_arg, sizeof(int)) < 0)
-	//	return (close(new_socket) ,false);
+	if (setsockopt(new_socket, SOL_SOCKET, SO_REUSEPORT, &opt_arg, sizeof(int)) < 0)
+		return (close(new_socket) ,false);
 	if (bind(new_socket, reinterpret_cast<sockaddr*>(&_addr), sizeof(_addr)) < 0)
 		return (close(new_socket) ,false);
 	if (listen(new_socket, MAX_QUEUE_CONNECTION) < 0)
