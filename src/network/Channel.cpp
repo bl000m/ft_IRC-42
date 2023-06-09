@@ -243,8 +243,10 @@ void	Channel::removeChannelUser(std::string nickname){
 	Sets a new topic for the channel.
 
 */
-void	Channel::setTopic(std::string newTopic){
+void	Channel::setTopic(std::string newTopic, std::string nickname){
 	_topic = newTopic;
+	_topicCreationTime = getCurrentTime();
+	_topicCreatedBy = nickname;
 }
 
 /*
@@ -253,6 +255,14 @@ void	Channel::setTopic(std::string newTopic){
 */
 std::string	Channel::getTopic(){
 	return _topic;
+}
+
+std::string Channel::getTimeCreationTopic(){
+	return _topicCreationTime;
+}
+
+std::string Channel::getNickCreationTopic(){
+	return _topicCreatedBy;
 }
 
 /* --------------- broadcast ---------------- */
@@ -264,3 +274,19 @@ void 	Channel::broadcast(std::string message, Client client){
 	}
 }
 
+void Channel::broadcastSenderIncluded(std::string message){
+	channelUsersIt it;
+	for (it = _channelUsers.begin(); it != _channelUsers.end(); it++){
+		send(it->second.client->getSock(), message.c_str(), message.size(), 0);
+	}
+}
+
+/* --------------- utils ---------------- */
+
+std::string Channel::getCurrentTime(){
+	time_t current = time(0);
+	char buffer[80];
+
+	strftime(buffer, sizeof(buffer), "%Y-%m-%d.%X", localtime(&current));
+	return buffer;
+}

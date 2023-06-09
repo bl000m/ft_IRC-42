@@ -57,11 +57,11 @@ void Server::kick(Client &client, const Message &mess) {
     }
 	else{
 		Client *kickedUser = this->getClient(nickname);
-		std::string persMessage = ": " + nickname + "!" + *(kickedUser->getUser()) + "@localhost " + "KICK" \
+		std::string persMessage = ": " + nickname + "!" + *(kickedUser->getUser()) + "@localhost " + "KICK" + " "\
 					+ channelName + " " + *(client.getNick()) + " " + reason;
 		send(kickedUser->getSock(), persMessage.c_str(), persMessage.size(), 0);
 		channel->removeChannelUser(nickname);
 		std::string kickMessage = "kick meassage to be written";
-		channel->broadcast(kickMessage, *kickedUser);
+		channel->broadcast(kickMessage, client);
 	}
 }
