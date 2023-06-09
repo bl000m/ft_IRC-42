@@ -115,32 +115,32 @@ Server::fn_map	Server::cmd_init(void)
 
 Server::fn_map const	Server::_command = cmd_init();
 
-void	Server::force_quit(int sock)
+void	Server::force_quit(int sock, bool err)
 {
-	client_map::iterator			i;
-	Client							*client;
+	client_map::iterator	i;
+	Client					*client;
+	std::string 			str_err;
+	std::string				note;
 
 	i = _clients.find(sock);
 	if (i == _clients.end())
 		return ;
 	client = &(i->second);
-	broadcast(*client, "QUIT", ":force quit", NULL);
+	if (err)
+	{
+		str_err.append(ERR_INPUTTOOLONG + (client->getFullName()) + std::string(":Input line was too long\n"));
+		send(sock, str_err.c_str(), str_err.size(), 0);
+	}
+	note = ":" + client->getFullName() + " QUIT :force quit\r\n";
+	for (channelListIt i; i != _channels.end(); i++)
+	{
+		if (i->second.isUserInChannel(*client->getNick()))
+		{
+			i->second.broadcast(note, *client);
+			i->second.removeChannelUser(*client->getNick());
+		}
+	}
 	rmClient(*client);
-	// for (j = _server_sockets.begin(); j != _server_sockets.end(); j++)
-	// {
-	// 	if (j->fd == sock)
-	// 		break ;
-	// }
-	// if (i != _clients.end())
-	// 	client = i->second;
-	// if (i != _clients.end())
-	// 	_clients.erase(i);
-	// if (j != _server_sockets.end())
-	// 	_server_sockets.erase(j);
-	//erase the client from all the channel
-	// close(sock);
-	//send the quit message to clients of the same channel
-	//right now use broadcast instead
 }
 
 Client	*Server::getClient(std::string const &nick)
@@ -174,4 +174,24 @@ void	Server::rmClient(Client &client)
 		_clients.erase(i);
 	if (j != _server_sockets.end())
 		_server_sockets.erase(j);
+}
+
+Channel		*Server::getChan(std::string const &chan)
+{
+	channelListIt	i;
+	
+	i = _channels.find(chan);
+	if (i == _channels.end())
+		return (NULL);
+	return (&(i->second));
+}
+
+void	Server::rmChan(std::string const &chan)
+{
+	channelListIt	i;
+	
+	i = _channels.find(chan);
+	if (i == _channels.end())
+		return ;
+	_channels.erase(i);
 }

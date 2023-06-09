@@ -19,7 +19,7 @@ void	Server::privmsg(Client &client, Message const &mess)
 	for (i = target.begin(); i != target.end(); i++)
 	{
 		if ((*i)[0] == '&' || (*i)[0] == '#')
-			;//to channel
+			sendToChan(client, mess, *i);
 		else if (!sendToNick(client, mess, *i))
 			this->reply(client, ERR_NOSUCHNICK, i->c_str(), ":No such nick");
 	}
@@ -42,7 +42,7 @@ void	Server::notice(Client &client, Message const &mess)
 	for (i = target.begin(); i != target.end(); i++)
 	{
 		if ((*i)[0] == '&' || (*i)[0] == '#')
-			;//to channel
+			sendToChan(client, mess, *i);
 		else if (!sendToNick(client, mess, *i))
 		{
 			;
@@ -73,7 +73,6 @@ std::vector<std::string>	Server::getTarget(std::string const &str)
 bool	Server::sendToNick(Client &client, Message const &mess, std::string const &nick)
 {
 	Client			*target;
-	// int				nickfd;
 	std::string		note;
 
 	target = getClient(nick);
@@ -81,18 +80,34 @@ bool	Server::sendToNick(Client &client, Message const &mess, std::string const &
 	{
 		return (false);
 	}
-
-	// nickfd = -1;
-	// for (i = _clients.begin(); i != _clients.end(); i++)
-	// {
-	// 	if ((*i->second.getNick()) == nick && i->second.isRegist())
-	// 		nickfd = i->second.getSock();
-	// }
-	// if (nickfd == -1)
-	// {
-	// 	return (false);
-	// }
 	note = ":" + client.getFullName() + " " + *(mess.getCommand()) + " " + *(target->getNick()) + " :" + mess.getParam()[1] + "\r\n";
 	send(target->getSock(), note.c_str(), note.size(), 0);
 	return (true);
+}
+
+void	Server::sendToChan(Client &client, Message const &mess, std::string const &name)
+{
+	bool		response;
+	Channel		*chan;
+	std::string	note;
+	
+	response = true;
+	if (*mess.getCommand() == "NOTICE")
+		response = false;
+	chan = getChan(name);
+	if (chan == NULL)
+	{
+		if (response)
+			reply(client, ERR_NOSUCHCHANNEL, ":NO suck channel", NULL);
+		return ;
+	}
+	if (chan->hasMode('n') && chan->isUserInChannel(*client.getNick()) == false)
+	{
+		if (response)
+			reply(client, ERR_CANNOTSENDTOCHAN, ":cannot send to channel", NULL);
+		return ;
+	}
+	note = ":" + client.getFullName() + " " + *mess.getCommand() \
+			+ " " + name + " :" + mess.getParam()[1] + "\r\n";
+	chan->broadcast(note, client);
 }

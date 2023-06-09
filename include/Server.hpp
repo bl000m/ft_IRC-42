@@ -67,9 +67,9 @@ class Server {
 
 		/*	command execution	*/
 		fn_ptr		getCmd(std::string const &cmd);
-		void		force_quit(int sock);
+		void		force_quit(int sock, bool err);
 
-		std::vector<std::string>	splitCommands(char *buffer);
+		std::vector<std::string>	splitCommands(std::string &buffer);
 
 		/*	connection commands	*/
 		void	pass(Client &client, Message const &mess);
@@ -94,6 +94,8 @@ class Server {
 		void	privmsg(Client &client, Message const &mess);
 		void	notice(Client &client, Message const &mess);
 		bool	sendToNick(Client &client, Message const &mess, std::string const &nick);
+		void	sendToChan(Client &client, Message const &mess, std::string const &chan);
+
 		std::vector<std::string>	getTarget(std::string const &str);
 
 		/*Channel related methods*/
@@ -119,9 +121,10 @@ class Server {
 		void	mode_channel(Client &client, Message const &mess, std::string target);
 
 		/*	client getter and remove	*/
-		Client	*getClient(std::string const &nick);
-		void	rmClient(Client &client);
-
+		Client		*getClient(std::string const &nick);
+		void		rmClient(Client &client);
+		Channel		*getChan(std::string const &chan);
+		void		rmChan(std::string const &chan);
 
 };
 
