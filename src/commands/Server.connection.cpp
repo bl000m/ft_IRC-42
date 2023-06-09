@@ -90,9 +90,9 @@ void	Server::quit(Client &client, Message const &mess)
 		note += mess.getParam()[0].c_str();	
 	}
 	note += "\r\n";
-	for (channelListIt i; i != _channel.end(); i++)
+	for (channelListIt i; i != _channels.end(); i++)
 	{
-		if (isUserInChannel(*client.getNick()))
+		if (i->second.isUserInChannel(*client.getNick()))
 		{
 			i->second.broadcast(note, client);
 			i->second.removeChannelUser(*client.getNick());

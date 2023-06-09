@@ -132,12 +132,12 @@ void	Server::force_quit(int sock, bool err)
 		send(sock, str_err.c_str(), str_err.size(), 0);
 	}
 	note = ":" + client->getFullName() + " QUIT :force quit\r\n";
-	for (channelListIt i; i != _channel.end(); i++)
+	for (channelListIt i; i != _channels.end(); i++)
 	{
-		if (isUserInChannel(*client.getNick()))
+		if (i->second.isUserInChannel(*client->getNick()))
 		{
-			i->second.broadcast(note, client);
-			i->second.removeChannelUser(*client.getNick());
+			i->second.broadcast(note, *client);
+			i->second.removeChannelUser(*client->getNick());
 		}
 	}
 	rmClient(*client);
