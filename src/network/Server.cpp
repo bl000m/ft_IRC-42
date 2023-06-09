@@ -33,7 +33,7 @@ void	Server::run(void)
 {
 	int			poll_ret;
 	pollfd		*current_poll;
-	char		buffer[MAX_BUFFER];
+	char		buffer[MAX_BUFFER * 2];
 	Message		mess;
 
 	std::cout << "Running Server" << std::endl;
@@ -63,29 +63,24 @@ void	Server::run(void)
 				{
 					std::cout << "lets exec" << std::endl;
 					if (ret == CLOSE_SOCKET)
-					{
-						// close(current_poll->fd);
-						// _server_sockets.erase(_server_sockets.begin() + i);
-						// std::cout << _server_sockets.size() << std::endl;
 						force_quit(current_poll->fd);
-					}
 					else
 					{
 						std::cout << "From socket " << current_poll->fd << ": " << buffer << std::endl;
-						strcat(_clients.find(current_poll->fd)->second._buff, buffer);
+						_clients.find(current_poll->fd)->second.catBuff(buffer, ret);
 						/* TEST*/
-						std::vector<std::string> cmds = splitCommands(_clients.find(current_poll->fd)->second._buff);
+						std::vector<std::string> cmds = splitCommands(_clients.find(current_poll->fd)->second.getBuff());
 						for (size_t j = 0; j < cmds.size(); j++)
 						{
 							std::cout << "SINGLE COMMAND: " << cmds[j] << std::endl;
 							if (mess.parse(cmds[j]))
 								execMessage(_clients.find(current_poll->fd)->second, mess);
-							memset(_clients.find(current_poll->fd)->second._buff, 0, MAX_BUFFER);
+							memset(_clients.find(current_poll->fd)->second.getBuff(), 0, MAX_BUFFER);
 						}
 					}
 				}
 				else
-					strcat(_clients.find(current_poll->fd)->second._buff, buffer);
+					_clients.find(current_poll->fd)->second.catBuff(buffer, ret);
 			}
 		}
 	}
