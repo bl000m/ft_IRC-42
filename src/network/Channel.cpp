@@ -243,7 +243,7 @@ void	Channel::removeChannelUser(std::string nickname){
 	Sets a new topic for the channel.
 
 */
-void	Channel::setTopic(std::string newTopic, std::string &nickname){
+void	Channel::setTopic(std::string newTopic, std::string nickname){
 	_topic = newTopic;
 	_topicCreationTime = getCurrentTime();
 	_topicCreatedBy = nickname;
@@ -271,6 +271,13 @@ void 	Channel::broadcast(std::string message, Client client){
 	for (it = _channelUsers.begin(); it != _channelUsers.end(); it++){
 		if (it->first != *(client.getNick()))
 			send(it->second.client->getSock(), message.c_str(), message.size(), 0);
+	}
+}
+
+void Channel::broadcastSenderIncluded(std::string message){
+	channelUsersIt it;
+	for (it = _channelUsers.begin(); it != _channelUsers.end(); it++){
+		send(it->second.client->getSock(), message.c_str(), message.size(), 0);
 	}
 }
 

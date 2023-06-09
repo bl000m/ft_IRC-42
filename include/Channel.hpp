@@ -61,13 +61,14 @@ class Channel {
 		void	removeChannelUser(std::string nickname);
 
 		/* topic */
-		void	setTopic(std::string newTopic, std::string &nickname);
+		void	setTopic(std::string newTopic, std::string nickname);
 		std::string	getTopic();
 		std::string getTimeCreationTopic();
 		std::string getNickCreationTopic();
 
 		/* communicating */
 		void broadcast(std::string message, Client client);
+		void broadcastSenderIncluded(std::string message);
 
 		/* utils */
 		std::string getCurrentTime();
