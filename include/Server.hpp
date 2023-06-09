@@ -67,7 +67,7 @@ class Server {
 
 		/*	command execution	*/
 		fn_ptr		getCmd(std::string const &cmd);
-		void		force_quit(int sock);
+		void		force_quit(int sock, bool err);
 
 		std::vector<std::string>	splitCommands(std::string &buffer);
 

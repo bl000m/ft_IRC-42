@@ -63,7 +63,7 @@ void	Server::run(void)
 				{
 					std::cout << "lets exec" << std::endl;
 					if (ret == CLOSE_SOCKET || ret >= MAX_BUFFER)
-						force_quit(current_poll->fd);
+						force_quit(current_poll->fd, false);
 					else
 					{
 						std::cout << "From socket " << current_poll->fd << ": size: " << ret << " buf: " << buffer << std::endl;
@@ -80,7 +80,7 @@ void	Server::run(void)
 					}
 				}
 				else if (ret >= MAX_BUFFER)
-					force_quit(current_poll->fd);
+					force_quit(current_poll->fd, true);
 				else
 					_clients.find(current_poll->fd)->second.catBuff(buffer, ret);
 			}

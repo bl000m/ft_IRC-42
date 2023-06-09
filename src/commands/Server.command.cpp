@@ -114,16 +114,21 @@ Server::fn_map	Server::cmd_init(void)
 
 Server::fn_map const	Server::_command = cmd_init();
 
-void	Server::force_quit(int sock)
+void	Server::force_quit(int sock, bool err)
 {
 	client_map::iterator			i;
 	Client							*client;
 
-	send(sock, "recv error close socket", 24, 0);
 	i = _clients.find(sock);
 	if (i == _clients.end())
 		return ;
 	client = &(i->second);
+	std::string str_err;
+	if(err)
+	{
+		str_err.append(ERR_INPUTTOOLONG + (client->getFullName()) + std::string(":Input line was too long"));
+		send(sock, str_err.c_str(), str_err.size(), 0);
+	}
 	// broadcast(*client, "QUIT", ":force quit", NULL);
 	rmClient(*client);
 	// for (j = _server_sockets.begin(); j != _server_sockets.end(); j++)
