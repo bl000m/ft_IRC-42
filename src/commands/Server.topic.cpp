@@ -10,7 +10,6 @@ void Server::topic(Client &client, const Message &mess) {
     const std::string topic = mess.getParam()[1];
     Channel *channel = this->getChannel(channelName);
 
-
 	/**
 	Checks if the topic is in present in parameters. If not  the client is notified:
 	- if the channel has already a topic, which topic
