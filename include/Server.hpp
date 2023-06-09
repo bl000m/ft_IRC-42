@@ -118,6 +118,7 @@ class Server {
 		void	mode(Client &client, Message const &mess);
 		void	oper(Client &client, Message const &mess);
 		void	mode_user(Client &client, Message const &mess, std::string target);
+		void	mode_channel(Client &client, Message const &mess, std::string target);
 
 		/*	client getter and remove	*/
 		Client		*getClient(std::string const &nick);

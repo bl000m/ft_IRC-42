@@ -3,7 +3,7 @@
 void	Server::mode(Client &client, Message const &mess)
 {
 	std::string	target;
-	
+
 	if (mess.getParamNum() < 1)
 	{
 		reply(client,  ERR_NEEDMOREPARAMS, "MODE", ":Not enough parameters");
@@ -16,7 +16,7 @@ void	Server::mode(Client &client, Message const &mess)
 	}
 	else
 	{
-		;//mode channel
+		mode_channel(client, mess, target);
 	}
 }
 
@@ -24,7 +24,7 @@ void	Server::mode(Client &client, Message const &mess)
 void	Server::mode_user(Client &client, Message const &mess, std::string target)
 {
 	std::string	mode;
-	
+
 	if (!nick_in_use(target))
 	{
 		reply(client,  ERR_NOSUCHNICK, target.c_str(), ":No such nick");
@@ -46,3 +46,20 @@ void	Server::mode_user(Client &client, Message const &mess, std::string target)
 	reply(client, "MODE", client.getMode().c_str(), NULL);
 }
 
+void	Server::mode_channel(Client &client, Message const &mess, std::string target){
+	std::string	mode;
+	Channel *channel = this->getChannel(target);
+
+	 if (channel == NULL) {
+        this->reply(client,  ERR_NOSUCHCHANNEL, target.c_str(), ":No such channel");
+        return;
+    }
+
+	mode = mess.getParam()[1];
+	if (mess.getParamNum() < 2){
+		std::string channelModeMessage = ":FT_IRC 324 " + *(client.getNick()) + " "\
+					 + target + " " + channel->getMode();
+		send(client.getSock(), channelModeMessage.c_str(), channelModeMessage.size(), 0);
+		return ;
+	}
+}
