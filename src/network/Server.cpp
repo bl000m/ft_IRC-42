@@ -152,7 +152,8 @@ bool	Server::newClientPoll(void)
 
 void	closeSocket(pollfd &pfd)
 {
-	close(pfd.fd);
+	if (pfd.fd > 2)
+		close(pfd.fd);
 }
 
 void    sigExit(int code)
