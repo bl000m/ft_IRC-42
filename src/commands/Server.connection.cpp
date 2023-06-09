@@ -82,15 +82,22 @@ void	Server::user(Client &client, Message const &mess)
 
 void	Server::quit(Client &client, Message const &mess)
 {
-	char const		*reason;
 	std::string		note;
 
-	reason = NULL;
+	note = ":" + client.getFullName() + " QUIT Quit: ";
 	if (mess.getParamNum() > 0)
-		reason = mess.getParam()[0].c_str();
-	//send the quit message to clients of the same channel
-	//right now use broadcast instead
-	broadcast(client, "QUIT", "Quit: ", reason);
+	{
+		note += mess.getParam()[0].c_str();	
+	}
+	note += "\r\n";
+	for (channelListIt i; i != _channel.end(); i++)
+	{
+		if (isUserInChannel(*client.getNick()))
+		{
+			i->second.broadcast(note, client);
+			i->second.removeChannelUser(*client.getNick());
+		}
+	}
 	note = ":localhost ERROR :client quit\r\n";
 	send(client.getSock(), note.c_str(), note.size(), 0);
 	rmClient(client);
