@@ -84,6 +84,7 @@ class Server {
 		/* channel operators related commands */
 		void 	invite(Client &client, Message const &mess);
 		void 	kick(Client &client, Message const &mess);
+		void 	topic(Client &client, Message const &mess);
 
 		/*	connection command helper	*/
 		static void		welcome_mess(Client const &client);
