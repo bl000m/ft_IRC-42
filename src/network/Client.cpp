@@ -9,6 +9,7 @@ Client::Client(void)
 	_sock_len(-1)
 {
 	std::memset(&_sock_addr, 0, sizeof(sockaddr_in));
+	memset(_buff, 0, MAX_BUFFER);
 }
 
 Client::Client(Client const &client)
@@ -25,6 +26,7 @@ Client::Client(Client const &client)
 		_user = new std::string(*client._user);
 	if (client._host)
 		_host = new std::string(*client._host);
+	memset(_buff, 0, MAX_BUFFER);
 }
 
 Client::~Client(void)
@@ -208,6 +210,26 @@ std::string		Client::getMode(void) const
 	if (_wallop)
 		temp += "w";
 	return (temp);
+}
+
+char	*Client::getBuff(void)
+{
+	return (_buff);
+}
+
+void	Client::catBuff(char *buff, int size)
+{
+	int	nbuff_size;
+
+	nbuff_size = size + strlen(_buff);
+	if (nbuff_size > MAX_BUFFER)
+	{
+		strncat(_buff, buff, nbuff_size - MAX_BUFFER);
+		_buff[MAX_BUFFER - 1] = '\r';
+		_buff[MAX_BUFFER - 2] = '\n';
+		return ;
+	}
+	strcat(_buff, buff);
 }
 
 /*	private function	*/
