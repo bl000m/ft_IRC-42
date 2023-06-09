@@ -5,19 +5,27 @@ Invites a client to join a channel on the server.
 @param client The client to be invited.
 @param message The message containing the invite command and parameters.
 */
-void Server::invite(Client &client, const Message &mess) {
+void Server::topic(Client &client, const Message &mess) {
+    const std::string channelName = mess.getParam()[0];
+    const std::string topic = mess.getParam()[1];
+    Channel *channel = this->getChannel(channelName);
+
     if (mess.getParamNum() < 2) {
-        this->reply(client,  ERR_NEEDMOREPARAMS, "INVITE", ":Not enough parameters");
+        if (channel->getTopic() != NULL){
+            std::string topicMessage = ":FT_IRC " + RPL_TOPIC + *(client.getNick()) + " " + channelName + " " \
+				+ ":No topic is set";
+	        send(getClient(nickname)->getSock(), topicMessage.c_str(), topicMessage.size(), 0);
+        }
+        else{
+            this->reply(client,  RPL_NOTOPIC, channelName, ":No topic is set");
+        }
         return;
     }
 
-    const std::string nickname = mess.getParam()[0];
-    const std::string channelName = mess.getParam()[1];
 
 	/**
 	Checks if the number of parameters in the invite message is sufficient.
 	*/
-    Channel *channel = this->getChannel(channelName);
     if (channel == NULL) {
         this->reply(client,  ERR_NOSUCHCHANNEL, channelName.c_str(), ":No such channel");
         return;
