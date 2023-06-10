@@ -55,11 +55,16 @@ void	Server::mode_channel(Client &client, Message const &mess, std::string targe
         return;
     }
 
-	mode = mess.getParam()[1];
 	if (mess.getParamNum() < 2){
 		std::string channelModeMessage = ":FT_IRC 324 " + *(client.getNick()) + " "\
-					 + target + " " + channel->getMode();
+					 + target + " " + channel->getMode() + "\n";
 		send(client.getSock(), channelModeMessage.c_str(), channelModeMessage.size(), 0);
 		return ;
+	}
+
+	mode = mess.getParam()[1];
+	if (!channel->isUserOperator(*(client.getNick()))) {
+        this->reply(client,  ERR_CHANOPRIVSNEEDED, target.c_str(), ":You're not channel operator");
+		return;
 	}
 }

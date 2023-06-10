@@ -51,17 +51,16 @@ void Server::kick(Client &client, const Message &mess) {
 	*/
     if (!channel->isUserInChannel(nickname)) {
 		std::string NotInChanMessage = ":FT_IRC 441 " + *(client.getNick()) + " " + nickname + " "\
-					 + channelName + " :They aren't on that channel";
+					 + channelName + " :They aren't on that channel\n";
 		send(client.getSock(), NotInChanMessage.c_str(), NotInChanMessage.size(), 0);
         return;
     }
 	else{
 		Client *kickedUser = this->getClient(nickname);
-		std::string persMessage = ": " + nickname + "!" + *(kickedUser->getUser()) + "@localhost " + "KICK" + " "\
-					+ channelName + " " + *(client.getNick()) + " " + reason;
-		send(kickedUser->getSock(), persMessage.c_str(), persMessage.size(), 0);
+		std::string kickMessage = ": " + nickname + "!" + *(kickedUser->getUser()) + "@localhost " + "KICK" + " "\
+					+ channelName + " " + *(client.getNick()) + " " + reason + "\n";
+		send(kickedUser->getSock(), kickMessage.c_str(), kickMessage.size(), 0);
 		channel->removeChannelUser(nickname);
-		std::string kickMessage = "kick meassage to be written";
 		channel->broadcast(kickMessage, client);
 	}
 }
