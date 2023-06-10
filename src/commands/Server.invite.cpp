@@ -60,6 +60,6 @@ void Server::invite(Client &client, const Message &mess) {
 	Constructs the invite message and sends it to the invited client.
 	*/
 	std::string inviteMessage = ":" + *(client.getNick()) + "!" + *(client.getUser()) + "@" \
-				+ "localhost" + " " + "INVITE" + nickname + " " + channelName + "\n";
+				+ "localhost" + " " + "INVITE" + " " + nickname + " " + channelName + "\n";
 	send(getClient(nickname)->getSock(), inviteMessage.c_str(), inviteMessage.size(), 0);
 }
