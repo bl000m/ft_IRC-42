@@ -14,19 +14,20 @@ void Server::topic(Client &client, const Message &mess) {
 	- if not, topic not set
 	*/
     if (mess.getParamNum() < 2) {
-        if (channel->getTopic().c_str() != NULL){
-            std::string topicMessage = std::string(":FT_IRC ") + RPL_TOPIC + " " + *(client.getNick()) + " " + channelName + " " \
-				+ ":" + channel->getTopic().c_str();
-			std::string topicWhoTimeMessage = std::string(":FT_IRC ") + RPL_TOPICWHOTIME + " " + *(client.getNick()) + " " + channelName + " " \
-				+ channel->getNickCreationTopic() + " " + channel->getTimeCreationTopic();
-	        send(client.getSock(), topicMessage.c_str(), topicMessage.size(), 0);
+        if (channel->getTopic().empty()){
+			std::cout << "channel->getTopic().c_str() RETURN NULL" << std::endl;
+            this->reply(client,  RPL_NOTOPIC, channelName.c_str(), ":No topic is set");
         }
         else{
-            this->reply(client,  RPL_NOTOPIC, channelName.c_str(), ":No topic is set");
+            std::string topicMessage = std::string(":FT_IRC ") + RPL_TOPIC + " " + *(client.getNick()) + " " + channelName + " " \
+				+ ":" + channel->getTopic().c_str() + "\n";
+			std::string topicWhoTimeMessage = std::string(":FT_IRC ") + RPL_TOPICWHOTIME + " " + *(client.getNick()) + " " + channelName + " " \
+				+ channel->getNickCreationTopic() + " " + channel->getTimeCreationTopic() + "\n";
+	        send(client.getSock(), topicMessage.c_str(), topicMessage.size(), 0);
+	        send(client.getSock(), topicWhoTimeMessage.c_str(), topicWhoTimeMessage.size(), 0);
         }
         return;
     }
-	std::cout << "HERRRRRREEE:" << mess.getParam()[0] << std::endl;
 
     std::string topic = mess.getParam()[1];
 	/**
@@ -57,6 +58,6 @@ void Server::topic(Client &client, const Message &mess) {
 	Creates message to be broadcasted to all the channel members when a topic is set/changed/cleared (if topic == "")
 	*/
 	channel->setTopic(topic, (*(client.getNick())));
-	std::string changeTopicMessage = ":" + *(client.getNick()) + " " + "TOPIC" + ": " + topic + " on channel: " + channelName;
+	std::string changeTopicMessage = ":" + *(client.getNick()) + " " + "TOPIC" + ": " + topic + " on channel: " + channelName + "\n";
 	channel->broadcastSenderIncluded(changeTopicMessage);
 }
