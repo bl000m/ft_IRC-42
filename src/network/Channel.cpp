@@ -269,12 +269,7 @@ void	Channel::setTopic(std::string newTopic, std::string nickname){
 
 */
 std::string	Channel::getTopic(){
-	 if (_topic.empty()) {
-		std::cout << "TOPIC IS EMPTYYYY" << std::endl;
-        return NULL;
-    } else {
         return _topic;
-    }
 }
 
 std::string Channel::getTimeCreationTopic(){
