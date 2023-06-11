@@ -248,13 +248,13 @@ bool Server::setMode(std::string mode, Channel* channel, Client& client)
                 handleTMode(op, channel, client);
                 break;
             case 'o':
-                unknown = handleOMode(op, mode, i, channel, client);
+                unknown = handleOMode(op, mode, i, channel, client, 'o');
                 break;
             case 'k':
-                handleKMode(op, mode, i, channel, client);
+                handleKMode(op, mode, i, channel, client, 'k');
                 break;
             case 'l':
-                handleLMode(op, mode, i, channel, client);
+                handleLMode(op, mode, i, channel, client, 'l');
                 break;
             default:
                 unknown = true;
@@ -288,9 +288,9 @@ void Server::handleTMode(bool op, Channel* channel, Client& client)
     channel->broadcastSenderIncluded(message);
 }
 
-bool Server::handleOMode(bool op, const std::string& mode, std::string::size_type& i, Channel* channel, Client& client)
+bool Server::handleOMode(bool op, const std::string& mode, std::string::size_type& i, Channel* channel, Client& client, char option)
 {
-    std::string nickname = extractParameter(mode, i, '+', '-');
+    std::string nickname = extractParameter(mode, i, '+', '-', option);
 
     if (nickname.empty())
         return true; // No nickname provided, mark as unknown
@@ -317,9 +317,9 @@ bool Server::handleOMode(bool op, const std::string& mode, std::string::size_typ
     return false;
 }
 
-void Server::handleKMode(bool op, const std::string& mode, std::string::size_type& i, Channel* channel, Client& client)
+void Server::handleKMode(bool op, const std::string& mode, std::string::size_type& i, Channel* channel, Client& client, char option)
 {
-    std::string password = extractParameter(mode, i, '+', '-');
+    std::string password = extractParameter(mode, i, '+', '-', option);
 
     if (op)
     {
@@ -340,9 +340,9 @@ void Server::handleKMode(bool op, const std::string& mode, std::string::size_typ
     }
 }
 
-void Server::handleLMode(bool op, const std::string& mode, std::string::size_type& i, Channel* channel, Client& client)
+void Server::handleLMode(bool op, const std::string& mode, std::string::size_type& i, Channel* channel, Client& client, char option)
 {
-    std::string limit = extractParameter(mode, i, '+', '-');
+    std::string limit = extractParameter(mode, i, '+', '-', option);
 
     if (op)
     {
@@ -370,13 +370,13 @@ std::string Server::buildModeMessage(Channel* channel, const Client& client, con
     return message;
 }
 
-std::string Server::extractParameter(const std::string& mode, std::string::size_type& i, char op1, char op2)
+std::string Server::extractParameter(const std::string& mode, std::string::size_type& i, char op1, char op2, char option)
 {
     std::string parameter;
 
     while (i < mode.size() && mode[i] != op1 && mode[i] != op2)
     {
-        if (mode[i] == ' ' || mode[i] == 'l')
+        if (mode[i] == ' ' || mode[i] == option)
             i++;
         parameter += mode[i];
         i++;
