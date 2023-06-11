@@ -117,22 +117,25 @@ Server::fn_map const	Server::_command = cmd_init();
 
 void	Server::force_quit(int sock, bool err)
 {
-	client_map::iterator	i;
-	Client					*client;
-	std::string 			str_err;
-	std::string				note;
+	Client				*client;
+	std::string 		str_err;
+	std::string			note;
+	channelListIt		i;
 
-	i = _clients.find(sock);
-	if (i == _clients.end())
+	if (_clients.find(sock) == _clients.end())
 		return ;
-	client = &(i->second);
+	client = &(_clients.find(sock)->second);
 	if (err)
 	{
-		str_err.append(ERR_INPUTTOOLONG + (client->getFullName()) + std::string(":Input line was too long\n"));
-		send(sock, str_err.c_str(), str_err.size(), 0);
+		reply(*client, ERR_INPUTTOOLONG, ":Input too long", NULL);
+	}
+	if (!client->isRegist())
+	{
+		rmClient(*client);
+		return ;
 	}
 	note = ":" + client->getFullName() + " QUIT :force quit\r\n";
-	for (channelListIt i; i != _channels.end(); i++)
+	for (i = _channels.begin(); i != _channels.end(); i++)
 	{
 		if (i->second.isUserInChannel(*client->getNick()))
 		{
@@ -169,7 +172,7 @@ void	Server::rmClient(Client &client)
 			break ;
 	}
 	close(client.getSock());
-	//erase clients from all the channel
+	//erase clients from client list and poll list
 	if (i != _clients.end())
 		_clients.erase(i);
 	if (j != _server_sockets.end())
