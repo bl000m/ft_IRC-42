@@ -110,6 +110,22 @@ void Channel::setUserAsOperator(std::string nickname){
         it->second.prefix = "@";
 }
 
+void Channel::removeUserAsOperator(std::string nickname){
+	channelUsersIt it;
+	it = _channelUsers.find(nickname);
+    if (it != _channelUsers.end())
+        it->second.prefix = "+";
+}
+
+void Channel::setMemberLimit(const std::string& limit) {
+	std::istringstream ss(limit);
+	int limitValue;
+	ss >> limitValue;
+	if (!ss.fail() && !ss.eof() && limitValue > 0 && limitValue <= 4096) {
+		_memberLimit = limitValue;
+	}
+}
+
 
 /*  <<<<<<<<<<<<<<<< SPECIFIC TO CHANNEL OPERATORS >>>>>>>>>>>>>>>>  */
 
