@@ -46,6 +46,14 @@ void	Server::mode_user(Client &client, Message const &mess, std::string target)
 	reply(client, "MODE", client.getMode().c_str(), NULL);
 }
 
+/**
+ CHANNEL MODES:
+ - o : channel operator status to specified nickname
+ - t : topic is locked and can only be changed by channel operator
+ - k : key (password) protected channel => locks the channel with given password. When joining the channel every user must specify the password to access it
+ - l : user limit => only the given number of members can be in the channel. If getUsersCount >= limit no other user is accepted
+ - i : invite only => clients must be invited to join the channel when this mode is set
+*/
 void	Server::mode_channel(Client &client, Message const &mess, std::string target){
 	std::string	mode;
 	Channel *channel = this->getChannel(target);
