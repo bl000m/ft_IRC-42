@@ -83,6 +83,10 @@ void	Server::mode_channel(Client &client, Message const &mess, std::string targe
 	}
 
 	mode = mess.getParam()[1];
+	for (int i = 2; i < mess.getParamNum(); i++)
+	{
+		mode += mess.getParam()[i];
+	}
 	std::cout << "this is MODE: " << mode << std::endl;
 	if (setMode(mode, channel, client))
 		reply(client, ERR_UMODEUNKNOWNFLAG, ":Unknown MODE flag", NULL);
@@ -93,9 +97,9 @@ bool	Server::setMode(std::string mode, Channel *channel, Client &client)
 	std::string::size_type	i;
 	bool	unknown = false;
 	bool	op = true;
-	std::string nickname;
 	std::string password;
 	std::string	limit;
+	std::string nickname;
 	std::string message;
 
 	if (mode.size() < 1 || (mode[0] != '+' && mode[0] != '-'))
@@ -139,12 +143,13 @@ bool	Server::setMode(std::string mode, Channel *channel, Client &client)
 				}
 				break ;
 			case 'o':
-				while (mode[i] != '+' && mode[i] != '-'){
-					if (mode[i] == ' ')
+				while (i < mode.size() && mode[i] != '+' && mode[i] != '-'){
+					if (mode[i] == ' ' || mode[i] == 'o')
 						i++;
 					nickname += mode[i];
 					i++;
 				}
+				std::cout << "nickname in case 'o'" << nickname << std::endl;
 				if (!channel->isUserInChannel(nickname)){
 					reply(client,  ERR_NOSUCHNICK, nickname.c_str(), ":No such nick");
 					unknown = true;
@@ -168,8 +173,8 @@ bool	Server::setMode(std::string mode, Channel *channel, Client &client)
                 break;
 			case 'k':
 				if (op == true){
-					while (mode[i] != '+' && mode[i] != '-'){
-						if (mode[i] == ' ')
+					while (i < mode.size() && mode[i] != '+' && mode[i] != '-'){
+						if (mode[i] == ' ' || mode[i] == 'k')
 							i++;
 						password += mode[i];
 						i++;
@@ -190,8 +195,8 @@ bool	Server::setMode(std::string mode, Channel *channel, Client &client)
 				break ;
 			case 'l':
 				if (op == true){
-					while (mode[i] != '+' && mode[i] != '-'){
-						if (mode[i] == ' ')
+					while (i < mode.size() && mode[i] != '+' && mode[i] != '-'){
+						if (mode[i] == ' ' || mode[i] == 'l')
 							i++;
 						limit += mode[i];
 						i++;

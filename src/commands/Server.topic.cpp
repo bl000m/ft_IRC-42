@@ -8,6 +8,18 @@ Sets a topic for a channel.
 void Server::topic(Client &client, const Message &mess) {
     const std::string channelName = mess.getParam()[0];
     Channel *channel = this->getChannel(channelName);
+	if (channel == NULL) {
+        this->reply(client,  ERR_NOSUCHCHANNEL, channelName.c_str(), ":No such channel");
+        return;
+    }
+	/**
+	Checks if Client trying to set the topic is a channel member.
+	*/
+    if (!channel->isUserInChannel(*(client.getNick()))) {
+        this->reply(client,  ERR_NOTONCHANNEL, channelName.c_str(), ":You're not on that channel");
+        return;
+    }
+
 	/**
 	Checks if the topic is in present in parameters. If not  the client is notified:
 	- if the channel has already a topic, which topic
@@ -15,7 +27,6 @@ void Server::topic(Client &client, const Message &mess) {
 	*/
     if (mess.getParamNum() < 2) {
         if (channel->getTopic().empty()){
-			std::cout << "channel->getTopic().c_str() RETURN NULL" << std::endl;
             this->reply(client,  RPL_NOTOPIC, channelName.c_str(), ":No topic is set");
         }
         else{
@@ -38,13 +49,6 @@ void Server::topic(Client &client, const Message &mess) {
         return;
     }
 
-	/**
-	Checks if Client trying to set the topic is a channel member.
-	*/
-    if (!channel->isUserInChannel(*(client.getNick()))) {
-        this->reply(client,  ERR_NOTONCHANNEL, channelName.c_str(), ":You're not on that channel");
-        return;
-    }
 
 	/**
 	Checks if Client trying to set the topic for a protected topic channel has operator privileges.
