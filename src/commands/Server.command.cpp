@@ -172,7 +172,7 @@ void	Server::rmClient(Client &client)
 			break ;
 	}
 	close(client.getSock());
-	//erase clients from all the channel
+	//erase clients from client list and poll list
 	if (i != _clients.end())
 		_clients.erase(i);
 	if (j != _server_sockets.end())
