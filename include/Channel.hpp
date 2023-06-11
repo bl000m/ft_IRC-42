@@ -54,7 +54,7 @@ class Channel {
 		void	removeMode(char mode);
 		bool	hasMode(char mode);
 		std::string getMode();
-		bool	setMode(std::string mode);
+		// bool	setMode(std::string mode);
 
 		/* invite */
 		void	inviteUser(std::string nickname);

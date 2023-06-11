@@ -84,6 +84,7 @@ class Server {
 		void 	invite(Client &client, Message const &mess);
 		void 	kick(Client &client, Message const &mess);
 		void 	topic(Client &client, Message const &mess);
+		bool	setMode(std::string mode, Channel *channel, Client &client);
 
 		/*	connection command helper	*/
 		static void		welcome_mess(Client const &client);

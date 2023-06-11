@@ -20,9 +20,9 @@ void Server::topic(Client &client, const Message &mess) {
         }
         else{
             std::string topicMessage = std::string(":FT_IRC ") + RPL_TOPIC + " " + *(client.getNick()) + " " + channelName + " " \
-				+ ":" + channel->getTopic().c_str() + "\n";
+				+ ":" + channel->getTopic().c_str() + "\r\n";
 			std::string topicWhoTimeMessage = std::string(":FT_IRC ") + RPL_TOPICWHOTIME + " " + *(client.getNick()) + " " + channelName + " " \
-				+ channel->getNickCreationTopic() + " " + channel->getTimeCreationTopic() + "\n";
+				+ channel->getNickCreationTopic() + " " + channel->getTimeCreationTopic() + "\r\n";
 	        send(client.getSock(), topicMessage.c_str(), topicMessage.size(), 0);
 	        send(client.getSock(), topicWhoTimeMessage.c_str(), topicWhoTimeMessage.size(), 0);
         }
@@ -58,6 +58,6 @@ void Server::topic(Client &client, const Message &mess) {
 	Creates message to be broadcasted to all the channel members when a topic is set/changed/cleared (if topic == "")
 	*/
 	channel->setTopic(topic, (*(client.getNick())));
-	std::string changeTopicMessage = ":" + *(client.getNick()) + " " + "TOPIC" + ": " + topic + " on channel: " + channelName + "\n";
+	std::string changeTopicMessage = ":" + *(client.getNick()) + " " + "TOPIC" + ": " + topic + " on channel: " + channelName + "\r\n";
 	channel->broadcastSenderIncluded(changeTopicMessage);
 }
