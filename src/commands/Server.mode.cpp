@@ -49,10 +49,17 @@ void	Server::mode_user(Client &client, Message const &mess, std::string target)
 /**
  CHANNEL MODES:
  - o : channel operator status to specified nickname
+ => MODE #channel (+ or -)o username
  - t : topic is locked and can only be changed by channel operator
+ => MODE #channel -t
  - k : key (password) protected channel => locks the channel with given password. When joining the channel every user must specify the password to access it
+ => MODE #channel -k password
  - l : user limit => only the given number of members can be in the channel. If getUsersCount >= limit no other user is accepted
+ => MODE #channel -l user_limit
  - i : invite only => clients must be invited to join the channel when this mode is set
+ => MODE #channel -i
+
+ All of them => MODE #channel +o nickname -i -k password -t -l limit_number
 */
 void	Server::mode_channel(Client &client, Message const &mess, std::string target){
 	std::string	mode;
@@ -70,9 +77,11 @@ void	Server::mode_channel(Client &client, Message const &mess, std::string targe
 		return ;
 	}
 
-	mode = mess.getParam()[1];
 	if (!channel->isUserOperator(*(client.getNick()))) {
         this->reply(client,  ERR_CHANOPRIVSNEEDED, target.c_str(), ":You're not channel operator");
 		return;
 	}
+
+	mode = mess.getParam()[1];
+
 }

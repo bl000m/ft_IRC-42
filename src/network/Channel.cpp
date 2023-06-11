@@ -110,6 +110,22 @@ void Channel::setUserAsOperator(std::string nickname){
         it->second.prefix = "@";
 }
 
+void Channel::removeUserAsOperator(std::string nickname){
+	channelUsersIt it;
+	it = _channelUsers.find(nickname);
+    if (it != _channelUsers.end())
+        it->second.prefix = "+";
+}
+
+void Channel::setMemberLimit(const std::string& limit) {
+	std::istringstream ss(limit);
+	int limitValue;
+	ss >> limitValue;
+	if (!ss.fail() && !ss.eof() && limitValue > 0 && limitValue <= 4096) {
+		_memberLimit = limitValue;
+	}
+}
+
 
 /*  <<<<<<<<<<<<<<<< SPECIFIC TO CHANNEL OPERATORS >>>>>>>>>>>>>>>>  */
 
@@ -203,6 +219,75 @@ std::string	Channel::getMode(){
 	if (hasMode('i'))
 		res += "i";
 	return (res);
+}
+
+bool	Channel::setMode(std::string mode)
+{
+	std::string::size_type	i;
+	bool	unknown = false;
+	bool	op = true;
+	std::string nickname;
+	std::string password;
+	std::string	limit;
+
+	if (mode.size() < 1 || (mode[0] != '+' && mode[0] != '-'))
+		return (false);
+	for (i = 0; i < mode.size(); i++)
+	{
+		switch(static_cast<int>(mode[i]))
+		{
+			case '+':
+				op = true;
+				break ;
+			case '-':
+				op = false;
+				break ;
+			case 'i':
+				addMode('i');
+				break ;
+			case 't':
+				addMode('t');
+				break ;
+			case 'o':
+				while (mode[i] != '+' && mode[i] != '-'){
+					if (mode[i] == ' ')
+						i++;
+					nickname += mode[i];
+					i++;
+				}
+				if (!nickname.empty()){
+					if (op == false)
+						removeUserAsOperator(nickname);
+					else
+						setUserAsOperator(nickname);
+				}
+                else
+                    unknown = true; // No nickname provided, mark as unknown
+                break;
+			case 'k':
+				while (mode[i] != '+' && mode[i] != '-'){
+					if (mode[i] == ' ')
+						i++;
+					password += mode[i];
+					i++;
+				}
+				if (!password.empty())
+					setPassword(password);
+				break ;
+			case 'l':
+				while (mode[i] != '+' && mode[i] != '-'){
+					if (mode[i] == ' ')
+						i++;
+					limit += mode[i];
+					i++;
+				}
+				setMemberLimit(limit);
+				break ;
+			default:
+				unknown = true;
+		}
+	}
+	return (unknown);
 }
 
 /* --------------- invite ---------------- */
