@@ -1,38 +1,38 @@
-NAME		= ircserv
+NAME       := ircserv
+CC         := c++
+FLAGS      := -Wall -Wextra -Werror -std=c++98
+RM         := rm -rf
 
-CC			= c++
-FLAGS		= -Wall -Wextra -Werror -std=c++98
-RM			= rm -rf
+OBJDIR     := ./objects
+SRCSDIR    := ./src
+HEADDIR    := ./include
 
-OBJDIR = 	./objects
-SRCSDIR=	./src
-HEADDIR =  	./include
+FILES      := main network/Server network/Client \
+             network/Channel \
+             commands/Server.connection \
+             commands/Server.command \
+             commands/Message \
+             commands/Server.privmsg \
+             commands/Server.join \
+             commands/Server.queries \
+             commands/Server.mode \
+             commands/Server.channel \
+             commands/Server.invite \
+             commands/Server.kick \
+             commands/Server.topic
 
-FILES		= main network/Server  network/Client \
-			network/Channel \
-			commands/Server.connection \
-			commands/Server.command \
-			commands/Message \
-			commands/Server.privmsg \
-			commands/Server.join \
-			commands/Server.queries \
-			commands/Server.mode \
-			commands/Server.channel \
-			commands/Server.invite \
-			commands/Server.kick \
-			commands/Server.topic
+SRC        := $(FILES:%=$(SRCSDIR)/%.cpp)
+OBJ        := $(addprefix $(OBJDIR)/, $(FILES:%=%.o))
+DEPS       := $(wildcard $(HEADDIR)/*.hpp)
 
-SRC			= $(FILES:=.cpp)
-OBJ			= $(addprefix $(OBJDIR)/, $(FILES:=.o))
-
-#Colors:
-YELLOW		=	\e[1;33m
-GREEN		=	\e[1;32m
-BLUE		=	\e[1;34m
-PURPLE		=	\e[1;35m
-UNDER_WHITE	=	\e[4;37m
-BOLD_WHITE	=	\e[1;37m
-BACK_WHITE	=	\e[0m
+# Colors
+YELLOW     := \e[1;33m
+GREEN      := \e[1;32m
+BLUE       := \e[1;34m
+PURPLE     := \e[1;35m
+UNDER_WHITE:= \e[4;37m
+BOLD_WHITE := \e[1;37m
+BACK_WHITE := \e[0m
 
 all: $(NAME)
 
@@ -50,8 +50,15 @@ $(OBJDIR)/%.o: $(SRCSDIR)/%.cpp
 	@mkdir -p $(dir $@)
 	@$(CC) $(FLAGS) -I $(HEADDIR) -c $< -o $@
 
+$(OBJ): | $(OBJDIR)
+
+$(OBJDIR):
+	@mkdir -p $(OBJDIR)
+
+$(OBJ): $(DEPS)
+
 clean:
-	@$(RM) $(OBJDIR) $(OBJ)
+	@$(RM) $(OBJDIR)
 	@printf "\nI removed all the object files as you asked\n\n"
 
 fclean: clean
