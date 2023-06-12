@@ -173,6 +173,9 @@ bool	Server::nick_valid(std::string const &nick)
 	return (true);
 }
 
+/*
+	Not all isupport message are implemented
+*/
 void	Server::welcome_mess(Client const &client)
 {
 	reply(client, RPL_WELCOME, ":Welcome to our network", NULL);
@@ -180,20 +183,7 @@ void	Server::welcome_mess(Client const &client)
 	reply(client, RPL_CREATED, ":This version is created yesterday", NULL);
 	reply(client, RPL_MYINFO, "<servername> <version> <available user modes> <available channel modes>", NULL);
 	reply(client, RPL_ISUPPORT,
-		"AWAYLEN=100 CASEMAPPING=ascii CHANLIMIT=#&: CHANNELLEN=32 CHANTYPES=# HOSTLEN=64 KICKLEN=255 MAXTARGETS=100 NICKLEN=31 TOPICLEN=307 USERLEN=18", " :are supported by this server");
+		" CASEMAPPING=ascii CHANLIMIT=#&: CHANTYPES=# ", " :are supported by this server");
 	reply(client,  RPL_UMODEIS, client.getMode().c_str(), NULL);
 	reply(client,  ERR_NOMOTD, "no MOTD", NULL);
-	/*
-		The value of below isupoort parameter
-		should be decide and completed later:
-
-		chanmode
-		elist
-		maxlist
-		modes
-		prefix
-		STATUSMSG
-		TARGMAX
-		EXCEPTS
-	*/
 }
