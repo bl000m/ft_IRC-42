@@ -8,7 +8,7 @@
 Channel::Channel(Client *oper, std::string name): _name(name), _topic(""), _modes(0){
 		if (!checkChannelName(name)) {
         throw std::invalid_argument("Invalid channel name: " + name);
-    }
+    } 
 		user newChannelUser;
 		std::string nickname = *(oper->getNick());
 		newChannelUser.client = oper;
@@ -92,6 +92,10 @@ Channel::channelUsers Channel::getChannelUsers(){
 */
 size_t Channel::getUsersCount(){
 	return _channelUsers.size();
+}
+
+int	Channel::getMemberLimit(){
+	return _memberLimit;
 }
 
 /* --------------- Channel data related setters ---------------- */

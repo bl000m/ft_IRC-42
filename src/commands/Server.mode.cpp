@@ -256,7 +256,7 @@ std::string Server::extractParameter(const std::string& mode, std::string::size_
     return parameter;
 }
 
-// bool	Server::setMode(std::string mode, Channel *channel, Client &client)
+/* bool	Server::setMode(std::string mode, Channel *channel, Client &client)
 // {
 // 	std::string::size_type	i;
 // 	bool	unknown = false;
@@ -384,4 +384,4 @@ std::string Server::extractParameter(const std::string& mode, std::string::size_
 // 		}
 // 	}
 // 	return (unknown);
-// }
+// }*/
