@@ -31,12 +31,12 @@ void	Server::wallops(Client &client, Message const &mess)
 	}
 }
 
-//who
-
 void	Server::kill(Client &client, Message const &mess)
 {
-	Client		*victim;
-	std::string	note;
+	Client				*victim;
+	std::string			note_to_all;
+	std::string			note_to_vic;
+	channelListIt		i;
 	
 	if (mess.getParamNum() < 2)
 	{
@@ -54,9 +54,17 @@ void	Server::kill(Client &client, Message const &mess)
 		this->reply(client, ERR_NOSUCHNICK, mess.getParam()[0].c_str(), ":No such nick");
 		return ;
 	}
-	//send to everyone sharing a channel, right now use broadcast instead
-	broadcast(*victim, "QUIT :killed", client.getFullName().c_str(), mess.getParam()[1].c_str());
-	note = ":localhost ERROR :killed " + client.getFullName() + " " + mess.getParam()[1] + "\r\n";
-	send(victim->getSock(), note.c_str(), note.size(), 0);
+	note_to_all = ":" + victim->getFullName() + " QUIT Killed " + *client.getNick() + "\r\n";
+	for (i = _channels.begin(); i != _channels.end(); i++)
+	{
+		if (i->second.isUserInChannel(*victim->getNick()))
+		{
+			i->second.broadcast(note_to_all, *victim);
+			i->second.removeChannelUser(*victim->getNick());
+		}
+	}
+	note_to_vic = ":localhost ERROR :killed " + client.getFullName() + " " + mess.getParam()[1] + "\r\n";
+	send(victim->getSock(), note_to_all.c_str(), note_to_all.size(), 0);
+	send(victim->getSock(), note_to_vic.c_str(), note_to_vic.size(), 0);
 	rmClient(*victim);
 }
