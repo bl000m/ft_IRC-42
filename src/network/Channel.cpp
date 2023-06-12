@@ -91,6 +91,10 @@ size_t Channel::getUsersCount(){
 	return _channelUsers.size();
 }
 
+int	Channel::getMemberLimit(){
+	return _memberLimit;
+}
+
 /* --------------- Channel data related setters ---------------- */
 
 /*
