@@ -99,7 +99,7 @@ void	Server::mode_channel(Client &client, Message const &mess, std::string targe
 	}
 
 	// std::cout << "this is MODE: " << mode << std::endl;
-	// if (setMode(mode, channel, client))
+	// if (setMode(channel, client))
 	// 	reply(client, ERR_UMODEUNKNOWNFLAG, ":Unknown MODE flag", NULL);
 }
 
@@ -157,47 +157,52 @@ bool Server::parseChannelModes(const std::string& modeString, Message const &mes
 }
 
 
-bool Server::setMode(std::string mode, Channel* channel, Client& client)
-{
-    std::string::size_type i;
-    bool unknown = false;
-    bool op = true;
+// bool Server::setMode(Channel* channel, Client& client)
+// {
+// 	channelModeList it;
 
-    if (mode.size() < 1 || (mode[0] != '+' && mode[0] != '-'))
-        return false;
+// 	for (it = _channelModes.begin(); it != _channelModes.end(); it++){
+// 		if (it->first == "+i")
+// 	}
+//     std::string::size_type i;
+//     bool unknown = false;
+//     bool op = true;
 
-    for (i = 0; i < mode.size(); i++)
-    {
-        switch (mode[i])
-        {
-            // case '+':
-            //     op = true;
-            //     break;
-            // case '-':
-            //     op = false;
-            //     break;
-            case 'i':
-                handleIMode(op, channel, client);
-                break;
-            case 't':
-                handleTMode(op, channel, client);
-                break;
-            case 'o':
-                unknown = handleOMode(op, mode, i, channel, client, 'o');
-                break;
-            case 'k':
-                handleKMode(op, mode, i, channel, client, 'k');
-                break;
-            case 'l':
-                handleLMode(op, mode, i, channel, client, 'l');
-                break;
-            default:
-                unknown = true;
-        }
-    }
+//     if (mode.size() < 1 || (mode[0] != '+' && mode[0] != '-'))
+//         return false;
 
-    return unknown;
-}
+//     for (i = 0; i < mode.size(); i++)
+//     {
+//         switch (mode[i])
+//         {
+//             // case '+':
+//             //     op = true;
+//             //     break;
+//             // case '-':
+//             //     op = false;
+//             //     break;
+//             case 'i':
+//                 handleIMode(op, channel, client);
+//                 break;
+//             case 't':
+//                 handleTMode(op, channel, client);
+//                 break;
+//             case 'o':
+//                 unknown = handleOMode(op, mode, i, channel, client, 'o');
+//                 break;
+//             case 'k':
+//                 handleKMode(op, mode, i, channel, client, 'k');
+//                 break;
+//             case 'l':
+//                 handleLMode(op, mode, i, channel, client, 'l');
+//                 break;
+//             default:
+//                 unknown = true;
+//         }
+//     }
+
+//     return unknown;
+// }
 
 void Server::handleIMode(bool op, Channel* channel, Client& client)
 {
