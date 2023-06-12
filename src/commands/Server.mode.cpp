@@ -77,9 +77,9 @@ void	Server::mode_channel(Client &client, Message const &mess, std::string targe
 	modeOptions = mess.getParam()[1];
 	//debug
 	std::cout << "mode options: " << modeOptions << std::endl;
-	parseChannelModes(modeOptions, mess);
-		//message?
-		// return;
+	if (!parseChannelModes(modeOptions, mess))
+		// message?
+		return;
 
 	//debug
 	for (it = _channelModes.begin(); it != _channelModes.end(); it++){
@@ -109,48 +109,45 @@ bool Server::parseChannelModes(const std::string& modeString, Message const &mes
     char sign;
     std::string option;
 	std::vector<std::string> optionVector;
-	channelModeListIt it;
 	std::string key;
 
 	 if (modeString.empty() || (modeString[0] != '+' && modeString[0] != '-'))
         return false;
-    // Iterate over each character in the mode string
     for (size_t i = 0; i < modeString.size(); i++)
     {
         if (modeString[i] == '+' || modeString[i] == '-')
         {
             sign = modeString[i];
-			std::cout << "sign: " << sign << std::endl;
+			// std::cout << "sign: " << sign << std::endl;
         }
         else if (modeString[i] == 'o' || modeString[i] == 't' || modeString[i] == 'i' || modeString[i] == 'k' || modeString[i] == 'l')
         {
 			key += sign;
 			key += modeString[i];
 			//debug
-			std::cout << "key: " << key << std::endl;
+			// std::cout << "key: " << key << std::endl;
 			optionVector.push_back(key);
 			key.clear();
-			// std::cout << "it->first :" << it->first << std::endl;
         }
     }
 	std::vector<std::string>::iterator itVec;
-	for (int i = 2; i < mess.getParamNum(); i++)
+	int i = 2;
+	while (i < mess.getParamNum())
 	{
 		for (itVec = optionVector.begin(); itVec != optionVector.end(); itVec++){
 			if ((*itVec == "+o" || *itVec == "+k" || *itVec == "+l"
 				|| *itVec == "-o") && !mess.getParam()[i].empty()){
 				//debug
-				std::cout << "option: " << *itVec << std::endl;
-
-				it->second = mess.getParam()[i];
-				// std::cout << "argument " << it->second << std::endl;
-				// break ;
+				// std::cout << "option: " << *itVec << std::endl;
+				_channelModes.insert(std::make_pair(*itVec, mess.getParam()[i]));
+				i++;
 			}
 			else if ((*itVec == "+o" || *itVec == "+k" || *itVec == "+l"
 				|| *itVec == "-o") && mess.getParam()[i].empty())
 				return false;
 			else{
-				std::cout << "option: " << *itVec << std::endl;
+				_channelModes.insert(std::make_pair(*itVec, ""));
+				// std::cout << "option withou args: " << *itVec << std::endl;
 				continue;
 			}
 		}
