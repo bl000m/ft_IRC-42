@@ -63,7 +63,7 @@ void	Server::mode_user(Client &client, Message const &mess, std::string target)
  +okitl nickname password num
 */
 void	Server::mode_channel(Client &client, Message const &mess, std::string target){
-	std::string	mode;
+	std::string	modeOptions;
 	Channel *channel = this->getChannel(target);
 
 	 if (channel == NULL) {
@@ -76,13 +76,13 @@ void	Server::mode_channel(Client &client, Message const &mess, std::string targe
 		return;
 	}
 
-	mode = mess.getParam()[1];
+	modeOptions = mess.getParam()[1];
 	for (int i = 2; i < mess.getParamNum(); i++)
 	{
 		mode += mess.getParam()[i];
 	}
 
-	
+	_channelModes = parseChannelModes(mode);
 
 	std::cout << "RETURN OF GETMODE: " << channel->getMode() << std::endl;
 	if (mess.getParamNum() < 2){
@@ -95,6 +95,49 @@ void	Server::mode_channel(Client &client, Message const &mess, std::string targe
 		reply(client, ERR_UMODEUNKNOWNFLAG, ":Unknown MODE flag", NULL);
 }
 
+channelModeList parseChannelModes(const std::string& modeString)
+{
+    std::map<std::string, std::string> channelModes;
+
+    std::string mode;
+    std::string argument;
+
+    // Iterate over each character in the mode string
+    for (char c : modeString)
+    {
+        if (c == '+' || c == '-')
+        {
+            // If the character is '+' or '-', it indicates the add or remove operation
+            mode = c;
+        }
+        else if (c == 'o' || c == 't' || c == 'i' || c == 'k' || c == 'l')
+        {
+            // If the character is one of the options 'o', 't', 'i', 'k', 'l'
+            // Add the previous mode and argument to the map if they exist
+            if (!mode.empty())
+            {
+                channelModes.insert(modesIterator, std::make_pair(mode, argument));
+                mode.clear();
+                argument.clear();
+            }
+
+            mode = c;
+        }
+        else
+        {
+            // If the character is not an option, it is considered an argument
+            argument += c;
+        }
+    }
+
+    // Add the last mode and argument to the map if they exist
+    if (!mode.empty())
+    {
+        channelModes.insert(modesIterator, std::make_pair(mode, argument));
+    }
+
+    return channelModes;
+}
 
 bool Server::setMode(std::string mode, Channel* channel, Client& client)
 {
