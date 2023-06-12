@@ -30,7 +30,7 @@ void	Server::joinChan(std::string &name, std::string &pass, Client &client)
 		reply(client, ERR_INVITEONLYCHAN, name.c_str(), " :Cannot join channel (+i)");
 		return ;
 	}
-	if (_channels.at(name).hasMode('l') && (int)_channels.at(name).getUsersCount() + 1 < _channels.at(name).getMemberLimit())
+	if (_channels.at(name).hasMode('l') && (int)_channels.at(name).getUsersCount() + 1 > _channels.at(name).getMemberLimit())
 	{	
 		reply(client, ERR_CHANNELISFULL, name.c_str(), " :Cannot join channel (+l)");
 		return ;
