@@ -63,26 +63,28 @@ void	Server::mode_user(Client &client, Message const &mess, std::string target)
  +okitl nickname password num
 */
 void	Server::mode_channel(Client &client, Message const &mess, std::string target){
-	std::string	mode;
+	std::string	modeOptions;
+	std::string	modeArgs;
 	Channel *channel = this->getChannel(target);
+	channelModeListIt it;
 
-	 if (channel == NULL) {
+	if (channel == NULL) {
         this->reply(client,  ERR_NOSUCHCHANNEL, target.c_str(), ":No such channel");
         return;
     }
 
-	if (!channel->isUserOperator(*(client.getNick()))) {
-        this->reply(client,  ERR_CHANOPRIVSNEEDED, target.c_str(), ":You're not channel operator");
-		return;
-	}
 
-	mode = mess.getParam()[1];
+	modeOptions = mess.getParam()[1];
 	for (int i = 2; i < mess.getParamNum(); i++)
 	{
-		mode += mess.getParam()[i];
+		modeArgs += mess.getParam()[i];
+		modeArgs += " ";
+	}
+	parseChannelModes(modeOptions, mess);
+	for (it = _channelModes.begin(); it != _channelModes.end(); it++){
+		std::cout << "option = " << it->first << "arg = " << it->second << std::endl;
 	}
 
-	
 
 	std::cout << "RETURN OF GETMODE: " << channel->getMode() << std::endl;
 	if (mess.getParamNum() < 2){
@@ -90,9 +92,49 @@ void	Server::mode_channel(Client &client, Message const &mess, std::string targe
 		return ;
 	}
 
-	std::cout << "this is MODE: " << mode << std::endl;
-	if (setMode(mode, channel, client))
-		reply(client, ERR_UMODEUNKNOWNFLAG, ":Unknown MODE flag", NULL);
+	if (!channel->isUserOperator(*(client.getNick()))) {
+        this->reply(client,  ERR_CHANOPRIVSNEEDED, target.c_str(), ":You're not channel operator");
+		return;
+	}
+
+	// std::cout << "this is MODE: " << mode << std::endl;
+	// if (setMode(mode, channel, client))
+	// 	reply(client, ERR_UMODEUNKNOWNFLAG, ":Unknown MODE flag", NULL);
+}
+
+void Server::parseChannelModes(const std::string& modeString, Message const &mess)
+{
+
+    char sign;
+    std::string option;
+	channelModeListIt it;
+	it = _channelModes.begin();
+	std::string key;
+
+	 if (modeString.empty() || (modeString[0] != '+' && modeString[0] != '-'))
+        return ;
+    // Iterate over each character in the mode string
+    for (size_t i = 0; i < modeString.size(); i++)
+    {
+        if (modeString[i] == '+' || modeString[i] == '-')
+        {
+            sign = modeString[i];
+        }
+        else if (modeString[i] == 'o' || modeString[i] == 't' || modeString[i] == 'i' || modeString[i] == 'k' || modeString[i] == 'l')
+        {
+			key = sign + modeString[i];
+			_channelModes.insert(it, std::make_pair(key, ""));
+        }
+    }
+	for (int i = 2; i < mess.getParamNum(); i++)
+	{
+		for (it = _channelModes.begin(); it != _channelModes.end(); it++){
+			if (it->first == "+o" || it->first == "+k" || it->first == "+l"
+				|| it->first == "-o" || it->first == "-k" || it->first == "-l"){
+				it->second = mess.getParam()[i];
+			}
+		}
+	}
 }
 
 

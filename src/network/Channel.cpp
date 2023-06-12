@@ -219,6 +219,7 @@ std::string	Channel::getMode(){
 		res += "l";
 	if (hasMode('i'))
 		res += "i";
+	if (res.empty())
 	return (res);
 }
 
