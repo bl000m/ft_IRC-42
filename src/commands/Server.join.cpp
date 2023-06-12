@@ -35,9 +35,9 @@ void	Server::joinChan(std::string &name, std::string &pass, Client &client)
 		reply(client, ERR_INVITEONLYCHAN, name.c_str(), " :Cannot join channel (+l)");
 		return ;
 	}
-	if (_channels.at(name).hasMode('t') && pass != _channels.at(name).getPassword())
+	if (_channels.at(name).hasMode('k') && pass != _channels.at(name).getPassword())
 	{
-		reply(client, ERR_INVITEONLYCHAN, name.c_str(), " :Cannot join channel (+t)");
+		reply(client, ERR_INVITEONLYCHAN, name.c_str(), " :Cannot join channel (+k)");
 		return ;
 	}
 	_channels.at(name).addClient(&client);
