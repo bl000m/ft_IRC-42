@@ -44,6 +44,8 @@ class Channel {
 		/* Channel data related setters*/
 		void setPassword(std::string newPassword);
 		void setUserAsOperator(std::string nickname);
+		void removeUserAsOperator(std::string nickname);
+		void setMemberLimit(const std::string& limit);
 
 		/* commands specific to channel operators */
 
@@ -52,6 +54,7 @@ class Channel {
 		void	removeMode(char mode);
 		bool	hasMode(char mode);
 		std::string getMode();
+		// bool	setMode(std::string mode);
 
 		/* invite */
 		void	inviteUser(std::string nickname);
@@ -85,6 +88,6 @@ class Channel {
 		std::string					_topicCreationTime;
 		std::string					_topicCreatedBy;
 		int							_modes;
+		int							_memberLimit;
 };
-
 #endif

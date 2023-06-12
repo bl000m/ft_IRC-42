@@ -8,25 +8,37 @@ Sets a topic for a channel.
 void Server::topic(Client &client, const Message &mess) {
     const std::string channelName = mess.getParam()[0];
     Channel *channel = this->getChannel(channelName);
+	if (channel == NULL) {
+        this->reply(client,  ERR_NOSUCHCHANNEL, channelName.c_str(), ":No such channel");
+        return;
+    }
+	/**
+	Checks if Client trying to set the topic is a channel member.
+	*/
+    if (!channel->isUserInChannel(*(client.getNick()))) {
+        this->reply(client,  ERR_NOTONCHANNEL, channelName.c_str(), ":You're not on that channel");
+        return;
+    }
+
 	/**
 	Checks if the topic is in present in parameters. If not  the client is notified:
 	- if the channel has already a topic, which topic
 	- if not, topic not set
 	*/
     if (mess.getParamNum() < 2) {
-        if (channel->getTopic().c_str() != NULL){
-            std::string topicMessage = std::string(":FT_IRC ") + RPL_TOPIC + " " + *(client.getNick()) + " " + channelName + " " \
-				+ ":" + channel->getTopic().c_str();
-			std::string topicWhoTimeMessage = std::string(":FT_IRC ") + RPL_TOPICWHOTIME + " " + *(client.getNick()) + " " + channelName + " " \
-				+ channel->getNickCreationTopic() + " " + channel->getTimeCreationTopic();
-	        send(client.getSock(), topicMessage.c_str(), topicMessage.size(), 0);
+        if (channel->getTopic().empty()){
+            this->reply(client,  RPL_NOTOPIC, channelName.c_str(), ":No topic is set");
         }
         else{
-            this->reply(client,  RPL_NOTOPIC, channelName.c_str(), ":No topic is set");
+            std::string topicMessage = std::string(":FT_IRC ") + RPL_TOPIC + " " + *(client.getNick()) + " " + channelName + " " \
+				+ ":" + channel->getTopic().c_str() + "\r\n";
+			std::string topicWhoTimeMessage = std::string(":FT_IRC ") + RPL_TOPICWHOTIME + " " + *(client.getNick()) + " " + channelName + " " \
+				+ channel->getNickCreationTopic() + " " + channel->getTimeCreationTopic() + "\r\n";
+	        send(client.getSock(), topicMessage.c_str(), topicMessage.size(), 0);
+	        send(client.getSock(), topicWhoTimeMessage.c_str(), topicWhoTimeMessage.size(), 0);
         }
         return;
     }
-	std::cout << "HERRRRRREEE:" << mess.getParam()[0] << std::endl;
 
     std::string topic = mess.getParam()[1];
 	/**
@@ -37,13 +49,6 @@ void Server::topic(Client &client, const Message &mess) {
         return;
     }
 
-	/**
-	Checks if Client trying to set the topic is a channel member.
-	*/
-    if (!channel->isUserInChannel(*(client.getNick()))) {
-        this->reply(client,  ERR_NOTONCHANNEL, channelName.c_str(), ":You're not on that channel");
-        return;
-    }
 
 	/**
 	Checks if Client trying to set the topic for a protected topic channel has operator privileges.
@@ -57,6 +62,6 @@ void Server::topic(Client &client, const Message &mess) {
 	Creates message to be broadcasted to all the channel members when a topic is set/changed/cleared (if topic == "")
 	*/
 	channel->setTopic(topic, (*(client.getNick())));
-	std::string changeTopicMessage = ":" + *(client.getNick()) + " " + "TOPIC" + ": " + topic + " on channel: " + channelName;
+	std::string changeTopicMessage = ":" + *(client.getNick()) + " " + "TOPIC" + ": " + topic + " on channel: " + channelName + "\r\n";
 	channel->broadcastSenderIncluded(changeTopicMessage);
 }

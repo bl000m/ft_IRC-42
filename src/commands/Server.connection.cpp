@@ -83,6 +83,8 @@ void	Server::user(Client &client, Message const &mess)
 void	Server::quit(Client &client, Message const &mess)
 {
 	std::string		note;
+	channelListIt		i;
+
 
 	note = ":" + client.getFullName() + " QUIT Quit: ";
 	if (mess.getParamNum() > 0)
@@ -90,7 +92,7 @@ void	Server::quit(Client &client, Message const &mess)
 		note += mess.getParam()[0].c_str();	
 	}
 	note += "\r\n";
-	for (channelListIt i; i != _channels.end(); i++)
+	for (i = _channels.begin(); i != _channels.end(); i++)
 	{
 		if (i->second.isUserInChannel(*client.getNick()))
 		{
