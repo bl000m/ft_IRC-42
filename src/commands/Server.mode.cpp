@@ -86,7 +86,6 @@ void	Server::mode_channel(Client &client, Message const &mess, std::string targe
 		std::cout << "option = " << it->first << " => arg = " << it->second << std::endl;
 	}
 
-
 	std::cout << "RETURN OF GETMODE: " << channel->getMode() << std::endl;
 	if (mess.getParamNum() < 2){
 		reply(client,  RPL_CHANNELMODEIS , target.c_str(), channel->getMode().c_str());
@@ -159,7 +158,6 @@ bool Server::parseChannelModes(const std::string& modeString, Message const &mes
 	return true;
 }
 
-
 bool Server::setMode(std::string mode, Channel* channel, Client& client)
 {
     std::string::size_type i;
@@ -231,7 +229,7 @@ bool Server::handleOMode(bool op, const std::string& mode, std::string::size_typ
     std::string nickname = extractParameter(mode, i, '+', '-', option);
 
     if (nickname.empty())
-        return true; // No nickname provided, mark as unknown
+        return true;
 
     if (!channel->isUserInChannel(nickname))
     {
@@ -324,133 +322,3 @@ std::string Server::extractParameter(const std::string& mode, std::string::size_
 
     return parameter;
 }
-
-/* bool	Server::setMode(std::string mode, Channel *channel, Client &client)
-// {
-// 	std::string::size_type	i;
-// 	bool	unknown = false;
-// 	bool	op = true;
-// 	std::string password;
-// 	std::string	limit;
-// 	std::string nickname;
-// 	std::string message;
-
-// 	if (mode.size() < 1 || (mode[0] != '+' && mode[0] != '-'))
-// 		return (false);
-// 	for (i = 0; i < mode.size(); i++)
-// 	{
-// 		switch(static_cast<int>(mode[i]))
-// 		{
-// 			case '+':
-// 				op = true;
-// 				break ;
-// 			case '-':
-// 				op = false;
-// 				break ;
-// 			case 'i':
-// 				if (op == true){
-// 					channel->addMode('i');
-// 					message =  ":" + *(client.getNick()) + "!" + *(client.getUser()) + "@localhost" \
-// 							+ " MODE " + channel->getName() + " " + "+i" + "\r\n";
-// 					channel->broadcastSenderIncluded(message);
-// 				}
-// 				else{
-// 					channel->removeMode('i');
-// 					message =  ":" + *(client.getNick()) + "!" + *(client.getUser()) + "@localhost" \
-// 							+ " MODE " + channel->getName() + " " + "-i" + "\r\n";
-// 					channel->broadcastSenderIncluded(message);
-// 				}
-// 				break ;
-// 			case 't':
-// 				if (op == true){
-// 					channel->addMode('t');
-// 					message =  ":" + *(client.getNick()) + "!" + *(client.getUser()) + "@localhost" \
-// 							+ " MODE " + channel->getName() + " " + "+t" + "\r\n";
-// 					channel->broadcastSenderIncluded(message);
-// 				}
-// 				else{
-// 					channel->removeMode('t');
-// 					message =  ":" + *(client.getNick()) + "!" + *(client.getUser()) + "@localhost" \
-// 							+ " MODE " + channel->getName() + " " + "-t" + "\r\n";
-// 					channel->broadcastSenderIncluded(message);
-// 				}
-// 				break ;
-// 			case 'o':
-// 				while (i < mode.size() && mode[i] != '+' && mode[i] != '-'){
-// 					if (mode[i] == ' ' || mode[i] == 'o')
-// 						i++;
-// 					nickname += mode[i];
-// 					i++;
-// 				}
-// 				std::cout << "nickname in case 'o'" << nickname << std::endl;
-// 				if (!channel->isUserInChannel(nickname)){
-// 					reply(client,  ERR_NOSUCHNICK, nickname.c_str(), ":No such nick");
-// 					unknown = true;
-// 				}
-// 				if (!nickname.empty() && channel->isUserInChannel(nickname)){
-// 					if (op == false){
-// 						channel->removeUserAsOperator(nickname);
-// 						message =  ":" + *(client.getNick()) + "!" + *(client.getUser()) + "@localhost" \
-// 						+ " MODE " + channel->getName() + " " + "-o" + " " + nickname + "\r\n";
-// 						channel->broadcastSenderIncluded(message);
-// 					}
-// 					else{
-// 						channel->setUserAsOperator(nickname);
-// 						message =  ":" + *(client.getNick()) + "!" + *(client.getUser()) + "@localhost" \
-// 						+ " MODE " + channel->getName() + " " + "+o" + " " + nickname + "\r\n";
-// 						channel->broadcastSenderIncluded(message);
-// 					}
-// 				}
-//                 else
-//                     unknown = true; // No nickname provided, mark as unknown
-//                 break;
-// 			case 'k':
-// 				if (op == true){
-// 					while (i < mode.size() && mode[i] != '+' && mode[i] != '-'){
-// 						if (mode[i] == ' ' || mode[i] == 'k')
-// 							i++;
-// 						password += mode[i];
-// 						i++;
-// 					}
-// 					if (!password.empty()){
-// 							channel->setPassword(password);
-// 							message =  ":" + *(client.getNick()) + "!" + *(client.getUser()) + "@localhost" \
-// 								+ " MODE " + channel->getName() + " " + "+k" + " " + password + "\r\n";
-// 							channel->broadcastSenderIncluded(message);
-// 					}
-// 				}
-// 				else{
-// 					channel->removeMode('k');
-// 					message =  ":" + *(client.getNick()) + "!" + *(client.getUser()) + "@localhost" \
-// 						+ " MODE " + channel->getName() + " " + "-k" + "\r\n";
-// 					channel->broadcastSenderIncluded(message);
-// 				}
-// 				break ;
-// 			case 'l':
-// 				if (op == true){
-// 					while (i < mode.size() && mode[i] != '+' && mode[i] != '-'){
-// 						if (mode[i] == ' ' || mode[i] == 'l')
-// 							i++;
-// 						limit += mode[i];
-// 						i++;
-// 					}
-// 					if (!limit.empty()){
-// 					channel->setMemberLimit(limit);
-// 					message =  ":" + *(client.getNick()) + "!" + *(client.getUser()) + "@localhost" \
-// 							+ " MODE " + channel->getName() + " " + "+l" + " " + limit + "\r\n";
-// 					channel->broadcastSenderIncluded(message);
-// 					}
-// 				}
-// 				else{
-// 					channel->removeMode('l');
-// 					message =  ":" + *(client.getNick()) + "!" + *(client.getUser()) + "@localhost" \
-// 							+ " MODE " + channel->getName() + " " + "-l" + "\r\n";
-// 					channel->broadcastSenderIncluded(message);
-// 				}
-// 				break ;
-// 			default:
-// 				unknown = true;
-// 		}
-// 	}
-// 	return (unknown);
-// }*/
