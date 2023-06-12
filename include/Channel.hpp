@@ -39,6 +39,7 @@ class Channel {
 		std::string  	getPassword();
 		channelUsers 	getChannelUsers();
 		size_t			getUsersCount();
+		int				getMemberLimit();
 
 
 		/* Channel data related setters*/
