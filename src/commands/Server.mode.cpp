@@ -71,10 +71,9 @@ void	Server::mode_channel(Client &client, Message const &mess, std::string targe
         return;
     }
 
+	std::cout << "RETURN OF GETMODE: " << channel->getMode() << std::endl;
 	if (mess.getParamNum() < 2){
-		std::string channelModeMessage = ":FT_IRC 324 " + *(client.getNick()) + " "\
-					 + target + " " + channel->getMode() + "\r\n";
-		send(client.getSock(), channelModeMessage.c_str(), channelModeMessage.size(), 0);
+		reply(client,  RPL_CHANNELMODEIS , target.c_str(), channel->getMode().c_str());
 		return ;
 	}
 
@@ -198,6 +197,7 @@ void Server::handleKMode(bool op, const std::string& mode, std::string::size_typ
         if (!password.empty())
         {
             channel->setPassword(password);
+			channel->addMode('k');
             std::string modeStr = "+k " + password;
             std::string message = buildModeMessage(channel, client, modeStr);
             channel->broadcastSenderIncluded(message);
@@ -221,6 +221,7 @@ void Server::handleLMode(bool op, const std::string& mode, std::string::size_typ
         if (!limit.empty())
         {
             channel->setMemberLimit(limit);
+			channel->addMode('l');
             std::string modeStr = "+l " + limit;
             std::string message = buildModeMessage(channel, client, modeStr);
             channel->broadcastSenderIncluded(message);
