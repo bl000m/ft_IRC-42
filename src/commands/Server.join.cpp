@@ -81,7 +81,7 @@ void	Server::join(Client &client, Message const &mess)
 		if (_channels.find(channels[i]) == _channels.end())
 		{
 			if (createChan(channels[i], keys[i], client) == false)
-				std::cout << "bad name" << std::endl;
+				reply(client, ERR_BADCHANMASK, channels[i].c_str(), " :Bad Channel Mask");
 		}
 		else
 			joinChan(channels[i], keys[i], client);

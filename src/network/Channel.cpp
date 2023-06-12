@@ -40,6 +40,8 @@ bool Channel::checkChannelName(std::string channelName) {
             return false;
         }
     }
+	if (channelName[0] != '#')
+		return (false);
     return true;
 }
 
