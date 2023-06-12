@@ -63,23 +63,27 @@ void	Server::mode_user(Client &client, Message const &mess, std::string target)
  +okitl nickname password num
 */
 void	Server::mode_channel(Client &client, Message const &mess, std::string target){
-	std::string	mode;
+	std::string	modeOptions;
+	std::string	modeArgs;
 	Channel *channel = this->getChannel(target);
+	channelModeListIt it;
 
-	 if (channel == NULL) {
+	if (channel == NULL) {
         this->reply(client,  ERR_NOSUCHCHANNEL, target.c_str(), ":No such channel");
         return;
     }
 
-	if (!channel->isUserOperator(*(client.getNick()))) {
-        this->reply(client,  ERR_CHANOPRIVSNEEDED, target.c_str(), ":You're not channel operator");
-		return;
-	}
 
-	mode = mess.getParam()[1];
-	for (int i = 2; i < mess.getParamNum(); i++)
-	{
-		mode += mess.getParam()[i];
+	modeOptions = mess.getParam()[1];
+	//debug
+	std::cout << "mode options: " << modeOptions << std::endl;
+	parseChannelModes(modeOptions, mess);
+		//message?
+		// return;
+
+	//debug
+	for (it = _channelModes.begin(); it != _channelModes.end(); it++){
+		std::cout << "option = " << it->first << " => arg = " << it->second << std::endl;
 	}
 
 	std::cout << "RETURN OF GETMODE: " << channel->getMode() << std::endl;
@@ -88,9 +92,70 @@ void	Server::mode_channel(Client &client, Message const &mess, std::string targe
 		return ;
 	}
 
-	std::cout << "this is MODE: " << mode << std::endl;
-	if (setMode(mode, channel, client))
-		reply(client, ERR_UMODEUNKNOWNFLAG, ":Unknown MODE flag", NULL);
+	if (!channel->isUserOperator(*(client.getNick()))) {
+        this->reply(client,  ERR_CHANOPRIVSNEEDED, target.c_str(), ":You're not channel operator");
+		return;
+	}
+
+	// std::cout << "this is MODE: " << mode << std::endl;
+	// if (setMode(mode, channel, client))
+	// 	reply(client, ERR_UMODEUNKNOWNFLAG, ":Unknown MODE flag", NULL);
+}
+
+bool Server::parseChannelModes(const std::string& modeString, Message const &mess)
+{
+
+    char sign;
+    std::string option;
+	std::vector<std::string> optionVector;
+	channelModeListIt it;
+	std::string key;
+
+	 if (modeString.empty() || (modeString[0] != '+' && modeString[0] != '-'))
+        return false;
+    // Iterate over each character in the mode string
+    for (size_t i = 0; i < modeString.size(); i++)
+    {
+        if (modeString[i] == '+' || modeString[i] == '-')
+        {
+            sign = modeString[i];
+			std::cout << "sign: " << sign << std::endl;
+        }
+        else if (modeString[i] == 'o' || modeString[i] == 't' || modeString[i] == 'i' || modeString[i] == 'k' || modeString[i] == 'l')
+        {
+			key += sign;
+			key += modeString[i];
+			//debug
+			std::cout << "key: " << key << std::endl;
+			optionVector.push_back(key);
+			key.clear();
+			// std::cout << "it->first :" << it->first << std::endl;
+        }
+    }
+	std::vector<std::string>::iterator itVec;
+	for (int i = 2; i < mess.getParamNum(); i++)
+	{
+		for (itVec = optionVector.begin(); itVec != optionVector.end(); itVec++){
+			if ((*itVec == "+o" || *itVec == "+k" || *itVec == "+l"
+				|| *itVec == "-o") && !mess.getParam()[i].empty()){
+				//debug
+				std::cout << "option: " << *itVec << std::endl;
+
+				it->second = mess.getParam()[i];
+				// std::cout << "argument " << it->second << std::endl;
+				// break ;
+			}
+			else if ((*itVec == "+o" || *itVec == "+k" || *itVec == "+l"
+				|| *itVec == "-o") && mess.getParam()[i].empty())
+				return false;
+			else{
+				std::cout << "option: " << *itVec << std::endl;
+				continue;
+			}
+		}
+	}
+
+	return true;
 }
 
 bool Server::setMode(std::string mode, Channel* channel, Client& client)
@@ -106,12 +171,12 @@ bool Server::setMode(std::string mode, Channel* channel, Client& client)
     {
         switch (mode[i])
         {
-            case '+':
-                op = true;
-                break;
-            case '-':
-                op = false;
-                break;
+            // case '+':
+            //     op = true;
+            //     break;
+            // case '-':
+            //     op = false;
+            //     break;
             case 'i':
                 handleIMode(op, channel, client);
                 break;
