@@ -59,7 +59,8 @@ void	Server::mode_user(Client &client, Message const &mess, std::string target)
  - i : invite only => clients must be invited to join the channel when this mode is set
  => MODE #channel -i
 
- All of them => MODE #channel +o nickname -i -k password -t -l limit_number
+ All of them => MODE #channel +o nickname +i +k password +t +l limit_number
+ +okitl nickname password num
 */
 void	Server::mode_channel(Client &client, Message const &mess, std::string target){
 	std::string	mode;
