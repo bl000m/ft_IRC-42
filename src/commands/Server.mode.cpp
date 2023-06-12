@@ -78,7 +78,7 @@ void	Server::mode_channel(Client &client, Message const &mess, std::string targe
 	//debug
 	std::cout << "mode options: " << modeOptions << std::endl;
 	if (!parseChannelModes(modeOptions, mess))
-		this->reply(client,  ERR_NEEDMOREPARAMS, target.c_str(), ":Not enough parameters");
+		// this->reply(client,  ERR_NEEDMOREPARAMS, target.c_str(), ":Not enough parameters");
 		return;
 
 	//debug
@@ -86,7 +86,7 @@ void	Server::mode_channel(Client &client, Message const &mess, std::string targe
 		std::cout << "option = " << it->first << " => arg = " << it->second << std::endl;
 	}
 
-	std::cout << "RETURN OF GETMODE: " << channel->getMode() << std::endl;
+	// std::cout << "RETURN OF GETMODE: " << channel->getMode() << std::endl;
 	if (mess.getParamNum() < 2){
 		reply(client,  RPL_CHANNELMODEIS , target.c_str(), channel->getMode().c_str());
 		return ;
@@ -109,10 +109,10 @@ bool Server::parseChannelModes(const std::string& modeString, Message const &mes
 	  std::string key;
 
 	  if (modeString.empty() || (modeString[0] != '+' && modeString[0] != '-')){
-        std::cout << "IN FIRST CHECK of PARSE" << std::endl;
+        // std::cout << "IN FIRST CHECK of PARSE" << std::endl;
         return false;
     }
-    std::cout << "modeString size = " << modeString.size() << std::endl;
+    // std::cout << "modeString size = " << modeString.size() << std::endl;
     for (size_t i = 0; i < modeString.size(); i++)
     {
         if (modeString[i] == '+' || modeString[i] == '-')
@@ -124,22 +124,22 @@ bool Server::parseChannelModes(const std::string& modeString, Message const &mes
         {
             key += sign;
             key += modeString[i];
-            std::cout << "key = " << key << std::endl;
+            // std::cout << "key = " << key << std::endl;
             optionVector.push_back(key);
-            std::cout << "Value of the last item: " << optionVector.back() << std::endl;
+            // std::cout << "Value of the last item: " << optionVector.back() << std::endl;
             key.clear();
         }
     }
     std::vector<std::string>::iterator itVec;
     itVec = optionVector.begin();
-    std::cout << "out: *itVec = " << *itVec << std::endl;
-    std::cout << "n. pqrqms" << mess.getParamNum() << std::endl;
+    // std::cout << "out: *itVec = " << *itVec << std::endl;
+    // std::cout << "n. pqrqms" << mess.getParamNum() << std::endl;
     if (mess.getParamNum() == 2)
     {
       if (*itVec == "+i" || *itVec == "-i" || *itVec == "+t"
           || *itVec == "-t" || *itVec == "-k" || *itVec == "+l")
       {
-          std::cout << "in: *itVec = " << *itVec << std::endl;
+          // std::cout << "in: *itVec = " << *itVec << std::endl;
           _channelModes.insert(std::make_pair(*itVec, ""));
       }
     }
@@ -175,7 +175,7 @@ bool Server::setMode(Channel* channel, Client& client)
 
 	for (it = _channelModes.begin(); it != _channelModes.end(); it++)
   {
-    std::cout << "in setMode, it->first = " << it->first << std::endl;
+    // std::cout << "in setMode, it->first = " << it->first << std::endl;
 		handleIMode(it, channel, client);
     handleTMode(it, channel, client);
     unknown = handleOMode(it, channel, client);
@@ -191,7 +191,7 @@ void Server::handleIMode(channelModeListIt it, Channel* channel, Client& client)
 {
     if (it->first == "+i")
     {
-      std::cout << "IN handlemode I" << std::endl;
+      // std::cout << "IN handlemode I" << std::endl;
       channel->addMode('i');
       std::string message = buildModeMessage(channel, client, it->first);
       channel->broadcastSenderIncluded(message);
@@ -218,7 +218,6 @@ void Server::handleTMode(channelModeListIt it, Channel* channel, Client& client)
       std::string message = buildModeMessage(channel, client, it->first);
       channel->broadcastSenderIncluded(message);
     }
-
 }
 
 bool Server::handleOMode(channelModeListIt it, Channel* channel, Client& client)
