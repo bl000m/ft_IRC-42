@@ -207,8 +207,10 @@ bool Channel::hasMode(char mode) {
 }
 
 std::string	Channel::getMode(){
-	std::string	res = "+";
+	std::string	res = "";
 
+	if (hasMode('t') || hasMode('k') || hasMode('o') || hasMode('l') || hasMode('i'))
+		res = "+";
 	if (hasMode('t'))
 		res += "t";
 	if (hasMode('k'))
@@ -219,7 +221,6 @@ std::string	Channel::getMode(){
 		res += "l";
 	if (hasMode('i'))
 		res += "i";
-	if (res.empty())
 	return (res);
 }
 

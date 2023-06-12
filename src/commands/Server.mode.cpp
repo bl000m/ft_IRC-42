@@ -75,12 +75,11 @@ void	Server::mode_channel(Client &client, Message const &mess, std::string targe
 
 
 	modeOptions = mess.getParam()[1];
-	for (int i = 2; i < mess.getParamNum(); i++)
-	{
-		modeArgs += mess.getParam()[i];
-		modeArgs += " ";
+	if (parseChannelModes(modeOptions, mess)){
+		//message?
+		return;
 	}
-	parseChannelModes(modeOptions, mess);
+
 	for (it = _channelModes.begin(); it != _channelModes.end(); it++){
 		std::cout << "option = " << it->first << "arg = " << it->second << std::endl;
 	}
@@ -102,7 +101,7 @@ void	Server::mode_channel(Client &client, Message const &mess, std::string targe
 	// 	reply(client, ERR_UMODEUNKNOWNFLAG, ":Unknown MODE flag", NULL);
 }
 
-void Server::parseChannelModes(const std::string& modeString, Message const &mess)
+bool Server::parseChannelModes(const std::string& modeString, Message const &mess)
 {
 
     char sign;
@@ -112,7 +111,7 @@ void Server::parseChannelModes(const std::string& modeString, Message const &mes
 	std::string key;
 
 	 if (modeString.empty() || (modeString[0] != '+' && modeString[0] != '-'))
-        return ;
+        return false;
     // Iterate over each character in the mode string
     for (size_t i = 0; i < modeString.size(); i++)
     {
@@ -133,8 +132,11 @@ void Server::parseChannelModes(const std::string& modeString, Message const &mes
 				|| it->first == "-o" || it->first == "-k" || it->first == "-l"){
 				it->second = mess.getParam()[i];
 			}
+			else
+				return false;
 		}
 	}
+	return true;
 }
 
 
