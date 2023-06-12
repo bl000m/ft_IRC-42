@@ -57,8 +57,8 @@ void Server::kick(Client &client, const Message &mess) {
     }
 	else{
 		Client *kickedUser = this->getClient(nickname);
-		std::string kickMessage = ": " + nickname + "!" + *(kickedUser->getUser()) + "@localhost " + "KICK" + " "\
-					+ channelName + " " + *(client.getNick()) + " " + reason + "\r\n";
+		std::string kickMessage = ":" + client.getFullName() + " KICK "\
+					+ channelName + " " + nickname + " " + reason + "\r\n";
 		send(kickedUser->getSock(), kickMessage.c_str(), kickMessage.size(), 0);
 		channel->removeChannelUser(nickname);
 		channel->broadcast(kickMessage, client);
