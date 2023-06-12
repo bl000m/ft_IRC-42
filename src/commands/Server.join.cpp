@@ -3,6 +3,7 @@
 bool	Server::createChan(std::string &name, std::string &pass, Client &client)
 {
 	std::string	join_message;
+	std::string	namreply_message;
 
 	Channel	chan(&client, name); //dont throw here please
 	if (chan.checkChannelName(name) == false)
@@ -13,10 +14,11 @@ bool	Server::createChan(std::string &name, std::string &pass, Client &client)
 	_channels.insert(std::pair<std::string, Channel>(name, chan));
 	/*IRC*/
 	join_message.append(":" + *(client).getNick() + " JOIN " + name + "\r\n");
+	namreply_message.append("= " + name);
 	send(client.getSock(), join_message.c_str(), join_message.size(), 0);
-	reply(client, RPL_TOPIC, "", "");
-	reply(client, RPL_NAMREPLY , "", "");
-	reply(client, RPL_ENDOFNAMES, "", "");
+	reply(client, RPL_TOPIC, name.c_str(), "");
+	reply(client, RPL_NAMREPLY , namreply_message.c_str(), chan.getClientList().c_str());
+	reply(client, RPL_ENDOFNAMES, name.c_str(), "");
 	std::cout << "SIZE:  " << _channels.size() << std::endl;
 	return (true);
 }
@@ -24,28 +26,30 @@ bool	Server::createChan(std::string &name, std::string &pass, Client &client)
 void	Server::joinChan(std::string &name, std::string &pass, Client &client)
 {
 	std::string	join_message;
+	std::string	namreply_message;
 
 	if (_channels.at(name).hasMode('i') && !_channels.at(name).isInvited(*(client).getNick()))
 	{
 		reply(client, ERR_INVITEONLYCHAN, name.c_str(), " :Cannot join channel (+i)");
 		return ;
 	}
-	if (_channels.at(name).hasMode('l') && (int)_channels.at(name).getUsersCount() + 1 < _channels.at(name).getMemberLimit())
+	if (_channels.at(name).hasMode('l') && (int)_channels.at(name).getUsersCount() + 1 > _channels.at(name).getMemberLimit())
 	{	
-		reply(client, ERR_INVITEONLYCHAN, name.c_str(), " :Cannot join channel (+l)");
+		reply(client, ERR_CHANNELISFULL, name.c_str(), " :Cannot join channel (+l)");
 		return ;
 	}
 	if (_channels.at(name).hasMode('k') && pass != _channels.at(name).getPassword())
 	{
-		reply(client, ERR_INVITEONLYCHAN, name.c_str(), " :Cannot join channel (+k)");
+		reply(client, ERR_BADCHANNELKEY, name.c_str(), " :Cannot join channel (+k)");
 		return ;
 	}
 	_channels.at(name).addClient(&client);
 	join_message.append(":" + *(client).getNick() + " JOIN " + name + "\r\n");
+	namreply_message.append("= " + name);
 	send(client.getSock(), join_message.c_str(), join_message.size(), 0);
-	reply(client, RPL_TOPIC, " ", _channels.at(name).getTopic().c_str());
-	reply(client, RPL_NAMREPLY , "", "");
-	reply(client, RPL_ENDOFNAMES, "", "");
+	reply(client, RPL_TOPIC, name.c_str(), _channels.at(name).getTopic().c_str());
+	reply(client, RPL_NAMREPLY , namreply_message.c_str(), _channels.at(name).getClientList().c_str());
+	reply(client, RPL_ENDOFNAMES, name.c_str(), "");
 	std::cout << "SIZE:  " << _channels.size() << std::endl;
 }
 
@@ -81,7 +85,7 @@ void	Server::join(Client &client, Message const &mess)
 		if (_channels.find(channels[i]) == _channels.end())
 		{
 			if (createChan(channels[i], keys[i], client) == false)
-				std::cout << "bad name" << std::endl;
+				reply(client, ERR_BADCHANMASK, channels[i].c_str(), " :Bad Channel Mask");
 		}
 		else
 			joinChan(channels[i], keys[i], client);

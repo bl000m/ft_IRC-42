@@ -86,7 +86,6 @@ void	Server::mode_channel(Client &client, Message const &mess, std::string targe
 		std::cout << "option = " << it->first << " => arg = " << it->second << std::endl;
 	}
 
-
 	std::cout << "RETURN OF GETMODE: " << channel->getMode() << std::endl;
 	if (mess.getParamNum() < 2){
 		reply(client,  RPL_CHANNELMODEIS , target.c_str(), channel->getMode().c_str());
@@ -131,7 +130,6 @@ bool Server::parseChannelModes(const std::string& modeString, Message const &mes
             key.clear();
         }
     }
-
     std::vector<std::string>::iterator itVec;
     itVec = optionVector.begin();
     std::cout << "out: *itVec = " << *itVec << std::endl;

@@ -40,6 +40,7 @@ class Channel {
 		channelUsers 	getChannelUsers();
 		size_t			getUsersCount();
 		int				getMemberLimit();
+		std::string		getClientList();
 
 
 		/* Channel data related setters*/

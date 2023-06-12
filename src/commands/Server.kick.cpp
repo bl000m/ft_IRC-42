@@ -15,7 +15,6 @@ void Server::kick(Client &client, const Message &mess) {
     }
 
     const std::string channelName = mess.getParam()[0];
-    const std::string nickname = mess.getParam()[1];
 
 	/**
 		If the channel does not exist, sends an error reply to the client and returns.
@@ -42,33 +41,34 @@ void Server::kick(Client &client, const Message &mess) {
         return;
     }
 
-	/**
-		Checks if the kicked client is on channel.
-	*/
-    if (!channel->isUserInChannel(nickname)) {
-        this->reply(client, ERR_USERNOTINCHANNEL, channelName.c_str(), ":They aren't on that channel");
-        return;
-    }
-
 	std::string reason = mess.getParamNum() > 2 ? mess.getParam()[2] : "";
+   
+    std::stringstream					ss;
+	std::string							nick;
+	std::vector<std::string>			victims;
+	std::vector<std::string>::iterator	it;
 
-	/**
-		Checks if the user to be kicked is a member of the channel.
-		If not, sends an error reply to the client and returns.
-		Otherwise, sends a kick message to the user and removes them from the channel.
-	*/
-    if (!channel->isUserInChannel(nickname)) {
-		std::string NotInChanMessage = ":FT_IRC 441 " + *(client.getNick()) + " " + nickname + " "\
-					 + channelName + " :They aren't on that channel\n";
-		send(client.getSock(), NotInChanMessage.c_str(), NotInChanMessage.size(), 0);
-        return;
-    }
-	else{
-		Client *kickedUser = this->getClient(nickname);
-		std::string kickMessage = ":" + client.getFullName() + " KICK "\
-					+ channelName + " " + nickname + " " + reason + "\r\n";
-		send(kickedUser->getSock(), kickMessage.c_str(), kickMessage.size(), 0);
-		channel->removeChannelUser(nickname);
-		channel->broadcast(kickMessage, client);
+	ss << mess.getParam()[1];
+	while (getline(ss, nick, ','))
+		victims.push_back(nick);
+	for (it = victims.begin(); it != victims.end(); it++)
+	{
+		/**
+			Checks if the user to be kicked is a member of the channel.
+			If not, sends an error reply to the client and returns.
+			Otherwise, sends a kick message to the user and removes them from the channel.
+		*/
+		if (!channel->isUserInChannel(*it)) {
+			this->reply(client, ERR_USERNOTINCHANNEL, channelName.c_str(), ":They aren't on that channel");
+			return;
+		}
+		else{
+			Client *kickedUser = this->getClient(*it);
+			std::string kickMessage = ":" + client.getFullName() + " KICK "\
+						+ channelName + " " + *it + " " + reason + "\r\n";
+			send(kickedUser->getSock(), kickMessage.c_str(), kickMessage.size(), 0);
+			channel->removeChannelUser(*it);
+			channel->broadcast(kickMessage, client);
+		}
 	}
 }
