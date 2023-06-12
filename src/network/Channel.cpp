@@ -207,7 +207,7 @@ bool Channel::hasMode(char mode) {
 }
 
 std::string	Channel::getMode(){
-	std::string	res = "";
+	std::string	res = "+";
 
 	if (hasMode('t'))
 		res += "t";
