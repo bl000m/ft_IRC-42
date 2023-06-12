@@ -62,6 +62,6 @@ void Server::topic(Client &client, const Message &mess) {
 	Creates message to be broadcasted to all the channel members when a topic is set/changed/cleared (if topic == "")
 	*/
 	channel->setTopic(topic, (*(client.getNick())));
-	std::string changeTopicMessage = ":" + *(client.getNick()) + RPL_TOPIC + channelName + " :" + topic + "\r\n";
+	std::string changeTopicMessage = ":" + *(client.getNick()) + " TOPIC " + channelName + " :" + topic + "\r\n";
 	channel->broadcastSenderIncluded(changeTopicMessage);
 }
