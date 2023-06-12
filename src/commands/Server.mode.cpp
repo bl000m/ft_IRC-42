@@ -75,13 +75,15 @@ void	Server::mode_channel(Client &client, Message const &mess, std::string targe
 
 
 	modeOptions = mess.getParam()[1];
-	if (parseChannelModes(modeOptions, mess)){
+	//debug
+	std::cout << "mode options: " << modeOptions << std::endl;
+	parseChannelModes(modeOptions, mess);
 		//message?
-		return;
-	}
+		// return;
 
+	//debug
 	for (it = _channelModes.begin(); it != _channelModes.end(); it++){
-		std::cout << "option = " << it->first << "arg = " << it->second << std::endl;
+		std::cout << "option = " << it->first << " => arg = " << it->second << std::endl;
 	}
 
 
@@ -106,8 +108,8 @@ bool Server::parseChannelModes(const std::string& modeString, Message const &mes
 
     char sign;
     std::string option;
+	std::vector<std::string> optionVector;
 	channelModeListIt it;
-	it = _channelModes.begin();
 	std::string key;
 
 	 if (modeString.empty() || (modeString[0] != '+' && modeString[0] != '-'))
@@ -118,24 +120,42 @@ bool Server::parseChannelModes(const std::string& modeString, Message const &mes
         if (modeString[i] == '+' || modeString[i] == '-')
         {
             sign = modeString[i];
+			std::cout << "sign: " << sign << std::endl;
         }
         else if (modeString[i] == 'o' || modeString[i] == 't' || modeString[i] == 'i' || modeString[i] == 'k' || modeString[i] == 'l')
         {
-			key = sign + modeString[i];
-			_channelModes.insert(it, std::make_pair(key, ""));
+			key += sign;
+			key += modeString[i];
+			//debug
+			std::cout << "key: " << key << std::endl;
+			optionVector.push_back(key);
+			key.clear();
+			// std::cout << "it->first :" << it->first << std::endl;
         }
     }
+	std::vector<std::string>::iterator itVec;
 	for (int i = 2; i < mess.getParamNum(); i++)
 	{
-		for (it = _channelModes.begin(); it != _channelModes.end(); it++){
-			if (it->first == "+o" || it->first == "+k" || it->first == "+l"
-				|| it->first == "-o" || it->first == "-k" || it->first == "-l"){
+		for (itVec = optionVector.begin(); itVec != optionVector.end(); itVec++){
+			if ((*itVec == "+o" || *itVec == "+k" || *itVec == "+l"
+				|| *itVec == "-o") && !mess.getParam()[i].empty()){
+				//debug
+				std::cout << "option: " << *itVec << std::endl;
+
 				it->second = mess.getParam()[i];
+				// std::cout << "argument " << it->second << std::endl;
+				// break ;
 			}
-			else
+			else if ((*itVec == "+o" || *itVec == "+k" || *itVec == "+l"
+				|| *itVec == "-o") && mess.getParam()[i].empty())
 				return false;
+			else{
+				std::cout << "option: " << *itVec << std::endl;
+				continue;
+			}
 		}
 	}
+
 	return true;
 }
 
@@ -153,12 +173,12 @@ bool Server::setMode(std::string mode, Channel* channel, Client& client)
     {
         switch (mode[i])
         {
-            case '+':
-                op = true;
-                break;
-            case '-':
-                op = false;
-                break;
+            // case '+':
+            //     op = true;
+            //     break;
+            // case '-':
+            //     op = false;
+            //     break;
             case 'i':
                 handleIMode(op, channel, client);
                 break;

@@ -42,6 +42,14 @@ void Server::kick(Client &client, const Message &mess) {
         return;
     }
 
+	/**
+		Checks if the kicked client is on channel.
+	*/
+    if (!channel->isUserInChannel(nickname)) {
+        this->reply(client, ERR_USERNOTINCHANNEL, channelName.c_str(), ":They aren't on that channel");
+        return;
+    }
+
 	std::string reason = mess.getParamNum() > 2 ? mess.getParam()[2] : "";
 
 	/**
