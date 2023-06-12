@@ -78,7 +78,7 @@ void	Server::mode_channel(Client &client, Message const &mess, std::string targe
 	//debug
 	std::cout << "mode options: " << modeOptions << std::endl;
 	if (!parseChannelModes(modeOptions, mess))
-		// message?
+		this->reply(client,  ERR_NEEDMOREPARAMS, target.c_str(), ":Not enough parameters");
 		return;
 
 	//debug
@@ -98,9 +98,7 @@ void	Server::mode_channel(Client &client, Message const &mess, std::string targe
 		return;
 	}
 
-	// std::cout << "this is MODE: " << mode << std::endl;
-	// if (setMode(channel, client))
-	// 	reply(client, ERR_UMODEUNKNOWNFLAG, ":Unknown MODE flag", NULL);
+	setMode(channel, client);
 }
 
 bool Server::parseChannelModes(const std::string& modeString, Message const &mess)
@@ -111,8 +109,11 @@ bool Server::parseChannelModes(const std::string& modeString, Message const &mes
   	std::vector<std::string> optionVector;
 	  std::string key;
 
-	  if (modeString.empty() || (modeString[0] != '+' && modeString[0] != '-'))
+	  if (modeString.empty() || (modeString[0] != '+' && modeString[0] != '-')){
+        std::cout << "IN FIRST CHECK of PARSE" << std::endl;
         return false;
+    }
+    std::cout << "modeString size = " << modeString.size() << std::endl;
     for (size_t i = 0; i < modeString.size(); i++)
     {
         if (modeString[i] == '+' || modeString[i] == '-')
@@ -124,12 +125,27 @@ bool Server::parseChannelModes(const std::string& modeString, Message const &mes
         {
             key += sign;
             key += modeString[i];
+            std::cout << "key = " << key << std::endl;
             optionVector.push_back(key);
+            std::cout << "Value of the last item: " << optionVector.back() << std::endl;
             key.clear();
         }
     }
 
     std::vector<std::string>::iterator itVec;
+    itVec = optionVector.begin();
+    std::cout << "out: *itVec = " << *itVec << std::endl;
+    std::cout << "n. pqrqms" << mess.getParamNum() << std::endl;
+    if (mess.getParamNum() == 2)
+    {
+      if (*itVec == "+i" || *itVec == "-i" || *itVec == "+t"
+          || *itVec == "-t" || *itVec == "-k" || *itVec == "+l")
+      {
+          std::cout << "in: *itVec = " << *itVec << std::endl;
+          _channelModes.insert(std::make_pair(*itVec, ""));
+      }
+    }
+
     int i = 2;
     while (i < mess.getParamNum())
     {
@@ -145,14 +161,14 @@ bool Server::parseChannelModes(const std::string& modeString, Message const &mes
           || *itVec == "-o") && mess.getParam()[i].empty())
             return false;
         else{
+          std::cout << "*itVec = " << *itVec << std::endl;
             _channelModes.insert(std::make_pair(*itVec, ""));
-            continue;
+            // continue;
         }
       }
     }
     return true;
 }
-
 
 bool Server::setMode(Channel* channel, Client& client)
 {
@@ -161,53 +177,76 @@ bool Server::setMode(Channel* channel, Client& client)
 
 	for (it = _channelModes.begin(); it != _channelModes.end(); it++)
   {
+    std::cout << "in setMode, it->first = " << it->first << std::endl;
 		handleIMode(it, channel, client);
     handleTMode(it, channel, client);
     unknown = handleOMode(it, channel, client);
     handleKMode(it, channel, client);
     handleLMode(it, channel, client);
-    unknown = true;
 	}
-    return unknown;
+  std::map<std::string, std::string> emptyMap;
+    _channelModes.swap(emptyMap);
+  return unknown;
 }
 
 void Server::handleIMode(channelModeListIt it, Channel* channel, Client& client)
 {
     if (it->first == "+i")
+    {
+      std::cout << "IN handlemode I" << std::endl;
       channel->addMode('i');
+      std::string message = buildModeMessage(channel, client, it->first);
+      channel->broadcastSenderIncluded(message);
+    }
     else if (it->first == "-i")
+    {
       channel->removeMode('i');
-
-    std::string message = buildModeMessage(channel, client, it->first);
-    channel->broadcastSenderIncluded(message);
+      std::string message = buildModeMessage(channel, client, it->first);
+      channel->broadcastSenderIncluded(message);
+    }
 }
 
 void Server::handleTMode(channelModeListIt it, Channel* channel, Client& client)
 {
     if (it->first == "+t")
+    {
       channel->addMode('t');
+      std::string message = buildModeMessage(channel, client, it->first);
+      channel->broadcastSenderIncluded(message);
+    }
     else if (it->first == "-t")
+    {
       channel->removeMode('t');
+      std::string message = buildModeMessage(channel, client, it->first);
+      channel->broadcastSenderIncluded(message);
+    }
 
-    std::string message = buildModeMessage(channel, client, it->first);
-    channel->broadcastSenderIncluded(message);
 }
 
 bool Server::handleOMode(channelModeListIt it, Channel* channel, Client& client)
 {
-    if (!channel->isUserInChannel(it->second))
-    {
-        reply(client, ERR_NOSUCHNICK, it->second.c_str(), ":No such nick");
-        return true;
-    }
     if (it->first == "+o")
+    {
+        if (!channel->isUserInChannel(it->second))
+        {
+            reply(client, ERR_NOSUCHNICK, it->second.c_str(), ":No such nick");
+            return true;
+        }
         channel->setUserAsOperator(it->second);
+        std::string message = buildModeMessage(channel, client, it->first + " " + it->second);
+        channel->broadcastSenderIncluded(message);
+    }
     else if (it->first == "-o")
+     {
+        if (!channel->isUserInChannel(it->second))
+        {
+            reply(client, ERR_NOSUCHNICK, it->second.c_str(), ":No such nick");
+            return true;
+        }
         channel->removeUserAsOperator(it->second);
-
-    std::string message = buildModeMessage(channel, client, it->first + " " + it->second);
-    channel->broadcastSenderIncluded(message);
-
+        std::string message = buildModeMessage(channel, client, it->first + " " + it->second);
+        channel->broadcastSenderIncluded(message);
+    }
     return false;
 }
 
@@ -217,13 +256,15 @@ void Server::handleKMode(channelModeListIt it, Channel* channel, Client& client)
     {
         channel->setPassword(it->second);
         channel->addMode('k');
+        std::string message = buildModeMessage(channel, client, it->first + " " + it->second);
+        channel->broadcastSenderIncluded(message);
     }
     else if (it->first == "-k")
     {
         channel->removeMode('k');
+        std::string message = buildModeMessage(channel, client, it->first);
+        channel->broadcastSenderIncluded(message);
     }
-    std::string message = buildModeMessage(channel, client, it->first);
-    channel->broadcastSenderIncluded(message);
 }
 
 void Server::handleLMode(channelModeListIt it, Channel* channel, Client& client)
@@ -232,13 +273,15 @@ void Server::handleLMode(channelModeListIt it, Channel* channel, Client& client)
     {
         channel->setMemberLimit(it->second);
         channel->addMode('l');
+        std::string message = buildModeMessage(channel, client, it->first + " " + it->second);
+        channel->broadcastSenderIncluded(message);
     }
     else if (it->first == "-l")
     {
         channel->removeMode('l');
+        std::string message = buildModeMessage(channel, client, it->first);
+        channel->broadcastSenderIncluded(message);
     }
-    std::string message = buildModeMessage(channel, client, it->first + it->second);
-    channel->broadcastSenderIncluded(message);
 }
 
 std::string Server::buildModeMessage(Channel* channel, const Client& client, const std::string& mode)
