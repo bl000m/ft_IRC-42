@@ -6,9 +6,6 @@
 	Adds the operator to the channel's user list with operator privileges.
 */
 Channel::Channel(Client *oper, std::string name): _name(name), _topic(""), _modes(0){
-		if (!checkChannelName(name)) {
-        throw std::invalid_argument("Invalid channel name: " + name);
-    } 
 		user newChannelUser;
 		std::string nickname = *(oper->getNick());
 		newChannelUser.client = oper;
