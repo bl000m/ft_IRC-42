@@ -88,14 +88,14 @@ class Server {
 		void 	kick(Client &client, Message const &mess);
 		void 	topic(Client &client, Message const &mess);
 		bool	setMode(std::string mode, Channel *channel, Client &client);
-    void  handleKMode(bool op, const std::string& mode, std::string::size_type& i, Channel* channel, Client& client, char option);
-    bool  handleOMode(bool op, const std::string& mode, std::string::size_type& i, Channel* channel, Client& client, char option);
-    void  handleTMode(bool op, Channel* channel, Client& client);
-    void  handleIMode(bool op, Channel* channel, Client& client);
-    void  handleLMode(bool op, const std::string& mode, std::string::size_type& i, Channel* channel, Client& client, char option);
-    std::string buildModeMessage(Channel* channel, const Client& client, const std::string& mode);
-    std::string extractParameter(const std::string& mode, std::string::size_type& i, char op1, char op2, char option);
-
+		bool 	parseChannelModes(const std::string& modeString, Message const &mess);
+		void  handleKMode(bool op, const std::string& mode, std::string::size_type& i, Channel* channel, Client& client, char option);
+		bool  handleOMode(bool op, const std::string& mode, std::string::size_type& i, Channel* channel, Client& client, char option);
+		void  handleTMode(bool op, Channel* channel, Client& client);
+		void  handleIMode(bool op, Channel* channel, Client& client);
+		void  handleLMode(bool op, const std::string& mode, std::string::size_type& i, Channel* channel, Client& client, char option);
+		std::string buildModeMessage(Channel* channel, const Client& client, const std::string& mode);
+		std::string extractParameter(const std::string& mode, std::string::size_type& i, char op1, char op2, char option);
 
 		/*	connection command helper	*/
 		static void		welcome_mess(Client const &client);
