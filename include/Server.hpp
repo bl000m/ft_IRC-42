@@ -44,6 +44,8 @@ class Server {
 		typedef std::map<std::string, fn_ptr>	fn_map;
 		typedef std::map<std::string, Channel>	channelList;
 		typedef std::map<std::string, Channel>::iterator channelListIt;
+		typedef std::map<std::string, std::string>	channelModeList;
+		typedef std::map<std::string, std::string>::iterator channelModeListIt;
 
         Server();
         ~Server();
@@ -62,6 +64,7 @@ class Server {
         sockaddr_in						_addr;
         std::vector<pollfd>				_server_sockets;
 		channelList						_channels;
+		channelModeList					_channelModes;
 		client_map						_clients;
 		static fn_map const				_command;
 

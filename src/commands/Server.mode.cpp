@@ -71,12 +71,6 @@ void	Server::mode_channel(Client &client, Message const &mess, std::string targe
         return;
     }
 
-	std::cout << "RETURN OF GETMODE: " << channel->getMode() << std::endl;
-	if (mess.getParamNum() < 2){
-		reply(client,  RPL_CHANNELMODEIS , target.c_str(), channel->getMode().c_str());
-		return ;
-	}
-
 	if (!channel->isUserOperator(*(client.getNick()))) {
         this->reply(client,  ERR_CHANOPRIVSNEEDED, target.c_str(), ":You're not channel operator");
 		return;
@@ -87,6 +81,15 @@ void	Server::mode_channel(Client &client, Message const &mess, std::string targe
 	{
 		mode += mess.getParam()[i];
 	}
+
+	
+
+	std::cout << "RETURN OF GETMODE: " << channel->getMode() << std::endl;
+	if (mess.getParamNum() < 2){
+		reply(client,  RPL_CHANNELMODEIS , target.c_str(), channel->getMode().c_str());
+		return ;
+	}
+
 	std::cout << "this is MODE: " << mode << std::endl;
 	if (setMode(mode, channel, client))
 		reply(client, ERR_UMODEUNKNOWNFLAG, ":Unknown MODE flag", NULL);
