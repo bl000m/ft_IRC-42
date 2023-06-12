@@ -97,6 +97,17 @@ int	Channel::getMemberLimit(){
 	return _memberLimit;
 }
 
+std::string	Channel::getClientList()
+{
+	std::string	ret;
+
+	for (channelUsers::iterator i = _channelUsers.begin(); i != _channelUsers.end(); i++)
+	{
+		ret.append(i->first + " ");
+	}
+	return ret;
+}
+
 /* --------------- Channel data related setters ---------------- */
 
 /*

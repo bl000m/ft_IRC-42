@@ -3,6 +3,7 @@
 bool	Server::createChan(std::string &name, std::string &pass, Client &client)
 {
 	std::string	join_message;
+	std::string	namreply_message;
 
 	Channel	chan(&client, name); //dont throw here please
 	if (chan.checkChannelName(name) == false)
@@ -13,10 +14,11 @@ bool	Server::createChan(std::string &name, std::string &pass, Client &client)
 	_channels.insert(std::pair<std::string, Channel>(name, chan));
 	/*IRC*/
 	join_message.append(":" + *(client).getNick() + " JOIN " + name + "\r\n");
+	namreply_message.append("= " + name);
 	send(client.getSock(), join_message.c_str(), join_message.size(), 0);
-	reply(client, RPL_TOPIC, "", "");
-	reply(client, RPL_NAMREPLY , "", "");
-	reply(client, RPL_ENDOFNAMES, "", "");
+	reply(client, RPL_TOPIC, name.c_str(), "");
+	reply(client, RPL_NAMREPLY , namreply_message.c_str(), chan.getClientList().c_str());
+	reply(client, RPL_ENDOFNAMES, name.c_str(), "");
 	std::cout << "SIZE:  " << _channels.size() << std::endl;
 	return (true);
 }
@@ -24,6 +26,7 @@ bool	Server::createChan(std::string &name, std::string &pass, Client &client)
 void	Server::joinChan(std::string &name, std::string &pass, Client &client)
 {
 	std::string	join_message;
+	std::string	namreply_message;
 
 	if (_channels.at(name).hasMode('i') && !_channels.at(name).isInvited(*(client).getNick()))
 	{
@@ -42,10 +45,11 @@ void	Server::joinChan(std::string &name, std::string &pass, Client &client)
 	}
 	_channels.at(name).addClient(&client);
 	join_message.append(":" + *(client).getNick() + " JOIN " + name + "\r\n");
+	namreply_message.append("= " + name);
 	send(client.getSock(), join_message.c_str(), join_message.size(), 0);
-	reply(client, RPL_TOPIC, " ", _channels.at(name).getTopic().c_str());
-	reply(client, RPL_NAMREPLY , "", "");
-	reply(client, RPL_ENDOFNAMES, "", "");
+	reply(client, RPL_TOPIC, name.c_str(), _channels.at(name).getTopic().c_str());
+	reply(client, RPL_NAMREPLY , namreply_message.c_str(), _channels.at(name).getClientList().c_str());
+	reply(client, RPL_ENDOFNAMES, name.c_str(), "");
 	std::cout << "SIZE:  " << _channels.size() << std::endl;
 }
 
