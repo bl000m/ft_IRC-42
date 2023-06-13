@@ -42,6 +42,14 @@ class Client
 
 		Client(int sockfd, socklen_t sock_size, sockaddr_in sock_addr);
 		
+		/*	reply-to-client related function	*/
+		void	reply(char const *numeric, char const *p1, char const *p2);
+		void	reply(char *src, char *cmd, char *para1, char *para2);
+		void	reply(char *src, char *cmd, char *para1, char *para2, char *para3);
+		void	reply(char *note);
+		std::string	getReply(void) const;
+		void		clearReply(void);
+
 		/*	setters	*/
 		void	setPass(bool good);
 		void	beRegist(void);
@@ -87,6 +95,7 @@ class Client
 		sockaddr_in		_sock_addr;
 		char			_buff[MAX_BUFFER];
 		std::string		_strbuff;
+		std::string		_envelope;
 
 		/*	private function	*/
 		void	clear(void);
