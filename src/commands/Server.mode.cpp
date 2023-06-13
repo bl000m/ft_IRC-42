@@ -80,7 +80,7 @@ void	Server::mode_channel(Client &client, Message const &mess, std::string targe
 		this->reply(client,  ERR_NEEDMOREPARAMS, target.c_str(), ":Not enough parameters");
 		return;
 	}
-	
+
 	if (!channel->isUserOperator(*(client.getNick()))) {
         this->reply(client,  ERR_CHANOPRIVSNEEDED, target.c_str(), ":You're not channel operator");
 		return;
@@ -138,15 +138,17 @@ bool Server::parseChannelModes(const std::string& modeString, Message const &mes
 			|| *itVec == "-o") && !mess.getParam()[i].empty())
 			{
 				_channelModes.insert(std::make_pair(*itVec, mess.getParam()[i]));
+				i++;
 			}
 			else if ((*itVec == "+o" || *itVec == "+k" || *itVec == "+l"
-			|| *itVec == "-o") && mess.getParam()[i].empty())
+			|| *itVec == "-o") && mess.getParam()[i].empty()){
 				return false;
+			}
 			else{
 				_channelModes.insert(std::make_pair(*itVec, ""));
 			}
 		}
-    	i++;
+		i++;
     }
     return true;
 }
