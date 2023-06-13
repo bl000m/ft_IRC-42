@@ -141,7 +141,8 @@ bool	Server::newClientPoll(void)
 	new_socket = accept(server_socket, reinterpret_cast<sockaddr*>(&client_addr), &client_size);
 	if (new_socket < 0)
 		return (false);
-	fcntl(new_socket, F_SETFL, O_NONBLOCK);
+	if (fcntl(new_socket, F_SETFL, O_NONBLOCK) < 0)
+		return (close(new_socket) ,false);
 	new_poll.fd = new_socket;
 	new_poll.events = POLLIN | POLLHUP;
 	new_poll.revents = 0;
