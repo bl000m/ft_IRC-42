@@ -103,6 +103,8 @@ std::string	Channel::getClientList()
 
 	for (channelUsers::iterator i = _channelUsers.begin(); i != _channelUsers.end(); i++)
 	{
+		if (isUserOperator(i->first))
+			ret.append("@");
 		ret.append(i->first + " ");
 	}
 	return ret;
