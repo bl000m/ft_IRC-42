@@ -244,13 +244,13 @@ std::string	Channel::getMode(){
 		res += "l";
 	}
 	if (hasMode('k'))
-		res += " " + getPassword() + " ";
+		res += " " + getPassword();
 	if (hasMode('l')){
 		std::stringstream ss;
 		std::string limit;
 		ss << _memberLimit;
 		ss >> limit;
-		res += limit;
+		res += " " + limit;
 	}
 
 	return (res);
