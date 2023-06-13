@@ -68,7 +68,7 @@ void Server::kick(Client &client, const Message &mess) {
 						+ channelName + " " + *it + " " + reason + "\r\n";
 			send(kickedUser->getSock(), kickMessage.c_str(), kickMessage.size(), 0);
 			channel->removeChannelUser(*it);
-			channel->broadcast(kickMessage, client);
+			channel->broadcastSenderIncluded(kickMessage);
 		}
 	}
 }

@@ -8,7 +8,6 @@ void	Server::execMessage(Client &client, Message const &mess)
 	cmd = mess.getCommand();
 	if (!cmd)
 		return ;
-	std::cout << "COMMAND:" << *cmd << std::endl;
 	cmd_ptr = getCmd(*cmd);
 	if (!cmd_ptr)
 	{
@@ -18,7 +17,6 @@ void	Server::execMessage(Client &client, Message const &mess)
 	if (!client.isRegist()
 			&& !(*cmd == "PASS" || *cmd == "NICK" || *cmd == "USER"))
 	{
-		std::cout << "COMMAND:" << *cmd << std::endl;
 		this->reply(client, ERR_UNKNOWNCOMMAND, cmd->c_str(), ":Unknown k command");
 		return ;
 	}

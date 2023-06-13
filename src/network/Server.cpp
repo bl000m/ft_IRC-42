@@ -61,18 +61,14 @@ void	Server::run(void)
 				ret = recv(current_poll->fd, buffer, MAX_BUFFER + 1, 0);
 				if (strchr(buffer, '\n') || ret <= CLOSE_SOCKET)
 				{
-					std::cout << "lets exec" << std::endl;
 					if (ret == CLOSE_SOCKET || ret >= MAX_BUFFER)
 						force_quit(current_poll->fd, false);
 					else
 					{
-						std::cout << "From socket " << current_poll->fd << ": size: " << ret << " buf: " << buffer << std::endl;
 						_clients.find(current_poll->fd)->second.catBuff(buffer, ret);
-						/* TEST*/
 						std::vector<std::string> cmds = splitCommands(_clients.find(current_poll->fd)->second.getBuff());
 						for (size_t j = 0; j < cmds.size(); j++)
 						{
-							std::cout << "SINGLE COMMAND: " << cmds[j] << std::endl;
 							if (mess.parse(cmds[j]))
 								execMessage(_clients.find(current_poll->fd)->second, mess);
 							_clients.find(current_poll->fd)->second.clearBuff();
@@ -148,7 +144,6 @@ bool	Server::newClientPoll(void)
 	new_poll.revents = 0;
 	_server_sockets.push_back(new_poll);
 	_clients.insert(std::pair<int, Client>(new_socket, Client(new_socket, client_size, client_addr)));
-	std::cout << _server_sockets.size() << std::endl;
 	std::cout << "new Client connected" << std::endl;
 	return (true);
 }

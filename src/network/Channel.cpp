@@ -144,8 +144,6 @@ void Channel::setMemberLimit(const std::string& limit) {
 		_memberLimit = 1;
 	else if (limitValue > 4096)
 		_memberLimit = 4096;
-
-	std::cout << "limit value in setMemberLimit:" << _memberLimit << std::endl;
 }
 
 
