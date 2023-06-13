@@ -74,7 +74,6 @@ void	Server::broadcast(Client const &client, char const *cmd, char const *p1, ch
 		note = note + " " + p1;
 	if (p2)
 		note = note + " " + p2;
-	note += "\r\n";
 	for (client_map::const_iterator i = clients.begin(); i != clients.end(); i++)
 	{
 		if (i->second.getFullName() == src)
@@ -132,7 +131,7 @@ void	Server::force_quit(int sock, bool err)
 		rmClient(*client);
 		return ;
 	}
-	note = ":" + client->getFullName() + " QUIT :force quit\r\n";
+	note = ":" + client->getFullName() + " QUIT :force quit";
 	for (i = _channels.begin(); i != _channels.end(); i++)
 	{
 		if (i->second.isUserInChannel(*client->getNick()))
