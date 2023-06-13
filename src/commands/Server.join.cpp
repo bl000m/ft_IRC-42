@@ -5,7 +5,7 @@ bool	Server::createChan(std::string &name, std::string &pass, Client &client)
 	std::string	join_message;
 	std::string	namreply_message;
 
-	Channel	chan(&client, name); //dont throw here please
+	Channel	chan(&client, name);
 	if (chan.checkChannelName(name) == false)
 		return (false);
 	chan.setPassword(pass);
@@ -19,7 +19,6 @@ bool	Server::createChan(std::string &name, std::string &pass, Client &client)
 	reply(client, RPL_TOPIC, name.c_str(), "");
 	reply(client, RPL_NAMREPLY , namreply_message.c_str(), chan.getClientList().c_str());
 	reply(client, RPL_ENDOFNAMES, name.c_str(), "");
-	std::cout << "SIZE:  " << _channels.size() << std::endl;
 	return (true);
 }
 
@@ -33,9 +32,6 @@ void	Server::joinChan(std::string &name, std::string &pass, Client &client)
 		reply(client, ERR_INVITEONLYCHAN, name.c_str(), " :Cannot join channel (+i)");
 		return ;
 	}
-	std::cout << "user count in JOIN" << (int)_channels.at(name).getUsersCount() << std::endl;
-	std::cout << "limit in JOIN" << _channels.at(name).getMemberLimit() << std::endl;
-	std::cout << "hasmode l in JOIN ?" << _channels.at(name).hasMode('l') << std::endl;
 	if (_channels.at(name).hasMode('l') && (int)_channels.at(name).getUsersCount() >= _channels.at(name).getMemberLimit())
 	{
 		reply(client, ERR_CHANNELISFULL, name.c_str(), " :Cannot join channel (+l)");
@@ -54,7 +50,6 @@ void	Server::joinChan(std::string &name, std::string &pass, Client &client)
 	reply(client, RPL_NAMREPLY , namreply_message.c_str(), _channels.at(name).getClientList().c_str());
 	reply(client, RPL_ENDOFNAMES, name.c_str(), "");
 	_channels.at(name).broadcast(join_message, client);
-	std::cout << "SIZE:  " << _channels.size() << std::endl;
 }
 
 void	Server::join(Client &client, Message const &mess)
@@ -79,9 +74,6 @@ void	Server::join(Client &client, Message const &mess)
 		while (getline(ss, parsed, ','))
 			keys.push_back(parsed);
 	}
-		/*Verify channel names and keys*/
-	std::cout << channels.size() << std::endl;
-	std::cout << keys.size() << std::endl;
 	for (size_t i = 0; i < channels.size(); i++)
 	{
 		if (keys.size() < i + 1)
