@@ -50,6 +50,7 @@ void	Server::joinChan(std::string &name, std::string &pass, Client &client)
 	reply(client, RPL_TOPIC, name.c_str(), _channels.at(name).getTopic().c_str());
 	reply(client, RPL_NAMREPLY , namreply_message.c_str(), _channels.at(name).getClientList().c_str());
 	reply(client, RPL_ENDOFNAMES, name.c_str(), "");
+	_channels.at(name).broadcast(join_message, client);
 	std::cout << "SIZE:  " << _channels.size() << std::endl;
 }
 
