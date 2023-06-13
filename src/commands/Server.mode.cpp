@@ -74,23 +74,24 @@ void	Server::mode_channel(Client &client, Message const &mess, std::string targe
     }
 
 
-	modeOptions = mess.getParam()[1];
-	//debug
-	std::cout << "mode options: " << modeOptions << std::endl;
-	if (!parseChannelModes(modeOptions, mess))
-		// this->reply(client,  ERR_NEEDMOREPARAMS, target.c_str(), ":Not enough parameters");
-		return;
 
 	//debug
-	for (it = _channelModes.begin(); it != _channelModes.end(); it++){
-		std::cout << "option = " << it->first << " => arg = " << it->second << std::endl;
-	}
+	// for (it = _channelModes.begin(); it != _channelModes.end(); it++){
+	// 	std::cout << "option = " << it->first << " => arg = " << it->second << std::endl;
+	// }
 
 	// std::cout << "RETURN OF GETMODE: " << channel->getMode() << std::endl;
 	if (mess.getParamNum() < 2){
 		reply(client,  RPL_CHANNELMODEIS , target.c_str(), channel->getMode().c_str());
 		return ;
 	}
+
+	modeOptions = mess.getParam()[1];
+	//debug
+	std::cout << "mode options: " << modeOptions << std::endl;
+	if (!parseChannelModes(modeOptions, mess))
+		// this->reply(client,  ERR_NEEDMOREPARAMS, target.c_str(), ":Not enough parameters");
+		return;
 
 	if (!channel->isUserOperator(*(client.getNick()))) {
         this->reply(client,  ERR_CHANOPRIVSNEEDED, target.c_str(), ":You're not channel operator");
@@ -268,6 +269,7 @@ void Server::handleLMode(channelModeListIt it, Channel* channel, Client& client)
 {
     if (it->first == "+l")
     {
+		std::cout << "second in handleLmode: " << it->second << std::endl;
         channel->setMemberLimit(it->second);
         channel->addMode('l');
         std::string message = buildModeMessage(channel, client, it->first + " " + it->second);

@@ -91,5 +91,6 @@ class Channel {
 		std::string					_topicCreatedBy;
 		int							_modes;
 		int							_memberLimit;
+		std::string					_strMemberLimit;
 };
 #endif
