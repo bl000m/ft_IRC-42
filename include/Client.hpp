@@ -47,8 +47,7 @@ class Client
 		void	reply(char *src, char *cmd, char *para1, char *para2);
 		void	reply(char *src, char *cmd, char *para1, char *para2, char *para3);
 		void	reply(char *note);
-		std::string	getReply(void) const;
-		void		clearReply(void);
+		void	beSent(void);
 
 		/*	setters	*/
 		void	setPass(bool good);

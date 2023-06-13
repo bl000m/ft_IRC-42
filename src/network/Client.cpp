@@ -120,12 +120,11 @@ void	Client::reply(char *note)
 	_envelope += note;
 	_envelope += "\r\n";
 }
-std::string	Client::getReply(void) const
+void	Client::beSent(void) const
 {
-	return (_envelope);
-}
-void		Client::clearReply(void)
-{
+	if (_envelope == "")
+		return ;
+	send(_sock, _envelope.c_str(), _envelope.size(), 0);
 	_envelope = "";
 }
 
