@@ -5,7 +5,7 @@
 	Checks if the channel name is valid.
 	Adds the operator to the channel's user list with operator privileges.
 */
-Channel::Channel(Client *oper, std::string name): _name(name), _topic(""), _modes(0){
+Channel::Channel(Client *oper, std::string name): _name(name), _topic(""), _modes(0), _memberLimit(0){
 		user newChannelUser;
 		std::string nickname = *(oper->getNick());
 		newChannelUser.client = oper;
@@ -132,12 +132,14 @@ void Channel::removeUserAsOperator(std::string nickname){
 }
 
 void Channel::setMemberLimit(const std::string& limit) {
-	std::istringstream ss(limit);
+	_strMemberLimit = limit;
+	std::stringstream ss;
 	int limitValue;
+	ss << limit;
 	ss >> limitValue;
-	if (!ss.fail() && !ss.eof() && limitValue > 0 && limitValue <= 4096) {
+	if (!ss.fail() && limitValue > 0 && limitValue <= 4096)
 		_memberLimit = limitValue;
-	}
+	std::cout << "limit value in setMemberLimit:" << _memberLimit << std::endl;
 }
 
 
@@ -230,10 +232,16 @@ std::string	Channel::getMode(){
 		res += "k";
 	if (hasMode('o'))
 		res += "o";
-	if (hasMode('l'))
-		res += "l";
 	if (hasMode('i'))
 		res += "i";
+	if (hasMode('l')){
+		res += "l";
+	}
+	if (hasMode('k'))
+		res += " " + getPassword() + " ";
+	if (hasMode('l'))
+		res += " " + _strMemberLimit;
+
 	return (res);
 }
 

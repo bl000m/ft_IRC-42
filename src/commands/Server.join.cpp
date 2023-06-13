@@ -33,8 +33,11 @@ void	Server::joinChan(std::string &name, std::string &pass, Client &client)
 		reply(client, ERR_INVITEONLYCHAN, name.c_str(), " :Cannot join channel (+i)");
 		return ;
 	}
-	if (_channels.at(name).hasMode('l') && (int)_channels.at(name).getUsersCount() + 1 > _channels.at(name).getMemberLimit())
-	{	
+	std::cout << "user count in JOIN" << (int)_channels.at(name).getUsersCount() << std::endl;
+	std::cout << "limit in JOIN" << _channels.at(name).getMemberLimit() << std::endl;
+	std::cout << "hasmode l in JOIN ?" << _channels.at(name).hasMode('l') << std::endl;
+	if (_channels.at(name).hasMode('l') && (int)_channels.at(name).getUsersCount() >= _channels.at(name).getMemberLimit())
+	{
 		reply(client, ERR_CHANNELISFULL, name.c_str(), " :Cannot join channel (+l)");
 		return ;
 	}
@@ -59,7 +62,7 @@ void	Server::join(Client &client, Message const &mess)
 	std::vector<std::string>	keys;
 	std::string					parsed;
 	std::stringstream			ss;
-	
+
 	if (mess.getParamNum() < 1)
 	{
 		reply(client,  ERR_NEEDMOREPARAMS, "JOIN", ":Not enough parameters");
