@@ -11,22 +11,35 @@ void	Server::who(Client &client, Message const &mess)
 	target = mess.getParam()[0];
 	if (target[0] == '#' || target[0] == '&')
 	{
-		;//who_chan(client, target);
+		who_chan(client, target);
 	}
 	else if (target.find_first_of("*?") == std::string::npos)
 	{
-		;
+		who_nick(client, target);
 	}
 	else
 	{
-		;
+		who_mask(client, target);
 	}
 	client.reply(RPL_ENDOFWHO, target, ":End of WHO list");
 }
 
-void	Server::who_chan(Client &client, std::string chan)
+void	Server::who_chan(Client &client, std::string chan_name)
 {
+	Channel					*chan;
+	Channel::channelUsers	members;
+	Channel::channelUsersIt	it;
+	std::string				note;
 
+	chan = getChan(chan_name);
+	if (!chan)
+		return ;
+	members = chan->getChannelUsers();
+	for (it = members.begin(); it != members.end(); it++)
+	{
+		note = who_reply(client, it->first, chan_name.c_str());
+		client.reply(note.c_str);
+	}
 }
 void	Server::who_nick(Client &client, std::string nick)
 {
@@ -38,7 +51,19 @@ void	Server::who_nick(Client &client, std::string nick)
 }
 void	Server::who_mask(Client &client, std::string mask)
 {
+	client_map::iterator	it;
+	std::string				nick;
+	std::string				note;
 
+	for (it = _clients.begin(); it != _clients.end(); it++)
+	{
+		nick = *(it->second.getNick());
+		if (isMatch(nick, mask))
+		{
+			note = who_nick(client, nick);
+			client.reply(note.c_str());
+		}
+	}
 }
 
 std::string	who_reply(Client const &client, std::string nick, char *chan)
