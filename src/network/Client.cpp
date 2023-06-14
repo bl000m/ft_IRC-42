@@ -122,10 +122,10 @@ void	Client::reply(char const *note)
 }
 void	Client::beSent(void)
 {
-	if (_envelope == "")
+	if (_envelope.empty())
 		return ;
 	send(_sock, _envelope.c_str(), _envelope.size(), 0);
-	_envelope = "";
+	_envelope.clear();
 }
 
 /*	setters	*/
