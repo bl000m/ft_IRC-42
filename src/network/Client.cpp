@@ -6,7 +6,7 @@ Client::Client(void)
 	_server_op(false), _wallop(true),
 	_sock(-1), _pass(false), 
 	_nick(NULL), _user(NULL), _host(NULL),
-	_sock_len(-1)
+	_sock_len(-1), _envelope("")
 {
 	std::memset(&_sock_addr, 0, sizeof(sockaddr_in));
 	memset(_buff, 0, MAX_BUFFER);
@@ -18,7 +18,7 @@ Client::Client(Client const &client)
 	_sock(client._sock), _pass(client._pass), 
 	_nick(NULL), _user(NULL), _host(NULL),
 	_sock_len(client._sock_len),
-	_sock_addr(client._sock_addr)
+	_sock_addr(client._sock_addr), _envelope("")
 {
 	if (client._nick)
 		_nick = new std::string(*client._nick);
@@ -47,6 +47,7 @@ Client	&Client::operator=(Client const &client)
 	_pass = client._pass;
 	_sock_len = client._sock_len;
 	_sock_addr = client._sock_addr;
+	_envelope = client._envelope;
 	clear();
 	if (client._nick)
 		_nick = new std::string(*client._nick);
@@ -62,7 +63,7 @@ Client::Client(int sockfd, socklen_t socklen, sockaddr_in sockaddr)
 	:_regist(false), _invisible(false), _server_op(false), _wallop(true),
 	_sock(sockfd), _pass(false),
 	_nick(NULL), _user(NULL), _host(NULL),
-	_sock_len(socklen), _sock_addr(sockaddr) {}
+	_sock_len(socklen), _sock_addr(sockaddr), _envelope("") {}
 
 /*
 	the modification of client has certain restrictions,
@@ -71,6 +72,61 @@ Client::Client(int sockfd, socklen_t socklen, sockaddr_in sockaddr)
 	1. Server should verify if there's nickname collsion
 	2. Once register, PASS and USER should not be accepted, and should generate an error message.
 */
+
+/*	reply-to-client related function	*/
+void	Client::reply(char const *numeric, char const *p1, char const *p2)
+{
+	_envelope += ":localhost ";
+	if (numeric)
+		_envelope += *numeric;
+	if (_nick)
+		_envelope = _envelope + " " + *_nick;
+	else
+		_envelope = _envelope + " unknown"; 
+	if (p1)
+		_envelope = _envelope + " " + *p1;
+	if (p2)
+		_envelope = _envelope + " " + *p2;
+	_envelope += "\r\n";
+}
+void	Client::reply(char *src, char *cmd, char *p1, char *p2)
+{
+	if (src)
+		_envelope = _envelope + ":" + *src;
+	if (cmd)
+		_envelope += " " + *cmd;
+	if (p1)
+		_envelope += " " + *p1;
+	if (p2)
+		_envelope += " " + *p2;
+	_envelope += "\r\n";
+}
+void	Client::reply(char *src, char *cmd, char *p1, char *p2, char *p3)
+{
+	if (src)
+		_envelope = _envelope + ":" + *src;
+	if (cmd)
+		_envelope += " " + *cmd;
+	if (p1)
+		_envelope += " " + *p1;
+	if (p2)
+		_envelope += " " + *p2;
+	if (p3)
+		_envelope += " " + *p3;
+	_envelope += "\r\n";
+}
+void	Client::reply(char const *note)
+{
+	_envelope += note;
+	_envelope += "\r\n";
+}
+void	Client::beSent(void)
+{
+	if (_envelope.empty())
+		return ;
+	send(_sock, _envelope.c_str(), _envelope.size(), 0);
+	_envelope.clear();
+}
 
 /*	setters	*/
 void	Client::setPass(bool good)

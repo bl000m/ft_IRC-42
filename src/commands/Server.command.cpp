@@ -11,13 +11,15 @@ void	Server::execMessage(Client &client, Message const &mess)
 	cmd_ptr = getCmd(*cmd);
 	if (!cmd_ptr)
 	{
-		this->reply(client, ERR_UNKNOWNCOMMAND, cmd->c_str(), ":Unknown command");
+		client.reply(ERR_UNKNOWNCOMMAND, cmd->c_str(), ":Unknown command");
+		// this->reply(client, ERR_UNKNOWNCOMMAND, cmd->c_str(), ":Unknown command");
 		return ;
 	}
 	if (!client.isRegist()
 			&& !(*cmd == "PASS" || *cmd == "NICK" || *cmd == "USER"))
 	{
-		this->reply(client, ERR_UNKNOWNCOMMAND, cmd->c_str(), ":Unknown k command");
+		client.reply(ERR_UNKNOWNCOMMAND, cmd->c_str(), ":Unknown command");
+		// this->reply(client, ERR_UNKNOWNCOMMAND, cmd->c_str(), ":Unknown k command");
 		return ;
 	}
 	(this->*cmd_ptr)(client, mess);
@@ -34,12 +36,7 @@ Server::fn_ptr	Server::getCmd(std::string const &cmd)
 }
 
 /*
-	send to client if the message has the form:
-	:localhost command nick para1 para2
-	:localhost command nick para1
-	:localhost command nick
-	the function simply append all together with space in between
-	add \r\n at the end
+	should be replaced by client::reply
 */
 void	Server::reply(Client const &client, char const *cmd, char const *p1, char const *p2)
 {
@@ -57,13 +54,14 @@ void	Server::reply(Client const &client, char const *cmd, char const *p1, char c
 	note = note + "\r\n";
 	//the 4th para of send use default temporarily
 	send(client.getSock(), note.c_str(), note.size(), 0);
+	std::cout << "ERR: SERVER::REPLY" << std::endl;
 }
 
 /*
 	A message from source (a client) to all other client
 	on the server
 */
-void	Server::broadcast(Client const &client, char const *cmd, char const *p1, char const *p2)
+void	Server::broadcast(Client &client, char const *cmd, char const *p1, char const *p2)
 {
 	std::string	note;
 	std::string	src = client.getFullName();
@@ -76,12 +74,12 @@ void	Server::broadcast(Client const &client, char const *cmd, char const *p1, ch
 		note = note + " " + p1;
 	if (p2)
 		note = note + " " + p2;
-	note += "\r\n";
 	for (client_map::const_iterator i = clients.begin(); i != clients.end(); i++)
 	{
 		if (i->second.getFullName() == src)
 			continue ;
-		send(i->second.getSock(), note.c_str(), note.size(), 0);
+		client.reply(note.c_str());
+		// send(i->second.getSock(), note.c_str(), note.size(), 0);
 	}
 	return ;
 }
@@ -125,14 +123,15 @@ void	Server::force_quit(int sock, bool err)
 	client = &(_clients.find(sock)->second);
 	if (err)
 	{
-		reply(*client, ERR_INPUTTOOLONG, ":Input too long", NULL);
+		client->reply(ERR_INPUTTOOLONG, ":Input too long", NULL);
+		// reply(*client, ERR_INPUTTOOLONG, ":Input too long", NULL);
 	}
 	if (!client->isRegist())
 	{
 		rmClient(*client);
 		return ;
 	}
-	note = ":" + client->getFullName() + " QUIT :force quit\r\n";
+	note = ":" + client->getFullName() + " QUIT :force quit";
 	for (i = _channels.begin(); i != _channels.end(); i++)
 	{
 		if (i->second.isUserInChannel(*client->getNick()))
