@@ -121,7 +121,7 @@ class Server {
 		/*	static map initialization	*/
 		static fn_map	cmd_init(void);
 
-		/*	should not be commited	*/
+		/*	server queries	*/
 		void	motd(Client &client, Message const &mess);
 		void	wallops(Client &client, Message const &mess);
 		void	kill(Client &client, Message const &mess);
@@ -129,7 +129,11 @@ class Server {
 		void	oper(Client &client, Message const &mess);
 		void	mode_user(Client &client, Message const &mess, std::string target);
 		void	mode_channel(Client &client, Message const &mess, std::string target);
-
+		void	who(Client &client, Message const &mess);
+		void	who_chan(Client &client, std::string chan_name);
+		void	who_nick(Client &client, std::string nick);
+		void	who_mask(Client &client, std::string mask);
+		std::string	who_reply(Client const &client, std::string nick, char *chan);
 		/*	client getter and remove	*/
 		Client		*getClient(std::string const &nick);
 		void		rmClient(Client &client);

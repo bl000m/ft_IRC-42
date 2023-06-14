@@ -105,6 +105,7 @@ Server::fn_map	Server::cmd_init(void)
 	temp["INVITE"] = &Server::invite;
 	temp["KICK"] = &Server::kick;
 	temp["TOPIC"] = &Server::topic;
+	temp["WHO"] = &Server::who;
 
 	return (temp);
 }

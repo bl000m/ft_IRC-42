@@ -66,7 +66,7 @@ void	Server::who_mask(Client &client, std::string mask)
 	}
 }
 
-std::string	who_reply(Client const &client, std::string nick, char *chan)
+std::string	Server::who_reply(Client const &client, std::string nick, char *chan)
 {
 	Client			*target;
 	channelListIt	it;
