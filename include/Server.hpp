@@ -97,7 +97,6 @@ class Server {
 		std::string buildModeMessage(Channel* channel, const Client& client, const std::string& mode);
 
 		/*	connection command helper	*/
-		static void		welcome_mess(Client const &client);
 		bool			nick_in_use(std::string const &nick) const;
 		static bool		nick_valid(std::string const &nick);
 
@@ -117,7 +116,7 @@ class Server {
 
 		/*	common reply	*/
 		static void		reply(Client const &client, char const *cmd, char const *p1, char const *p2);
-		void			broadcast(Client const &source, char const *cmd, char const *p1, char const *p2);
+		void			broadcast(Client &source, char const *cmd, char const *p1, char const *p2);
 
 		/*	static map initialization	*/
 		static fn_map	cmd_init(void);

@@ -115,12 +115,12 @@ void	Client::reply(char *src, char *cmd, char *p1, char *p2, char *p3)
 		_envelope += " " + *p3;
 	_envelope += "\r\n";
 }
-void	Client::reply(char *note)
+void	Client::reply(char const *note)
 {
 	_envelope += note;
 	_envelope += "\r\n";
 }
-void	Client::beSent(void) const
+void	Client::beSent(void)
 {
 	if (_envelope == "")
 		return ;

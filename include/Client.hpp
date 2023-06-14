@@ -46,7 +46,7 @@ class Client
 		void	reply(char const *numeric, char const *p1, char const *p2);
 		void	reply(char *src, char *cmd, char *para1, char *para2);
 		void	reply(char *src, char *cmd, char *para1, char *para2, char *para3);
-		void	reply(char *note);
+		void	reply(char const *note);
 		void	beSent(void);
 
 		/*	setters	*/

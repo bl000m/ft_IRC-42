@@ -10,8 +10,8 @@ void	Server::motd(Client &client, Message const &mess)
 
 void	Server::wallops(Client &client, Message const &mess)
 {
-	client_map::const_iterator	i;
-	std::string					note;
+	client_map::iterator	i;
+	std::string				note;
 	
 	if (mess.getParamNum() < 1)
 	{
@@ -71,8 +71,8 @@ void	Server::kill(Client &client, Message const &mess)
 		}
 	}
 	note_to_vic = ":localhost ERROR :killed " + client.getFullName() + " " + mess.getParam()[1];
-	victim.reply(note_to_all.c_str());
-	victim.reply(note_to_vic.c_str());
+	victim->reply(note_to_all.c_str());
+	victim->reply(note_to_vic.c_str());
 	// send(victim->getSock(), note_to_all.c_str(), note_to_all.size(), 0);
 	// send(victim->getSock(), note_to_vic.c_str(), note_to_vic.size(), 0);
 	rmClient(*victim);

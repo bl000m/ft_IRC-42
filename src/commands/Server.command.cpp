@@ -61,7 +61,7 @@ void	Server::reply(Client const &client, char const *cmd, char const *p1, char c
 	A message from source (a client) to all other client
 	on the server
 */
-void	Server::broadcast(Client const &client, char const *cmd, char const *p1, char const *p2)
+void	Server::broadcast(Client &client, char const *cmd, char const *p1, char const *p2)
 {
 	std::string	note;
 	std::string	src = client.getFullName();
@@ -78,7 +78,7 @@ void	Server::broadcast(Client const &client, char const *cmd, char const *p1, ch
 	{
 		if (i->second.getFullName() == src)
 			continue ;
-		client.reply(note.c_str);
+		client.reply(note.c_str());
 		// send(i->second.getSock(), note.c_str(), note.size(), 0);
 	}
 	return ;
@@ -123,7 +123,7 @@ void	Server::force_quit(int sock, bool err)
 	client = &(_clients.find(sock)->second);
 	if (err)
 	{
-		client.reply(ERR_INPUTTOOLONG, ":Input too long", NULL);
+		client->reply(ERR_INPUTTOOLONG, ":Input too long", NULL);
 		// reply(*client, ERR_INPUTTOOLONG, ":Input too long", NULL);
 	}
 	if (!client->isRegist())

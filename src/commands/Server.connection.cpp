@@ -1,5 +1,7 @@
 #include "Server.hpp"
 
+static void	welcome_mess(Client &client);
+
 void	Server::pass(Client &client, Message const &mess)
 {
 	if (client.isRegist() || client.getNick())
@@ -87,7 +89,7 @@ void	Server::user(Client &client, Message const &mess)
 	client.setUser(param[0]);
 	client.setHost(param[3]);
 	client.beRegist();
-	this->welcome_mess(client);
+	welcome_mess(client);
 }
 
 void	Server::quit(Client &client, Message const &mess)
@@ -192,7 +194,7 @@ bool	Server::nick_valid(std::string const &nick)
 /*
 	Not all isupport message are implemented
 */
-void	Server::welcome_mess(Client const &client)
+static void	welcome_mess(Client &client)
 {
 	client.reply(RPL_WELCOME, ":Welcome to our network", NULL);
 	client.reply(RPL_YOURHOST, ":Your host is ft_irc", NULL);

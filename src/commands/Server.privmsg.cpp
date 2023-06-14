@@ -84,7 +84,7 @@ bool	Server::sendToNick(Client &client, Message const &mess, std::string const &
 		return (false);
 	}
 	note = ":" + client.getFullName() + " " + *(mess.getCommand()) + " " + *(target->getNick()) + " :" + mess.getParam()[1] + "\r\n";
-	target.reply(note.c_str());
+	target->reply(note.c_str());
 	// send(target->getSock(), note.c_str(), note.size(), 0);
 	return (true);
 }
