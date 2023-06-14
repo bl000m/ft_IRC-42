@@ -68,3 +68,49 @@ void	Server::kill(Client &client, Message const &mess)
 	send(victim->getSock(), note_to_vic.c_str(), note_to_vic.size(), 0);
 	rmClient(*victim);
 }
+
+
+/*
+	string matching with wild card
+	mask contain * or ?
+*/
+bool	isMatch(std::string name, std::string mask)
+{
+	int	i;
+	int	j;
+	int	match;
+	int	wildcard;
+
+	i = 0;
+	j = 0;
+	match = 0;
+	wildcard = -1;
+	while (i < name.size())
+	{
+		if (j < mask.size() && (mask[j] == '?' || mask[j] == name[i]))
+		{
+			i++;
+			j++;
+		}
+		else if (j < mask.size() && mask[j] == '*')
+		{
+			wildcard = j;
+			j++;
+			match = i;
+		}
+		else if (wildcard != -1)
+		{
+			j = wildcard + 1;
+			match++;
+			i = match;
+		}
+		else
+			return (false);
+	}
+	for (; j < mask.size(); j++)
+	{
+		if (mask[j] != '*')
+			return (false);
+	}
+	return (true);
+}
