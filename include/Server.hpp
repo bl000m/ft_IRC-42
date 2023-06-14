@@ -133,7 +133,7 @@ class Server {
 		void	who_chan(Client &client, std::string chan_name);
 		void	who_nick(Client &client, std::string nick);
 		void	who_mask(Client &client, std::string mask);
-		std::string	who_reply(Client const &client, std::string nick, char *chan);
+		std::string	who_reply(Client const &client, std::string nick, char const *chan);
 		/*	client getter and remove	*/
 		Client		*getClient(std::string const &nick);
 		void		rmClient(Client &client);

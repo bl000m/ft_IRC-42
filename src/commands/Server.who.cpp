@@ -21,7 +21,7 @@ void	Server::who(Client &client, Message const &mess)
 	{
 		who_mask(client, target);
 	}
-	client.reply(RPL_ENDOFWHO, target, ":End of WHO list");
+	client.reply(RPL_ENDOFWHO, target.c_str(), ":End of WHO list");
 }
 
 void	Server::who_chan(Client &client, std::string chan_name)
@@ -38,7 +38,7 @@ void	Server::who_chan(Client &client, std::string chan_name)
 	for (it = members.begin(); it != members.end(); it++)
 	{
 		note = who_reply(client, it->first, chan_name.c_str());
-		client.reply(note.c_str);
+		client.reply(note.c_str());
 	}
 }
 void	Server::who_nick(Client &client, std::string nick)
@@ -60,13 +60,12 @@ void	Server::who_mask(Client &client, std::string mask)
 		nick = *(it->second.getNick());
 		if (isMatch(nick, mask))
 		{
-			note = who_nick(client, nick);
-			client.reply(note.c_str());
+			who_nick(client, nick);
 		}
 	}
 }
 
-std::string	Server::who_reply(Client const &client, std::string nick, char *chan)
+std::string	Server::who_reply(Client const &client, std::string nick, char const *chan)
 {
 	Client			*target;
 	channelListIt	it;
@@ -76,12 +75,12 @@ std::string	Server::who_reply(Client const &client, std::string nick, char *chan
 	target = getClient(nick);
 	if (!target)
 		return (note);
-	note = ":localhost" + RPL_WHOREPLY + *client.getNick() + " ";
+	note = note + ":localhost" + RPL_WHOREPLY + *client.getNick() + " ";
 	if (chan)
 		chan_name = chan;
 	else
 	{
-		for (it = _channel.begin(); it != _channel.end(); it++)
+		for (it = _channels.begin(); it != _channels.end(); it++)
 		{
 			if (it->second.isUserInChannel(nick))
 			{
@@ -103,8 +102,8 @@ std::string	Server::who_reply(Client const &client, std::string nick, char *chan
 */
 static bool	isMatch(std::string name, std::string mask)
 {
-	int	i;
-	int	j;
+	long unsigned int	i;
+	long unsigned int	j;
 	int	match;
 	int	wildcard;
 
