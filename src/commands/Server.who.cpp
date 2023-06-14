@@ -75,6 +75,8 @@ std::string	Server::who_reply(Client const &client, std::string nick, char const
 	target = getClient(nick);
 	if (!target)
 		return (note);
+	if (target->isInvisible() && !share_chan(client, *target))
+		return (note);
 	note = note + ":localhost" + RPL_WHOREPLY + *client.getNick() + " ";
 	if (chan)
 		chan_name = chan;
@@ -139,4 +141,21 @@ static bool	isMatch(std::string name, std::string mask)
 			return (false);
 	}
 	return (true);
+}
+
+bool	Server::share_chan(Client const &a, Client const &b)
+{
+	channelListIt	it;
+	Channel			*chan;
+
+	for (it = _channels.begin(); it != _channels.end(); it++)
+	{
+		chan = &(it->second);
+		if (chan->isUserInChannel(*a.getNick())
+			&& chan->isUserInChannel(*b.getNick()))
+		{
+			return (true);
+		}
+	}
+	return (false);
 }
