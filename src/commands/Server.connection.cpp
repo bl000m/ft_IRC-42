@@ -55,14 +55,16 @@ void	Server::nick(Client &client, Message const &mess)
 	}
 	if (client.isRegist())
 		broadcast(client, "NICK", new_nick.c_str(), NULL);
-	old_nick = *(client.getNick());
-	client.setNick(new_nick);
-	channels = client.getChannels();
-	for (it = channels.begin(); it != channels.end(); it++){
-		Channel *channel = getChannel(it->first);
-		if (channel->isUserInChannel(old_nick))
-			channel->updateNickname(old_nick, new_nick);
+	if (client.getNick() != NULL){
+		old_nick = *(client.getNick());
+		channels = client.getChannels();
+		for (it = channels.begin(); it != channels.end(); it++){
+			Channel *channel = getChannel(it->first);
+			if (channel->isUserInChannel(old_nick))
+				channel->updateNickname(old_nick, new_nick);
+		}
 	}
+	client.setNick(new_nick);
 }
 
 void	Server::user(Client &client, Message const &mess)
