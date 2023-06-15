@@ -57,8 +57,10 @@ void	Server::who_mask(Client &client, std::string mask)
 
 	for (it = _clients.begin(); it != _clients.end(); it++)
 	{
+		if (!it->second.isRegist())
+			continue ;
 		nick = it->second.getNick();
-		if (nick && isMatch(*nick, mask))
+		if (isMatch(*nick, mask))
 		{
 			who_nick(client, *nick);
 		}
@@ -73,7 +75,7 @@ std::string	Server::who_reply(Client const &client, std::string nick, char const
 	std::string		note = "";
 
 	target = getClient(nick);
-	if (!target)
+	if (!target || !target->isRegist())
 		return (note);
 	if (target->isInvisible() && !share_chan(client, *target))
 		return (note);
