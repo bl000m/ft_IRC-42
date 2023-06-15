@@ -52,15 +52,15 @@ void	Server::who_nick(Client &client, std::string nick)
 void	Server::who_mask(Client &client, std::string mask)
 {
 	client_map::iterator	it;
-	std::string				nick;
+	std::string const		*nick;
 	std::string				note;
 
 	for (it = _clients.begin(); it != _clients.end(); it++)
 	{
-		nick = *(it->second.getNick());
-		if (isMatch(nick, mask))
+		nick = it->second.getNick();
+		if (nick && isMatch(*nick, mask))
 		{
-			who_nick(client, nick);
+			who_nick(client, *nick);
 		}
 	}
 }

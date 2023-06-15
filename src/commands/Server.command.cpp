@@ -147,7 +147,7 @@ Client	*Server::getClient(std::string const &nick)
 	temp = NULL;
 	for (i = _clients.begin(); i != _clients.end(); i++)
 	{
-		if (*(i->second.getNick()) == nick)
+		if (i->second.getNick() && *(i->second.getNick()) == nick)
 			temp = &(i->second);
 	}
 	return (temp);
