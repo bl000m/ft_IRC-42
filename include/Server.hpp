@@ -123,9 +123,6 @@ class Server {
 		static void		reply(Client const &client, char const *cmd, char const *p1, char const *p2);
 		void			broadcast(Client &source, char const *cmd, char const *p1, char const *p2);
 
-		/*	static map initialization	*/
-		static fn_map	cmd_init(void);
-
 		/*	server queries	*/
 		void	motd(Client &client, Message const &mess);
 		void	wallops(Client &client, Message const &mess);
