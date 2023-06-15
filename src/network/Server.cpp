@@ -129,7 +129,7 @@ std::vector<std::string>	Server::splitCommands(std::string &buffer)
 	ss << buffer;
 	while (true)
 	{
-		getline(ss, parsed, '\n')
+		getline(ss, parsed, '\n');
 		if (ss.eof())
 			return (cmds);
 		cmds.push_back(parsed);

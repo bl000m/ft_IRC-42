@@ -292,6 +292,8 @@ void	Client::clearBuff(void)
 		_readbuf.clear();
 		return ;
 	}
+	if (_readbuf.find("\n") == std::string::npos)
+		return ;
 	i = _readbuf.find_last_of("\n");
 	_readbuf = _readbuf.substr(i + 1);
 }
