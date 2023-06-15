@@ -31,9 +31,12 @@
 #define MAX_PORT                65535
 #define MIN_ARGC                3
 #define CLOSE_SOCKET            0
+#define MAX_BUFFER	512
 
 #define IS_POLLIN(revents)      (revents & POLLIN)
 #define IS_POLLHUP(revents)     (revents & POLLHUP)
+#define IS_POLLOUT(revents)     (revents & POLLOUT)
+#define IS_POLLERR(revents)     (revents & POLLERR)
 
 class Channel;
 class Client;
@@ -56,12 +59,9 @@ class Server {
 
         void    initServer(const std::string &port, const std::string &password);
         void    run(void);
-		void	execMessage(Client &client, Message const &mess);
 
     private:
-        bool					initServerPoll(void);
-        bool					newClientPoll(void);
-
+		/*	private data	*/
         std::string						_password;
         uint16_t						_iport;
 
@@ -72,11 +72,20 @@ class Server {
 		client_map						_clients;
 		static fn_map const				_command;
 
+		/*	Server::run helper	*/
+        bool	initServerPoll(void);
+        bool	newClientPoll(void);
+		void	client_pollin(char *buf, int sock);
+		void	client_pollout(int sock);
+		void	force_quit(int sock, bool err);
+		std::vector<std::string>	splitCommands(std::string &buffer);
+
 		/*	command execution	*/
 		fn_ptr		getCmd(std::string const &cmd);
-		void		force_quit(int sock, bool err);
+		void		execMessage(Client &client, Message const &mess);
 
-		std::vector<std::string>	splitCommands(std::string &buffer);
+		/*	static map initialization	*/
+		static fn_map	cmd_init(void);
 
 		/*	connection commands	*/
 		void	pass(Client &client, Message const &mess);
@@ -102,9 +111,21 @@ class Server {
 		std::string buildModeMessage(Channel* channel, const Client& client, const std::string& mode);
 
 		/*	connection command helper	*/
-		static void		welcome_mess(Client const &client);
 		bool			nick_in_use(std::string const &nick) const;
 		static bool		nick_valid(std::string const &nick);
+
+		/* channel operators related commands */
+		void	invite(Client &client, Message const &mess);
+		void	kick(Client &client, Message const &mess);
+		void	topic(Client &client, Message const &mess);
+		bool	setMode(Channel *channel, Client &client);
+		bool	parseChannelModes(const std::string& modeString, Message const &mess);
+		void	handleKMode(channelModeListIt it, Channel* channel, Client& client);
+		bool	handleOMode(channelModeListIt it, Channel* channel, Client& client);
+		void	handleTMode(channelModeListIt it, Channel* channel, Client& client);
+		void	handleIMode(channelModeListIt it, Channel* channel, Client& client);
+		void	handleLMode(channelModeListIt it, Channel* channel, Client& client);
+		std::string	buildModeMessage(Channel* channel, const Client& client, const std::string& mode);
 
 		/*	privmsg and notice	*/
 		void	privmsg(Client &client, Message const &mess);
@@ -112,22 +133,15 @@ class Server {
 		bool	sendToNick(Client &client, Message const &mess, std::string const &nick);
 		void	sendToChan(Client &client, Message const &mess, std::string const &chan);
 
-		std::vector<std::string>	getTarget(std::string const &str);
-
 		/*Channel related methods*/
 		bool	createChan(std::string &name, std::string &pass, Client &client);
 		void	joinChan(std::string &name, std::string &pass, Client &client);
-		/* channel getter */
-		Channel *getChannel(const std::string &channelName);
 
 		/*	common reply	*/
 		static void		reply(Client const &client, char const *cmd, char const *p1, char const *p2);
-		void			broadcast(Client const &source, char const *cmd, char const *p1, char const *p2);
+		void			broadcast(Client &source, char const *cmd, char const *p1, char const *p2);
 
-		/*	static map initialization	*/
-		static fn_map	cmd_init(void);
-
-		/*	should not be commited	*/
+		/*	server queries	*/
 		void	motd(Client &client, Message const &mess);
 		void	wallops(Client &client, Message const &mess);
 		void	kill(Client &client, Message const &mess);
@@ -135,12 +149,22 @@ class Server {
 		void	oper(Client &client, Message const &mess);
 		void	mode_user(Client &client, Message const &mess, std::string target);
 		void	mode_channel(Client &client, Message const &mess, std::string target);
+		void	who(Client &client, Message const &mess);
+		void	who_chan(Client &client, std::string chan_name);
+		void	who_nick(Client &client, std::string nick);
+		void	who_mask(Client &client, std::string mask);
+		std::string	who_reply(Client const &client, std::string nick, char const *chan);
+		bool	share_chan(Client const &a, Client const &b);
 
-		/*	client getter and remove	*/
+		/*	client channel getter and remove	*/
 		Client		*getClient(std::string const &nick);
 		void		rmClient(Client &client);
 		Channel		*getChan(std::string const &chan);
 		void		rmChan(std::string const &chan);
+		Channel		*getChannel(const std::string &channelName);
+
+		/* utils */
+		channelNamesVec split(const std::string &channelsFromInput, char delimiter);
 
 		/* utils */
 		channelNamesVec split(const std::string &channelsFromInput, char delimiter);

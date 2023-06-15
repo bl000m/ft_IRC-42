@@ -6,7 +6,7 @@ void	Server::mode(Client &client, Message const &mess)
 
 	if (mess.getParamNum() < 1)
 	{
-		reply(client,  ERR_NEEDMOREPARAMS, "MODE", ":Not enough parameters");
+		client.reply(ERR_NEEDMOREPARAMS, "MODE", ":Not enough parameters");
 		return ;
 	}
 	target = mess.getParam()[0];
@@ -27,23 +27,23 @@ void	Server::mode_user(Client &client, Message const &mess, std::string target)
 
 	if (!nick_in_use(target))
 	{
-		reply(client,  ERR_NOSUCHNICK, target.c_str(), ":No such nick");
+		client.reply(ERR_NOSUCHNICK, target.c_str(), ":No such nick");
 		return ;
 	}
 	if (*client.getNick() != target)
 	{
-		reply(client,  ERR_USERSDONTMATCH, ":Cant change mode for other user", NULL);
+		client.reply(ERR_USERSDONTMATCH, ":Cant change mode for other user", NULL);
 		return ;
 	}
 	if (mess.getParamNum() < 2)
 	{
-		reply(client,  RPL_UMODEIS, client.getMode().c_str(), NULL);
+		client.reply(RPL_UMODEIS, client.getMode().c_str(), NULL);
 		return ;
 	}
 	mode = mess.getParam()[1];
 	if (client.setMode(mode))
-		reply(client, ERR_UMODEUNKNOWNFLAG, ":Unknown MODE flag", NULL);
-	reply(client, "MODE", client.getMode().c_str(), NULL);
+		client.reply(ERR_UMODEUNKNOWNFLAG, ":Unknown MODE flag", NULL);
+	client.reply("MODE", client.getMode().c_str(), NULL);
 }
 
 /**
@@ -66,23 +66,27 @@ void	Server::mode_channel(Client &client, Message const &mess, std::string targe
 	channelModeListIt it;
 
 	if (channel == NULL) {
-        this->reply(client,  ERR_NOSUCHCHANNEL, target.c_str(), ":No such channel");
+		client.reply(ERR_NOSUCHCHANNEL, target.c_str(), ":No such channel");
+        // this->reply(client,  ERR_NOSUCHCHANNEL, target.c_str(), ":No such channel");
         return;
     }
 
 	if (mess.getParamNum() < 2){
-		reply(client,  RPL_CHANNELMODEIS , target.c_str(), channel->getMode().c_str());
+		client.reply(RPL_CHANNELMODEIS , target.c_str(), channel->getMode().c_str());
+		// reply(client,  RPL_CHANNELMODEIS , target.c_str(), channel->getMode().c_str());
 		return ;
 	}
 
 	modeOptions = mess.getParam()[1];
 	if (!parseChannelModes(modeOptions, mess)){
-		this->reply(client,  ERR_NEEDMOREPARAMS, target.c_str(), ":Not enough parameters");
+		client.reply(ERR_NEEDMOREPARAMS, target.c_str(), ":Not enough parameters");
+		// this->reply(client,  ERR_NEEDMOREPARAMS, target.c_str(), ":Not enough parameters");
 		return;
 	}
 
 	if (!channel->isUserOperator(*(client.getNick()))) {
-        this->reply(client,  ERR_CHANOPRIVSNEEDED, target.c_str(), ":You're not channel operator");
+		client.reply(ERR_CHANOPRIVSNEEDED, target.c_str(), ":You're not channel operator");
+        // this->reply(client,  ERR_CHANOPRIVSNEEDED, target.c_str(), ":You're not channel operator");
 		return;
 	}
 

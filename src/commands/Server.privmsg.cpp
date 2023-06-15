@@ -1,5 +1,7 @@
 #include "Server.hpp"
 
+static std::vector<std::string>	getTarget(std::string const &str);
+
 void	Server::privmsg(Client &client, Message const &mess)
 {
 	std::vector<std::string>					target;
@@ -7,12 +9,12 @@ void	Server::privmsg(Client &client, Message const &mess)
 
 	if (mess.getParamNum() < 1)
 	{
-		this->reply(client, ERR_NORECIPIENT, ":No recipient given PRIMSG", NULL);
+		client.reply(ERR_NORECIPIENT, ":No recipient given PRIMSG", NULL);
 		return ;
 	}
 	if (mess.getParamNum() < 2)
 	{
-		this->reply(client, ERR_NOTEXTTOSEND, ":No text to send", NULL);
+		client.reply(ERR_NOTEXTTOSEND, ":No text to send", NULL);
 		return ;
 	}
 	target = getTarget(mess.getParam()[0]);
@@ -21,7 +23,7 @@ void	Server::privmsg(Client &client, Message const &mess)
 		if ((*i)[0] == '&' || (*i)[0] == '#')
 			sendToChan(client, mess, *i);
 		else if (!sendToNick(client, mess, *i))
-			this->reply(client, ERR_NOSUCHNICK, i->c_str(), ":No such nick");
+			client.reply(ERR_NOSUCHNICK, i->c_str(), ":No such nick");
 	}
 }
 
@@ -50,7 +52,7 @@ void	Server::notice(Client &client, Message const &mess)
 	}
 }
 
-std::vector<std::string>	Server::getTarget(std::string const &str)
+static std::vector<std::string>	getTarget(std::string const &str)
 {
 	std::vector<std::string>	temp;
 	std::string::size_type		head;
@@ -80,8 +82,8 @@ bool	Server::sendToNick(Client &client, Message const &mess, std::string const &
 	{
 		return (false);
 	}
-	note = ":" + client.getFullName() + " " + *(mess.getCommand()) + " " + *(target->getNick()) + " :" + mess.getParam()[1] + "\r\n";
-	send(target->getSock(), note.c_str(), note.size(), 0);
+	note = ":" + client.getFullName() + " " + *(mess.getCommand()) + " " + *(target->getNick()) + " :" + mess.getParam()[1];
+	target->reply(note.c_str());
 	return (true);
 }
 
@@ -98,13 +100,13 @@ void	Server::sendToChan(Client &client, Message const &mess, std::string const &
 	if (chan == NULL)
 	{
 		if (response)
-			reply(client, ERR_NOSUCHCHANNEL, ":NO suck channel", NULL);
+			client.reply(ERR_NOSUCHCHANNEL, ":NO such channel", NULL);
 		return ;
 	}
 	if (chan->hasMode('n') && chan->isUserInChannel(*client.getNick()) == false)
 	{
 		if (response)
-			reply(client, ERR_CANNOTSENDTOCHAN, ":cannot send to channel", NULL);
+			client.reply(ERR_CANNOTSENDTOCHAN, ":cannot send to channel", NULL);
 		return ;
 	}
 	note = ":" + client.getFullName() + " " + *mess.getCommand() \
