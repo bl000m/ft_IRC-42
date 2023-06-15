@@ -114,7 +114,8 @@ void	Server::quit(Client &client, Message const &mess)
 	note = ":localhost ERROR :client quit";
 	client.reply(note.c_str());
 	// send(client.getSock(), note.c_str(), note.size(), 0);
-	rmClient(client);
+	// rmClient(client);
+	client.beQuit();
 }
 
 void	Server::ping(Client &client, Message const &mess)

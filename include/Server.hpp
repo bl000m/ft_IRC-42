@@ -75,6 +75,7 @@ class Server {
 		fn_ptr		getCmd(std::string const &cmd);
 		void		force_quit(int sock, bool err);
 		void		client_pollin(char *buf, int sock);
+		void		client_pollout(int sock);
 
 
 		std::vector<std::string>	splitCommands(std::string &buffer);

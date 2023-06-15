@@ -6,7 +6,7 @@ void	Server::execMessage(Client &client, Message const &mess)
 	std::string const	*cmd;
 
 	cmd = mess.getCommand();
-	if (!cmd)
+	if (!cmd || client.isQuit())
 		return ;
 	cmd_ptr = getCmd(*cmd);
 	if (!cmd_ptr)

@@ -58,6 +58,7 @@ class Client
 		void	setInvisible(bool yes);
 		void	setWallop(bool yes);
 		bool	setMode(std::string mode);
+		void	beQuit(void);
 
 		/*	getters	*/
 		int		getSock(void) const;
@@ -66,6 +67,7 @@ class Client
 		bool	isServerOp(void) const;
 		bool	isInvisible(void) const;
 		bool	getWallop(void) const;
+		bool	isQuit(void) const;
 
 		std::string const	*getNick(void) const;
 		std::string const	*getUser(void) const;
@@ -93,6 +95,7 @@ class Client
 		sockaddr_in		_sock_addr;
 		std::string		_readbuf;
 		std::string		_envelope;
+		bool			_quit;
 
 		/*	private function	*/
 		void	clear(void);

@@ -6,7 +6,7 @@ Client::Client(void)
 	_server_op(false), _wallop(true),
 	_sock(-1), _pass(false), 
 	_nick(NULL), _user(NULL), _host(NULL),
-	_sock_len(-1), _envelope("")
+	_sock_len(-1), _envelope(""), _quit(false)
 {
 	std::memset(&_sock_addr, 0, sizeof(sockaddr_in));
 }
@@ -17,7 +17,7 @@ Client::Client(Client const &client)
 	_sock(client._sock), _pass(client._pass), 
 	_nick(NULL), _user(NULL), _host(NULL),
 	_sock_len(client._sock_len),
-	_sock_addr(client._sock_addr), _envelope("")
+	_sock_addr(client._sock_addr), _envelope(""), _quit(client._quit)
 {
 	if (client._nick)
 		_nick = new std::string(*client._nick);
@@ -46,6 +46,7 @@ Client	&Client::operator=(Client const &client)
 	_sock_len = client._sock_len;
 	_sock_addr = client._sock_addr;
 	_envelope = client._envelope;
+	_quit = client._quit;
 	clear();
 	if (client._nick)
 		_nick = new std::string(*client._nick);
@@ -61,7 +62,8 @@ Client::Client(int sockfd, socklen_t socklen, sockaddr_in sockaddr)
 	:_regist(false), _invisible(false), _server_op(false), _wallop(true),
 	_sock(sockfd), _pass(false),
 	_nick(NULL), _user(NULL), _host(NULL),
-	_sock_len(socklen), _sock_addr(sockaddr), _envelope("") {}
+	_sock_len(socklen), _sock_addr(sockaddr),
+	_envelope(""), _quit(false) {}
 
 /*
 	the modification of client has certain restrictions,
@@ -199,6 +201,10 @@ bool	Client::setMode(std::string mode)
 	}
 	return (unknown);
 }
+void	Client::beQuit(void)
+{
+	_quit = true;
+}
 
 /*	getters	*/
 int		Client::getSock(void) const
@@ -264,6 +270,11 @@ std::string		Client::getMode(void) const
 	if (_wallop)
 		temp += "w";
 	return (temp);
+}
+
+bool	Client::isQuit(void) const
+{
+	return (_quit);
 }
 
 std::string	&Client::getBuff(void)

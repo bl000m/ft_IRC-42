@@ -53,7 +53,7 @@ void	Server::run(void)
 			current_poll = &_server_sockets[i];
 			if (IS_POLLOUT(current_poll->revents))
 			{
-				_clients.find(current_poll->fd)->second.beSent();
+				client_pollout(current_poll->fd);
 			}
 			if (IS_POLLIN(current_poll->revents))
 			{
@@ -72,6 +72,16 @@ void	Server::run(void)
 			}
 		}
 	}
+}
+
+void	Server::client_pollout(int sock)
+{
+	Client	*client;
+
+	client = &(_clients.find(sock)->second);
+	client->beSent();
+	if (client->isQuit())
+		rmClient(*client);
 }
 
 void	Server::client_pollin(char *buf, int sock)
