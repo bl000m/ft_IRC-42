@@ -76,41 +76,41 @@ void	Client::reply(char const *numeric, char const *p1, char const *p2)
 {
 	_envelope += ":localhost ";
 	if (numeric)
-		_envelope += *numeric;
+		_envelope += numeric;
 	if (_nick)
 		_envelope = _envelope + " " + *_nick;
 	else
 		_envelope = _envelope + " unknown"; 
 	if (p1)
-		_envelope = _envelope + " " + *p1;
+		_envelope = _envelope + " " + p1;
 	if (p2)
-		_envelope = _envelope + " " + *p2;
+		_envelope = _envelope + " " + p2;
 	_envelope += "\r\n";
 }
 void	Client::reply(char *src, char *cmd, char *p1, char *p2)
 {
 	if (src)
-		_envelope = _envelope + ":" + *src;
+		_envelope = _envelope + ":" + src;
 	if (cmd)
-		_envelope += " " + *cmd;
+		_envelope = _envelope + " " + cmd;
 	if (p1)
-		_envelope += " " + *p1;
+		_envelope = _envelope + " " + p1;
 	if (p2)
-		_envelope += " " + *p2;
+		_envelope = _envelope + " " + p2;
 	_envelope += "\r\n";
 }
 void	Client::reply(char *src, char *cmd, char *p1, char *p2, char *p3)
 {
 	if (src)
-		_envelope = _envelope + ":" + *src;
+		_envelope = _envelope + ":" + src;
 	if (cmd)
-		_envelope += " " + *cmd;
+		_envelope = _envelope + " " + cmd;
 	if (p1)
-		_envelope += " " + *p1;
+		_envelope = _envelope + " " + p1;
 	if (p2)
-		_envelope += " " + *p2;
+		_envelope = _envelope + " " + p2;
 	if (p3)
-		_envelope += " " + *p3;
+		_envelope = _envelope + " " + p3;
 	_envelope += "\r\n";
 }
 void	Client::reply(char const *note)

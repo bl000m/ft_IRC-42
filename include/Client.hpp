@@ -91,7 +91,6 @@ class Client
 		std::string		*_host;
 		socklen_t		_sock_len;
 		sockaddr_in		_sock_addr;
-		// char			_buff[MAX_BUFFER];
 		std::string		_readbuf;
 		std::string		_envelope;
 

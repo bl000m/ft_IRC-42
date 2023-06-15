@@ -33,7 +33,7 @@ void	Server::run(void)
 	int			poll_ret;
 	pollfd		*current_poll;
 	char		buffer[MAX_BUFFER + 1];
-	Message		mess;
+	// Message		mess;
 
 	std::cout << "Running Server" << std::endl;
 	while (is_running)
@@ -54,13 +54,12 @@ void	Server::run(void)
 			current_poll = &_server_sockets[i];
 			if (IS_POLLOUT(current_poll->revents))
 			{
-				;	
+				_clients.find(current_poll->fd)->second.beSent();
 			}
 			if (IS_POLLIN(current_poll->revents))
 			{
-				std::cout << "POLLIN start" << std::endl;
+				std::cout << "POLLIN: ";
 				client_pollin(buffer, current_poll->fd);
-				std::cout << "POLLIN end" << std::endl;
 				// memset(buffer, 0, MAX_BUFFER + 1);
 				// std::cout << "new input" << std::endl;
 				// int	ret;
