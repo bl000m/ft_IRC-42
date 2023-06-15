@@ -8,13 +8,11 @@ void	Server::privmsg(Client &client, Message const &mess)
 	if (mess.getParamNum() < 1)
 	{
 		client.reply(ERR_NORECIPIENT, ":No recipient given PRIMSG", NULL);
-		// this->reply(client, ERR_NORECIPIENT, ":No recipient given PRIMSG", NULL);
 		return ;
 	}
 	if (mess.getParamNum() < 2)
 	{
 		client.reply(ERR_NOTEXTTOSEND, ":No text to send", NULL);
-		// this->reply(client, ERR_NOTEXTTOSEND, ":No text to send", NULL);
 		return ;
 	}
 	target = getTarget(mess.getParam()[0]);
@@ -24,7 +22,6 @@ void	Server::privmsg(Client &client, Message const &mess)
 			sendToChan(client, mess, *i);
 		else if (!sendToNick(client, mess, *i))
 			client.reply(ERR_NOSUCHNICK, i->c_str(), ":No such nick");
-			// this->reply(client, ERR_NOSUCHNICK, i->c_str(), ":No such nick");
 	}
 }
 
