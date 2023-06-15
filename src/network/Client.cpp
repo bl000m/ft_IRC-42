@@ -284,7 +284,16 @@ std::string	&Client::getBuff(void)
 
 void	Client::clearBuff(void)
 {
-	_readbuf.clear();
+	std::string::size_type	i;
+	
+	/*leave the last line if it's not finished*/
+	if (_readbuf[_readbuf.size() - 1] == '\n')
+	{
+		_readbuf.clear();
+		return ;
+	}
+	i = _readbuf.find_last_of("\n");
+	_readbuf = _readbuf.substr(i + 1);
 }
 
 void	Client::catBuff(char *buff, int size)

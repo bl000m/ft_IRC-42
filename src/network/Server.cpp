@@ -127,11 +127,14 @@ std::vector<std::string>	Server::splitCommands(std::string &buffer)
 	std::vector<std::string>	cmds;
 
 	ss << buffer;
-	while (getline(ss, parsed, '\n'))
+	while (true)
 	{
+		getline(ss, parsed, '\n')
+		if (ss.eof())
+			return (cmds);
 		cmds.push_back(parsed);
 	}
-	return (cmds);
+	// return (cmds);
 }
 
 bool	Server::initServerPoll(void)
