@@ -102,6 +102,7 @@ Server::fn_map	Server::cmd_init(void)
 	temp["KICK"] = &Server::kick;
 	temp["TOPIC"] = &Server::topic;
 	temp["WHO"] = &Server::who;
+	temp["AWAY"] = &Server::away;
 
 	return (temp);
 }

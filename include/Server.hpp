@@ -137,6 +137,8 @@ class Server {
 		void	who_mask(Client &client, std::string mask);
 		std::string	who_reply(Client const &client, std::string nick, char const *chan);
 		bool	share_chan(Client const &a, Client const &b);
+		void	away(Client &client, Message const &mess);
+
 
 		/*	client channel getter and remove	*/
 		Client		*getClient(std::string const &nick);

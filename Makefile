@@ -20,7 +20,8 @@ FILES      := main network/Server network/Client \
              commands/Server.invite \
              commands/Server.kick \
              commands/Server.topic \
-			 commands/Server.who
+			 commands/Server.who \
+			 commands/Server.away 
 
 SRC        := $(FILES:%=$(SRCSDIR)/%.cpp)
 OBJ        := $(addprefix $(OBJDIR)/, $(FILES:%=%.o))

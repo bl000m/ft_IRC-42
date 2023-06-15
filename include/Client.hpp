@@ -59,6 +59,7 @@ class Client
 		void	setWallop(bool yes);
 		bool	setMode(std::string mode);
 		void	beQuit(void);
+		void	setAway(std::string mess);
 
 		/*	getters	*/
 		int		getSock(void) const;
@@ -68,6 +69,7 @@ class Client
 		bool	isInvisible(void) const;
 		bool	getWallop(void) const;
 		bool	isQuit(void) const;
+		std::string	getAway(void) const;
 
 		std::string const	*getNick(void) const;
 		std::string const	*getUser(void) const;
@@ -96,7 +98,7 @@ class Client
 		std::string		_readbuf;
 		std::string		_envelope;
 		bool			_quit;
-
+		std::string		_away;
 		/*	private function	*/
 		void	clear(void);
 };
