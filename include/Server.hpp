@@ -123,7 +123,7 @@ class Server {
 		static void		reply(Client const &client, char const *cmd, char const *p1, char const *p2);
 		void			broadcast(Client &source, char const *cmd, char const *p1, char const *p2);
 
-		/*	server querries	*/
+		/*	server queries	*/
 		void	motd(Client &client, Message const &mess);
 		void	wallops(Client &client, Message const &mess);
 		void	kill(Client &client, Message const &mess);
@@ -131,6 +131,12 @@ class Server {
 		void	oper(Client &client, Message const &mess);
 		void	mode_user(Client &client, Message const &mess, std::string target);
 		void	mode_channel(Client &client, Message const &mess, std::string target);
+		void	who(Client &client, Message const &mess);
+		void	who_chan(Client &client, std::string chan_name);
+		void	who_nick(Client &client, std::string nick);
+		void	who_mask(Client &client, std::string mask);
+		std::string	who_reply(Client const &client, std::string nick, char const *chan);
+		bool	share_chan(Client const &a, Client const &b);
 
 		/*	client channel getter and remove	*/
 		Client		*getClient(std::string const &nick);
