@@ -1,5 +1,7 @@
 #include "Server.hpp"
 
+static std::vector<std::string>	getTarget(std::string const &str);
+
 void	Server::privmsg(Client &client, Message const &mess)
 {
 	std::vector<std::string>					target;
@@ -50,7 +52,7 @@ void	Server::notice(Client &client, Message const &mess)
 	}
 }
 
-std::vector<std::string>	Server::getTarget(std::string const &str)
+static std::vector<std::string>	getTarget(std::string const &str)
 {
 	std::vector<std::string>	temp;
 	std::string::size_type		head;

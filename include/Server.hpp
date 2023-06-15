@@ -115,8 +115,6 @@ class Server {
 		bool	sendToNick(Client &client, Message const &mess, std::string const &nick);
 		void	sendToChan(Client &client, Message const &mess, std::string const &chan);
 
-		std::vector<std::string>	getTarget(std::string const &str);
-
 		/*Channel related methods*/
 		bool	createChan(std::string &name, std::string &pass, Client &client);
 		void	joinChan(std::string &name, std::string &pass, Client &client);
