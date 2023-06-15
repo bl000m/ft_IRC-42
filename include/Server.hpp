@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include <sstream>
 #include <map>
 #include "global.hpp"
 
@@ -35,6 +36,7 @@
 #define IS_POLLHUP(revents)     (revents & POLLHUP)
 
 class Channel;
+class Client;
 
 class Server {
     public:
@@ -46,6 +48,8 @@ class Server {
 		typedef std::map<std::string, Channel>::iterator channelListIt;
 		typedef std::map<std::string, std::string>	channelModeList;
 		typedef std::map<std::string, std::string>::iterator channelModeListIt;
+		typedef std::vector<std::string> channelNamesVec;
+		typedef std::vector<std::string>::iterator channelNamesVecIt;
 
         Server();
         ~Server();
@@ -87,6 +91,7 @@ class Server {
 		void 	invite(Client &client, Message const &mess);
 		void 	kick(Client &client, Message const &mess);
 		void 	topic(Client &client, Message const &mess);
+		void 	part(Client &client, Message const &mess);
 		bool	setMode(Channel *channel, Client &client);
 		bool 	parseChannelModes(const std::string& modeString, Message const &mess);
 		void  handleKMode(channelModeListIt it, Channel* channel, Client& client);
@@ -136,6 +141,9 @@ class Server {
 		void		rmClient(Client &client);
 		Channel		*getChan(std::string const &chan);
 		void		rmChan(std::string const &chan);
+
+		/* utils */
+		channelNamesVec split(const std::string &channelsFromInput, char delimiter);
 
 };
 

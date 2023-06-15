@@ -4,7 +4,7 @@
 Client::Client(void)
 	:_regist(false), _invisible(false),
 	_server_op(false), _wallop(true),
-	_sock(-1), _pass(false), 
+	_sock(-1), _pass(false),
 	_nick(NULL), _user(NULL), _host(NULL),
 	_sock_len(-1)
 {
@@ -15,7 +15,7 @@ Client::Client(void)
 Client::Client(Client const &client)
 	:_regist(client._regist), _invisible(client._invisible),
 	_server_op(client._server_op), _wallop(client._wallop),
-	_sock(client._sock), _pass(client._pass), 
+	_sock(client._sock), _pass(client._pass),
 	_nick(NULL), _user(NULL), _host(NULL),
 	_sock_len(client._sock_len),
 	_sock_addr(client._sock_addr)
@@ -144,6 +144,14 @@ bool	Client::setMode(std::string mode)
 		}
 	}
 	return (unknown);
+}
+
+void Client::addChannel(Channel *newChannel){
+	_channelsMember[newChannel->getName()] = newChannel;
+}
+
+void Client::removeChannel(const std::string &channelName){
+	_channelsMember.erase(channelName);
 }
 
 /*	getters	*/

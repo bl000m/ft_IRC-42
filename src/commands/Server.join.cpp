@@ -43,6 +43,9 @@ void	Server::joinChan(std::string &name, std::string &pass, Client &client)
 		return ;
 	}
 	_channels.at(name).addClient(&client);
+	//added for implementing PART cmd
+	client.addChannel(&_channels.at(name));
+	//
 	join_message.append(":" + *(client).getNick() + " JOIN " + name + "\r\n");
 	namreply_message.append("= " + name);
 	send(client.getSock(), join_message.c_str(), join_message.size(), 0);

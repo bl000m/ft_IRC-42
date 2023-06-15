@@ -107,6 +107,7 @@ Server::fn_map	Server::cmd_init(void)
 	temp["INVITE"] = &Server::invite;
 	temp["KICK"] = &Server::kick;
 	temp["TOPIC"] = &Server::topic;
+	temp["PART"] = &Server::part;
 
 	return (temp);
 }
@@ -180,7 +181,7 @@ void	Server::rmClient(Client &client)
 Channel		*Server::getChan(std::string const &chan)
 {
 	channelListIt	i;
-	
+
 	i = _channels.find(chan);
 	if (i == _channels.end())
 		return (NULL);
@@ -190,7 +191,7 @@ Channel		*Server::getChan(std::string const &chan)
 void	Server::rmChan(std::string const &chan)
 {
 	channelListIt	i;
-	
+
 	i = _channels.find(chan);
 	if (i == _channels.end())
 		return ;

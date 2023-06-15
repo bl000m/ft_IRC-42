@@ -1,5 +1,5 @@
-//  NO 42 HEADER 
-//  NO 42 HEADER 
+//  NO 42 HEADER
+//  NO 42 HEADER
 //  NO 42 HEADER
 
 #include "Server.hpp"
@@ -18,7 +18,7 @@ Server::~Server() {
 void    Server::initServer(const std::string &port, const std::string &password)
 {
 	std::stringstream	ss;
-	
+
 	_password = password;
 	ss << port;
 	ss >> _iport;
@@ -159,4 +159,16 @@ void    sigExit(int code)
 	(void)code;
 	is_running = false;
 	std::cout << "Exiting ..." << std::endl;
+}
+
+/* utils */
+Server::channelNamesVec Server::split(const std::string &channelsFromInput, char delimiter){
+	channelNamesVec result;
+	std::stringstream ss(channelsFromInput);
+	std::string token;
+
+	while(std::getline(ss, token, delimiter))
+		result.push_back(token);
+
+	return result;
 }

@@ -9,13 +9,16 @@
 # include <sys/socket.h>
 # include <netinet/in.h>
 # include <netinet/ip.h>
-#define MAX_BUFFER	512
+# include "Channel.hpp"
+# define MAX_BUFFER	512
+
+class Channel;
 /*
 	The default ctor creates an empty client
 
 	The ctor Client(int sockfd, unsigned int ip) creates a connected client, which should be added to a container by the server
 
-	If a client quit, the server should remove it from the 
+	If a client quit, the server should remove it from the
 	container, so the resources can be released
 */
 
@@ -34,6 +37,8 @@
 class Client
 {
 	public:
+		typedef std::map<std::string, Channel*> channelMap;
+		typedef std::map<std::string, Channel*>::iterator channelMapIt;
 		/*	canon form and ctor	*/
 		Client(void);
 		Client(Client const &client);
@@ -41,7 +46,7 @@ class Client
 		Client	&operator=(Client const &client);
 
 		Client(int sockfd, socklen_t sock_size, sockaddr_in sock_addr);
-		
+
 		/*	setters	*/
 		void	setPass(bool good);
 		void	beRegist(void);
@@ -53,6 +58,7 @@ class Client
 		void	setWallop(bool yes);
 		bool	setMode(std::string mode);
 
+
 		/*	getters	*/
 		int		getSock(void) const;
 		bool	getPass(void) const;
@@ -60,6 +66,10 @@ class Client
 		bool	isServerOp(void) const;
 		bool	isInvisible(void) const;
 		bool	getWallop(void) const;
+
+		/* channel related */
+		void	addChannel(Channel *newChannel);
+		void	removeChannel(const std::string &channelName);
 
 		std::string const	*getNick(void) const;
 		std::string const	*getUser(void) const;
@@ -76,7 +86,7 @@ class Client
 		bool			_invisible;
 		bool			_server_op;
 		bool			_wallop;
-		
+
 		/*	private variable	*/
 		int				_sock;
 		bool			_pass;
@@ -87,6 +97,7 @@ class Client
 		sockaddr_in		_sock_addr;
 		char			_buff[MAX_BUFFER];
 		std::string		_strbuff;
+		channelMap		_channelsMember;
 
 		/*	private function	*/
 		void	clear(void);
