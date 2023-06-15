@@ -12,5 +12,5 @@ void	Server::away(Client &client, Message const &mess)
 	}
 	text = mess.getParam()[0];
 	client.setAway(text);
-	client.reply(RPL_NOWAWAY, ":You have been marked as being away");
+	client.reply(RPL_NOWAWAY, ":You have been marked as being away", NULL);
 }
