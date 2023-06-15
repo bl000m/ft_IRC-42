@@ -18,6 +18,7 @@ typedef struct t_user{
 	Client *client;
 	std::string userMode;
 	std::string prefix;
+	time_t	joinedTime;
 } user;
 
 class Channel {
@@ -33,6 +34,10 @@ class Channel {
 		void	addClient(Client *client);
 		bool	isUserInChannel(const std::string nickname);
 		bool	isUserOperator(const std::string nickname);
+		bool	isThereAnyOperator();
+		int		channelMemberNum();
+		std::string	getOldestMemberUser();
+		void	setOldestMemberUserAsOperator();
 
 		/* Channel data related getters*/
 		const std::string&  	getName();
@@ -78,6 +83,7 @@ class Channel {
 
 		/* utils */
 		std::string getCurrentTime();
+		time_t getCurrentTimeT();
 
 	private:
 		Channel();
@@ -91,6 +97,5 @@ class Channel {
 		std::string					_topicCreatedBy;
 		int							_modes;
 		int							_memberLimit;
-		std::string					_strMemberLimit;
 };
 #endif

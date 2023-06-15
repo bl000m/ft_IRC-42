@@ -146,13 +146,6 @@ bool	Client::setMode(std::string mode)
 	return (unknown);
 }
 
-void Client::addChannel(Channel *newChannel){
-	_channelsMember[newChannel->getName()] = newChannel;
-}
-
-void Client::removeChannel(const std::string &channelName){
-	_channelsMember.erase(channelName);
-}
 
 /*	getters	*/
 int		Client::getSock(void) const
@@ -271,4 +264,15 @@ std::ostream	&operator<<(std::ostream &out, Client const &client)
 	else
 		out << "(null)" << std::endl;
 	return (out);
+}
+
+/* channel related */
+
+void Client::addChannel(Channel *newChannel){
+	_channelsMember[newChannel->getName()] = newChannel;
+
+}
+
+void Client::removeChannel(const std::string &channelName){
+	_channelsMember.erase(channelName);
 }
