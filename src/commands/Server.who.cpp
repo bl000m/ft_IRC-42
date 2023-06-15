@@ -73,6 +73,7 @@ std::string	Server::who_reply(Client const &client, std::string nick, char const
 	channelListIt	it;
 	std::string		chan_name = "*";
 	std::string		note = "";
+	std::string		flag = " H ";
 
 	target = getClient(nick);
 	if (!target || !target->isRegist())
@@ -93,9 +94,11 @@ std::string	Server::who_reply(Client const &client, std::string nick, char const
 			}
 		}
 	}
+	if (!target->getAway().empty())
+		flag = " G ";
 	note = note + chan_name + " ";
 	note = note + *target->getUser() + " <host> <server> "
-		+ *target->getNick() + " <flags> :<hopcount> "
+		+ *target->getNick() + flag + ":<hopcount> "
 		+ *target->getHost();
 	return (note);
 }
