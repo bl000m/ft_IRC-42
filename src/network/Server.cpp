@@ -116,10 +116,6 @@ void	Server::client_pollin(char *buf, int sock)
 	}
 }
 
-
-
-
-
 std::vector<std::string>	Server::splitCommands(std::string &buffer)
 {
 	std::stringstream			ss;
@@ -134,7 +130,6 @@ std::vector<std::string>	Server::splitCommands(std::string &buffer)
 			return (cmds);
 		cmds.push_back(parsed);
 	}
-	// return (cmds);
 }
 
 bool	Server::initServerPoll(void)
