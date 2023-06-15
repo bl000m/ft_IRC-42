@@ -70,6 +70,7 @@ void	Server::run(void)
 				std::cout << "POLLERR" << std::endl;
 				force_quit(current_poll->fd, false);
 			}
+			current_poll->revents = 0;
 		}
 	}
 }
