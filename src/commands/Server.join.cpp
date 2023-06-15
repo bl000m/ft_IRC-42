@@ -50,7 +50,8 @@ void	Server::joinChan(std::string &name, std::string &pass, Client &client)
 		return ;
 	}
 	_channels.at(name).addClient(&client);
-	join_message.append(":" + *(client).getNick() + " JOIN " + name);
+	client.addChannel(&_channels.at(name));
+	join_message.append(":" + *(client).getNick() + " JOIN " + name + "\r\n");
 	namreply_message.append("= " + name);
 	client.reply(join_message.c_str());
 	client.reply(RPL_TOPIC, name.c_str(), _channels.at(name).getTopic().c_str());

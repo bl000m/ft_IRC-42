@@ -11,6 +11,7 @@ Channel::Channel(Client *oper, std::string name): _name(name), _topic(""), _mode
 		newChannelUser.client = oper;
 		newChannelUser.userMode = oper->getMode();
 		newChannelUser.prefix = "@";
+		newChannelUser.joinedTime = getCurrentTimeT();
 		_channelUsers[nickname] = newChannelUser;
 }
 
@@ -26,6 +27,7 @@ void	Channel::addClient(Client *client){
 		newChannelUser.client = client;
 		newChannelUser.userMode = client->getMode();
 		newChannelUser.prefix = "+";
+		newChannelUser.joinedTime = getCurrentTimeT();
 		_channelUsers[nickname] = newChannelUser;
 }
 
@@ -61,6 +63,15 @@ bool	Channel::isUserOperator(const std::string nickname){
         return true;
 	else
 		return false;
+}
+
+bool	Channel::isThereAnyOperator(){
+	channelUsersIt it;
+	for (it = _channelUsers.begin(); it != _channelUsers.end(); it++){
+		if (it->second.prefix == "@")
+			return true;
+	}
+	return false;
 }
 
 /* --------------- Channel data related getters ---------------- */
@@ -123,6 +134,35 @@ void Channel::setUserAsOperator(std::string nickname){
 	channelUsersIt it;
 	it = _channelUsers.find(nickname);
     if (it != _channelUsers.end())
+        it->second.prefix = "@";
+}
+
+std::string Channel::getOldestMemberUser(){
+	channelUsersIt it;
+	it = _channelUsers.begin();
+	std::string oldestMemberUserNick;
+	time_t isBefore = (it->second.joinedTime);
+	oldestMemberUserNick = it->first;
+	std::cout << "isBefore: " << isBefore << std::endl;
+	for (it = _channelUsers.begin(); it != _channelUsers.end(); it++){
+		std::cout << "nick: "<< it->first << " joined time: " << it->second.joinedTime << std::endl;
+		if (it->second.joinedTime < isBefore){
+			isBefore = it->second.joinedTime;
+			std::cout << "in IF isBefore: " << isBefore << std::endl;
+			std::cout << "it->first = " << it->first << std::endl;
+			oldestMemberUserNick = it->first;
+		}
+	}
+	std::cout << "the oldest return in getOldest: " << oldestMemberUserNick << std::endl;
+	return oldestMemberUserNick;
+}
+
+void	Channel::setOldestMemberUserAsOperator(){
+	channelUsersIt it;
+	std::string oldestUserNick = getOldestMemberUser();
+	std::cout << "the oldest user is: " << oldestUserNick << std::endl;
+	it = _channelUsers.find(oldestUserNick);
+	if (it != _channelUsers.end())
         it->second.prefix = "@";
 }
 
@@ -355,4 +395,10 @@ std::string Channel::getCurrentTime(){
 
 	strftime(buffer, sizeof(buffer), "%Y-%m-%d.%X", localtime(&current));
 	return buffer;
+}
+
+time_t Channel::getCurrentTimeT(){
+	time_t current = time(0);
+
+	return current;
 }

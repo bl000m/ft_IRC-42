@@ -4,7 +4,7 @@
 Client::Client(void)
 	:_regist(false), _invisible(false),
 	_server_op(false), _wallop(true),
-	_sock(-1), _pass(false), 
+	_sock(-1), _pass(false),
 	_nick(NULL), _user(NULL), _host(NULL),
 	_sock_len(-1), _envelope(""), _quit(false),
 	_away("")
@@ -15,7 +15,7 @@ Client::Client(void)
 Client::Client(Client const &client)
 	:_regist(client._regist), _invisible(client._invisible),
 	_server_op(client._server_op), _wallop(client._wallop),
-	_sock(client._sock), _pass(client._pass), 
+	_sock(client._sock), _pass(client._pass),
 	_nick(NULL), _user(NULL), _host(NULL),
 	_sock_len(client._sock_len),
 	_sock_addr(client._sock_addr), _envelope(""), _quit(client._quit), _away(client._away)
@@ -213,6 +213,7 @@ void	Client::setAway(std::string mess)
 	_away = mess;
 }
 
+
 /*	getters	*/
 int		Client::getSock(void) const
 {
@@ -363,4 +364,15 @@ std::ostream	&operator<<(std::ostream &out, Client const &client)
 	else
 		out << "(null)" << std::endl;
 	return (out);
+}
+
+/* channel related */
+
+void Client::addChannel(Channel *newChannel){
+	_channelsMember[newChannel->getName()] = newChannel;
+
+}
+
+void Client::removeChannel(const std::string &channelName){
+	_channelsMember.erase(channelName);
 }

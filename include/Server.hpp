@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include <sstream>
 #include <map>
 #include "global.hpp"
 
@@ -38,6 +39,7 @@
 #define IS_POLLERR(revents)     (revents & POLLERR)
 
 class Channel;
+class Client;
 
 class Server {
     public:
@@ -49,6 +51,8 @@ class Server {
 		typedef std::map<std::string, Channel>::iterator channelListIt;
 		typedef std::map<std::string, std::string>	channelModeList;
 		typedef std::map<std::string, std::string>::iterator channelModeListIt;
+		typedef std::vector<std::string> channelNamesVec;
+		typedef std::vector<std::string>::iterator channelNamesVecIt;
 
         Server();
         ~Server();
@@ -75,7 +79,7 @@ class Server {
 		void	client_pollout(int sock);
 		void	force_quit(int sock, bool err);
 		std::vector<std::string>	splitCommands(std::string &buffer);
-		
+
 		/*	command execution	*/
 		fn_ptr		getCmd(std::string const &cmd);
 		void		execMessage(Client &client, Message const &mess);
@@ -92,22 +96,23 @@ class Server {
 		void	pong(Client &client, Message const &mess);
 		void	join(Client &client, Message const &mess);
 
+		/* channel operators related commands */
+		void 	invite(Client &client, Message const &mess);
+		void 	kick(Client &client, Message const &mess);
+		void 	topic(Client &client, Message const &mess);
+		void 	part(Client &client, Message const &mess);
+		bool	setMode(Channel *channel, Client &client);
+		bool 	parseChannelModes(const std::string& modeString, Message const &mess);
+		void  handleKMode(channelModeListIt it, Channel* channel, Client& client);
+		bool  handleOMode(channelModeListIt it, Channel* channel, Client& client);
+		void  handleTMode(channelModeListIt it, Channel* channel, Client& client);
+		void  handleIMode(channelModeListIt it, Channel* channel, Client& client);
+		void  handleLMode(channelModeListIt it, Channel* channel, Client& client);
+		std::string buildModeMessage(Channel* channel, const Client& client, const std::string& mode);
+
 		/*	connection command helper	*/
 		bool			nick_in_use(std::string const &nick) const;
 		static bool		nick_valid(std::string const &nick);
-
-		/* channel operators related commands */
-		void	invite(Client &client, Message const &mess);
-		void	kick(Client &client, Message const &mess);
-		void	topic(Client &client, Message const &mess);
-		bool	setMode(Channel *channel, Client &client);
-		bool	parseChannelModes(const std::string& modeString, Message const &mess);
-		void	handleKMode(channelModeListIt it, Channel* channel, Client& client);
-		bool	handleOMode(channelModeListIt it, Channel* channel, Client& client);
-		void	handleTMode(channelModeListIt it, Channel* channel, Client& client);
-		void	handleIMode(channelModeListIt it, Channel* channel, Client& client);
-		void	handleLMode(channelModeListIt it, Channel* channel, Client& client);
-		std::string	buildModeMessage(Channel* channel, const Client& client, const std::string& mode);
 
 		/*	privmsg and notice	*/
 		void	privmsg(Client &client, Message const &mess);
@@ -118,7 +123,7 @@ class Server {
 		/*Channel related methods*/
 		bool	createChan(std::string &name, std::string &pass, Client &client);
 		void	joinChan(std::string &name, std::string &pass, Client &client);
-		
+
 		/*	common reply	*/
 		static void		reply(Client const &client, char const *cmd, char const *p1, char const *p2);
 		void			broadcast(Client &source, char const *cmd, char const *p1, char const *p2);
@@ -146,6 +151,9 @@ class Server {
 		Channel		*getChan(std::string const &chan);
 		void		rmChan(std::string const &chan);
 		Channel		*getChannel(const std::string &channelName);
+
+		/* utils */
+		channelNamesVec split(const std::string &channelsFromInput, char delimiter);
 
 };
 

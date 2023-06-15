@@ -255,9 +255,23 @@ void Server::handleLMode(channelModeListIt it, Channel* channel, Client& client)
 {
     if (it->first == "+l")
     {
+		std::string message;
+		std::stringstream ss;
+		int limitValue;
+		ss << it->second;
+		ss >> limitValue;
         channel->setMemberLimit(it->second);
         channel->addMode('l');
-        std::string message = buildModeMessage(channel, client, it->first + " " + it->second);
+		if (limitValue > 4096){
+			client.reply("+l 4096 => WARNING: when the limit is set to a value higher than the max limit, max limit value is used");
+        	message = buildModeMessage(channel, client, it->first + " " + "4096");
+		}
+		else if (limitValue <= 0){
+			client.reply("+l 1 => WARNING: when the limit is set to a value lower than the min limit, min limit value is used");
+        	message = buildModeMessage(channel, client, it->first + " " + "1");
+		}
+		else
+        	message = buildModeMessage(channel, client, it->first + " " + it->second);
         channel->broadcastSenderIncluded(message);
     }
     else if (it->first == "-l")
