@@ -90,7 +90,8 @@ void	Client::reply(char const *numeric, char const *p1, char const *p2)
 		_envelope = _envelope + " " + p1;
 	if (p2)
 		_envelope = _envelope + " " + p2;
-	_envelope += "\r\n";
+	if (_envelope[_envelope.size() - 1] != '\n')
+		_envelope += "\r\n";
 }
 void	Client::reply(char *src, char *cmd, char *p1, char *p2)
 {
@@ -102,7 +103,8 @@ void	Client::reply(char *src, char *cmd, char *p1, char *p2)
 		_envelope = _envelope + " " + p1;
 	if (p2)
 		_envelope = _envelope + " " + p2;
-	_envelope += "\r\n";
+	if (_envelope[_envelope.size() - 1] != '\n')
+		_envelope += "\r\n";
 }
 void	Client::reply(char *src, char *cmd, char *p1, char *p2, char *p3)
 {
@@ -116,12 +118,14 @@ void	Client::reply(char *src, char *cmd, char *p1, char *p2, char *p3)
 		_envelope = _envelope + " " + p2;
 	if (p3)
 		_envelope = _envelope + " " + p3;
-	_envelope += "\r\n";
+	if (_envelope[_envelope.size() - 1] != '\n')
+		_envelope += "\r\n";
 }
 void	Client::reply(char const *note)
 {
 	_envelope += note;
-	_envelope += "\r\n";
+	if (_envelope[_envelope.size() - 1] != '\n')
+		_envelope += "\r\n";
 }
 void	Client::beSent(void)
 {
