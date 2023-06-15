@@ -5,7 +5,7 @@
 */
 void 	Server::part(Client &client, Message const &mess){
 	 if (mess.getParamNum() < 1) {
-        this->reply(client,  ERR_NEEDMOREPARAMS, "PART", ":Not enough parameters");
+        client.reply(ERR_NEEDMOREPARAMS, "PART", ":Not enough parameters");
         return;
     }
 	channelNamesVec channelNames = split(mess.getParam()[0], ',');
@@ -15,11 +15,11 @@ void 	Server::part(Client &client, Message const &mess){
 		std::string channelName = *it;
 		Channel *channel = getChannel(channelName);
 		if (channel == NULL) {
-        	this->reply(client,  ERR_NOSUCHCHANNEL, channelName.c_str(), ":No such channel");
+        	client.reply(ERR_NOSUCHCHANNEL, channelName.c_str(), ":No such channel");
         	return;
     	}
 		else if (!channel->isUserInChannel(*(client.getNick()))) {
-			this->reply(client,  ERR_NOTONCHANNEL, channelName.c_str(), ":You're not on that channel");
+			client.reply(ERR_NOTONCHANNEL, channelName.c_str(), ":You're not on that channel");
 			return;
 		}
 		else{

@@ -114,19 +114,6 @@ class Server {
 		bool			nick_in_use(std::string const &nick) const;
 		static bool		nick_valid(std::string const &nick);
 
-		/* channel operators related commands */
-		void	invite(Client &client, Message const &mess);
-		void	kick(Client &client, Message const &mess);
-		void	topic(Client &client, Message const &mess);
-		bool	setMode(Channel *channel, Client &client);
-		bool	parseChannelModes(const std::string& modeString, Message const &mess);
-		void	handleKMode(channelModeListIt it, Channel* channel, Client& client);
-		bool	handleOMode(channelModeListIt it, Channel* channel, Client& client);
-		void	handleTMode(channelModeListIt it, Channel* channel, Client& client);
-		void	handleIMode(channelModeListIt it, Channel* channel, Client& client);
-		void	handleLMode(channelModeListIt it, Channel* channel, Client& client);
-		std::string	buildModeMessage(Channel* channel, const Client& client, const std::string& mode);
-
 		/*	privmsg and notice	*/
 		void	privmsg(Client &client, Message const &mess);
 		void	notice(Client &client, Message const &mess);
@@ -162,9 +149,6 @@ class Server {
 		Channel		*getChan(std::string const &chan);
 		void		rmChan(std::string const &chan);
 		Channel		*getChannel(const std::string &channelName);
-
-		/* utils */
-		channelNamesVec split(const std::string &channelsFromInput, char delimiter);
 
 		/* utils */
 		channelNamesVec split(const std::string &channelsFromInput, char delimiter);
