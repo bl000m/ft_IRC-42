@@ -9,7 +9,6 @@ Client::Client(void)
 	_sock_len(-1), _envelope("")
 {
 	std::memset(&_sock_addr, 0, sizeof(sockaddr_in));
-	memset(_buff, 0, MAX_BUFFER);
 }
 
 Client::Client(Client const &client)
@@ -26,7 +25,6 @@ Client::Client(Client const &client)
 		_user = new std::string(*client._user);
 	if (client._host)
 		_host = new std::string(*client._host);
-	memset(_buff, 0, MAX_BUFFER);
 }
 
 Client::~Client(void)
@@ -270,21 +268,33 @@ std::string		Client::getMode(void) const
 
 std::string	&Client::getBuff(void)
 {
-	return (_strbuff);
+	return (_readbuf);
 }
 
 void	Client::clearBuff(void)
 {
-	_strbuff.clear();
+	_readbuf.clear();
 }
 
 void	Client::catBuff(char *buff, int size)
 {
-	int	nbuff_size;
+	bool	end;
 
-	nbuff_size = size + strlen(_buff);
-	(void)nbuff_size;
-	_strbuff += buff;
+	end = false;
+	for (int i = 0; i < size + 1; i++)
+	{
+		if (buff[i] == '\0')
+			end = true;
+	}
+	if (!end)
+		std::cout << "Client: catbuff: input has no \\0" << std::endl;
+	else
+		_readbuf += buff;
+	// int	nbuff_size;
+
+	// nbuff_size = size + strlen(_buff);
+	// (void)nbuff_size;
+	// _strbuff += buff;
 }
 
 /*	private function	*/

@@ -30,9 +30,12 @@
 #define MAX_PORT                65535
 #define MIN_ARGC                3
 #define CLOSE_SOCKET            0
+#define MAX_BUFFER	10//512
 
 #define IS_POLLIN(revents)      (revents & POLLIN)
 #define IS_POLLHUP(revents)     (revents & POLLHUP)
+#define IS_POLLOUT(revents)     (revents & POLLOUT)
+#define IS_POLLERR(revents)     (revents & POLLERR)
 
 class Channel;
 
@@ -71,6 +74,8 @@ class Server {
 		/*	command execution	*/
 		fn_ptr		getCmd(std::string const &cmd);
 		void		force_quit(int sock, bool err);
+		void		client_pollin(char *buf, int sock);
+
 
 		std::vector<std::string>	splitCommands(std::string &buffer);
 
