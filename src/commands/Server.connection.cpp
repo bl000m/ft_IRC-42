@@ -203,13 +203,4 @@ static void	welcome_mess(Client &client)
 	client.reply(RPL_ISUPPORT, "CASEMAPPING=ascii CHANLIMIT=#&: CHANTYPES=#", ":are supported by this server");
 	client.reply(RPL_UMODEIS, client.getMode().c_str(), NULL);
 	client.reply(ERR_NOMOTD, "no MOTD", NULL);
-
-	// reply(client, RPL_WELCOME, ":Welcome to our network", NULL);
-	// reply(client, RPL_YOURHOST, ":Your host is ft_irc", NULL);
-	// reply(client, RPL_CREATED, ":This version is created yesterday", NULL);
-	// reply(client, RPL_MYINFO, "<servername> <version> <available user modes> <available channel modes>", NULL);
-	// reply(client, RPL_ISUPPORT,
-	// 	" CASEMAPPING=ascii CHANLIMIT=#&: CHANTYPES=# ", " :are supported by this server");
-	// reply(client,  RPL_UMODEIS, client.getMode().c_str(), NULL);
-	// reply(client,  ERR_NOMOTD, "no MOTD", NULL);
 }

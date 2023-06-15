@@ -33,7 +33,6 @@ void	Server::run(void)
 	int			poll_ret;
 	pollfd		*current_poll;
 	char		buffer[MAX_BUFFER + 1];
-	// Message		mess;
 
 	std::cout << "Running Server" << std::endl;
 	while (is_running)
@@ -60,30 +59,6 @@ void	Server::run(void)
 			{
 				std::cout << "POLLIN: ";
 				client_pollin(buffer, current_poll->fd);
-				// memset(buffer, 0, MAX_BUFFER + 1);
-				// std::cout << "new input" << std::endl;
-				// int	ret;
-				// ret = recv(current_poll->fd, buffer, MAX_BUFFER + 1, 0);
-				// if (strchr(buffer, '\n') || ret <= CLOSE_SOCKET)
-				// {
-				// 	if (ret == CLOSE_SOCKET || ret >= MAX_BUFFER)
-				// 		force_quit(current_poll->fd, false);
-				// 	else
-				// 	{
-				// 		_clients.find(current_poll->fd)->second.catBuff(buffer, ret);
-				// 		std::vector<std::string> cmds = splitCommands(_clients.find(current_poll->fd)->second.getBuff());
-				// 		for (size_t j = 0; j < cmds.size(); j++)
-				// 		{
-				// 			if (mess.parse(cmds[j]))
-				// 				execMessage(_clients.find(current_poll->fd)->second, mess);
-				// 			_clients.find(current_poll->fd)->second.clearBuff();
-				// 		}
-				// 	}
-				// }
-				// else if (ret >= MAX_BUFFER)
-				// 	force_quit(current_poll->fd, true);
-				// else
-				// 	_clients.find(current_poll->fd)->second.catBuff(buffer, ret);
 			}
 			if (IS_POLLHUP(current_poll->revents))
 			{
