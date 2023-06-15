@@ -6,7 +6,8 @@ Client::Client(void)
 	_server_op(false), _wallop(true),
 	_sock(-1), _pass(false),
 	_nick(NULL), _user(NULL), _host(NULL),
-	_sock_len(-1), _envelope(""), _quit(false)
+	_sock_len(-1), _envelope(""), _quit(false),
+	_away("")
 {
 	std::memset(&_sock_addr, 0, sizeof(sockaddr_in));
 }
@@ -17,7 +18,7 @@ Client::Client(Client const &client)
 	_sock(client._sock), _pass(client._pass),
 	_nick(NULL), _user(NULL), _host(NULL),
 	_sock_len(client._sock_len),
-	_sock_addr(client._sock_addr), _envelope(""), _quit(client._quit)
+	_sock_addr(client._sock_addr), _envelope(""), _quit(client._quit), _away(client._away)
 {
 	if (client._nick)
 		_nick = new std::string(*client._nick);
@@ -47,6 +48,7 @@ Client	&Client::operator=(Client const &client)
 	_sock_addr = client._sock_addr;
 	_envelope = client._envelope;
 	_quit = client._quit;
+	_away = client._away;
 	clear();
 	if (client._nick)
 		_nick = new std::string(*client._nick);
@@ -63,7 +65,8 @@ Client::Client(int sockfd, socklen_t socklen, sockaddr_in sockaddr)
 	_sock(sockfd), _pass(false),
 	_nick(NULL), _user(NULL), _host(NULL),
 	_sock_len(socklen), _sock_addr(sockaddr),
-	_envelope(""), _quit(false) {}
+	_envelope(""), _quit(false),
+	_away("") {}
 
 /*
 	the modification of client has certain restrictions,
@@ -205,6 +208,10 @@ void	Client::beQuit(void)
 {
 	_quit = true;
 }
+void	Client::setAway(std::string mess)
+{
+	_away = mess;
+}
 
 
 /*	getters	*/
@@ -276,6 +283,11 @@ std::string		Client::getMode(void) const
 bool	Client::isQuit(void) const
 {
 	return (_quit);
+}
+
+std::string	Client::getAway(void) const
+{
+	return (_away);
 }
 
 std::string	&Client::getBuff(void)

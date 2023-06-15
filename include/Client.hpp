@@ -65,6 +65,7 @@ class Client
 		void	setWallop(bool yes);
 		bool	setMode(std::string mode);
 		void	beQuit(void);
+		void	setAway(std::string mess);
 
 
 		/*	getters	*/
@@ -75,6 +76,7 @@ class Client
 		bool	isInvisible(void) const;
 		bool	getWallop(void) const;
 		bool	isQuit(void) const;
+		std::string	getAway(void) const;
 
 		/* channel related */
 		void	addChannel(Channel *newChannel);
@@ -108,7 +110,7 @@ class Client
 		std::string		_readbuf;
 		std::string		_envelope;
 		bool			_quit;
-
+		std::string		_away;
 		/*	private function	*/
 		void	clear(void);
 };

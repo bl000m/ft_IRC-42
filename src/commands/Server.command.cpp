@@ -103,6 +103,7 @@ Server::fn_map	Server::cmd_init(void)
 	temp["TOPIC"] = &Server::topic;
 	temp["PART"] = &Server::part;
 	temp["WHO"] = &Server::who;
+	temp["AWAY"] = &Server::away;
 
 	return (temp);
 }
