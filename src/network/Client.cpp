@@ -6,10 +6,9 @@ Client::Client(void)
 	_server_op(false), _wallop(true),
 	_sock(-1), _pass(false), 
 	_nick(NULL), _user(NULL), _host(NULL),
-	_sock_len(-1), _envelope("")
+	_sock_len(-1), _envelope(""), _quit(false)
 {
 	std::memset(&_sock_addr, 0, sizeof(sockaddr_in));
-	memset(_buff, 0, MAX_BUFFER);
 }
 
 Client::Client(Client const &client)
@@ -18,7 +17,7 @@ Client::Client(Client const &client)
 	_sock(client._sock), _pass(client._pass), 
 	_nick(NULL), _user(NULL), _host(NULL),
 	_sock_len(client._sock_len),
-	_sock_addr(client._sock_addr), _envelope("")
+	_sock_addr(client._sock_addr), _envelope(""), _quit(client._quit)
 {
 	if (client._nick)
 		_nick = new std::string(*client._nick);
@@ -26,7 +25,6 @@ Client::Client(Client const &client)
 		_user = new std::string(*client._user);
 	if (client._host)
 		_host = new std::string(*client._host);
-	memset(_buff, 0, MAX_BUFFER);
 }
 
 Client::~Client(void)
@@ -48,6 +46,7 @@ Client	&Client::operator=(Client const &client)
 	_sock_len = client._sock_len;
 	_sock_addr = client._sock_addr;
 	_envelope = client._envelope;
+	_quit = client._quit;
 	clear();
 	if (client._nick)
 		_nick = new std::string(*client._nick);
@@ -63,7 +62,8 @@ Client::Client(int sockfd, socklen_t socklen, sockaddr_in sockaddr)
 	:_regist(false), _invisible(false), _server_op(false), _wallop(true),
 	_sock(sockfd), _pass(false),
 	_nick(NULL), _user(NULL), _host(NULL),
-	_sock_len(socklen), _sock_addr(sockaddr), _envelope("") {}
+	_sock_len(socklen), _sock_addr(sockaddr),
+	_envelope(""), _quit(false) {}
 
 /*
 	the modification of client has certain restrictions,
@@ -78,41 +78,41 @@ void	Client::reply(char const *numeric, char const *p1, char const *p2)
 {
 	_envelope += ":localhost ";
 	if (numeric)
-		_envelope += *numeric;
+		_envelope += numeric;
 	if (_nick)
 		_envelope = _envelope + " " + *_nick;
 	else
 		_envelope = _envelope + " unknown"; 
 	if (p1)
-		_envelope = _envelope + " " + *p1;
+		_envelope = _envelope + " " + p1;
 	if (p2)
-		_envelope = _envelope + " " + *p2;
+		_envelope = _envelope + " " + p2;
 	_envelope += "\r\n";
 }
 void	Client::reply(char *src, char *cmd, char *p1, char *p2)
 {
 	if (src)
-		_envelope = _envelope + ":" + *src;
+		_envelope = _envelope + ":" + src;
 	if (cmd)
-		_envelope += " " + *cmd;
+		_envelope = _envelope + " " + cmd;
 	if (p1)
-		_envelope += " " + *p1;
+		_envelope = _envelope + " " + p1;
 	if (p2)
-		_envelope += " " + *p2;
+		_envelope = _envelope + " " + p2;
 	_envelope += "\r\n";
 }
 void	Client::reply(char *src, char *cmd, char *p1, char *p2, char *p3)
 {
 	if (src)
-		_envelope = _envelope + ":" + *src;
+		_envelope = _envelope + ":" + src;
 	if (cmd)
-		_envelope += " " + *cmd;
+		_envelope = _envelope + " " + cmd;
 	if (p1)
-		_envelope += " " + *p1;
+		_envelope = _envelope + " " + p1;
 	if (p2)
-		_envelope += " " + *p2;
+		_envelope = _envelope + " " + p2;
 	if (p3)
-		_envelope += " " + *p3;
+		_envelope = _envelope + " " + p3;
 	_envelope += "\r\n";
 }
 void	Client::reply(char const *note)
@@ -201,6 +201,10 @@ bool	Client::setMode(std::string mode)
 	}
 	return (unknown);
 }
+void	Client::beQuit(void)
+{
+	_quit = true;
+}
 
 /*	getters	*/
 int		Client::getSock(void) const
@@ -268,23 +272,51 @@ std::string		Client::getMode(void) const
 	return (temp);
 }
 
+bool	Client::isQuit(void) const
+{
+	return (_quit);
+}
+
 std::string	&Client::getBuff(void)
 {
-	return (_strbuff);
+	return (_readbuf);
 }
 
 void	Client::clearBuff(void)
 {
-	_strbuff.clear();
+	std::string::size_type	i;
+	
+	/*leave the last line if it's not finished*/
+	if (_readbuf[_readbuf.size() - 1] == '\n')
+	{
+		_readbuf.clear();
+		return ;
+	}
+	if (_readbuf.find("\n") == std::string::npos)
+		return ;
+	i = _readbuf.find_last_of("\n");
+	_readbuf = _readbuf.substr(i + 1);
 }
 
 void	Client::catBuff(char *buff, int size)
 {
-	int	nbuff_size;
+	bool	end;
 
-	nbuff_size = size + strlen(_buff);
-	(void)nbuff_size;
-	_strbuff += buff;
+	end = false;
+	for (int i = 0; i < size + 1; i++)
+	{
+		if (buff[i] == '\0')
+			end = true;
+	}
+	if (!end)
+		std::cout << "Client: catbuff: input has no \\0" << std::endl;
+	else
+		_readbuf += buff;
+	// int	nbuff_size;
+
+	// nbuff_size = size + strlen(_buff);
+	// (void)nbuff_size;
+	// _strbuff += buff;
 }
 
 /*	private function	*/

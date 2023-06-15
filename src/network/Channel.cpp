@@ -334,14 +334,16 @@ void 	Channel::broadcast(std::string message, Client client){
 	channelUsersIt it;
 	for (it = _channelUsers.begin(); it != _channelUsers.end(); it++){
 		if (it->first != *(client.getNick()))
-			send(it->second.client->getSock(), message.c_str(), message.size(), 0);
+			it->second.client->reply(message.c_str());
+			// send(it->second.client->getSock(), message.c_str(), message.size(), 0);
 	}
 }
 
 void Channel::broadcastSenderIncluded(std::string message){
 	channelUsersIt it;
 	for (it = _channelUsers.begin(); it != _channelUsers.end(); it++){
-		send(it->second.client->getSock(), message.c_str(), message.size(), 0);
+		it->second.client->reply(message.c_str());
+		// send(it->second.client->getSock(), message.c_str(), message.size(), 0);
 	}
 }
 

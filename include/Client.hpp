@@ -9,7 +9,6 @@
 # include <sys/socket.h>
 # include <netinet/in.h>
 # include <netinet/ip.h>
-#define MAX_BUFFER	512
 /*
 	The default ctor creates an empty client
 
@@ -59,6 +58,7 @@ class Client
 		void	setInvisible(bool yes);
 		void	setWallop(bool yes);
 		bool	setMode(std::string mode);
+		void	beQuit(void);
 
 		/*	getters	*/
 		int		getSock(void) const;
@@ -67,6 +67,7 @@ class Client
 		bool	isServerOp(void) const;
 		bool	isInvisible(void) const;
 		bool	getWallop(void) const;
+		bool	isQuit(void) const;
 
 		std::string const	*getNick(void) const;
 		std::string const	*getUser(void) const;
@@ -92,9 +93,9 @@ class Client
 		std::string		*_host;
 		socklen_t		_sock_len;
 		sockaddr_in		_sock_addr;
-		char			_buff[MAX_BUFFER];
-		std::string		_strbuff;
+		std::string		_readbuf;
 		std::string		_envelope;
+		bool			_quit;
 
 		/*	private function	*/
 		void	clear(void);

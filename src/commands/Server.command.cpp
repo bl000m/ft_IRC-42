@@ -6,20 +6,18 @@ void	Server::execMessage(Client &client, Message const &mess)
 	std::string const	*cmd;
 
 	cmd = mess.getCommand();
-	if (!cmd)
+	if (!cmd || client.isQuit())
 		return ;
 	cmd_ptr = getCmd(*cmd);
 	if (!cmd_ptr)
 	{
 		client.reply(ERR_UNKNOWNCOMMAND, cmd->c_str(), ":Unknown command");
-		// this->reply(client, ERR_UNKNOWNCOMMAND, cmd->c_str(), ":Unknown command");
 		return ;
 	}
 	if (!client.isRegist()
 			&& !(*cmd == "PASS" || *cmd == "NICK" || *cmd == "USER"))
 	{
 		client.reply(ERR_UNKNOWNCOMMAND, cmd->c_str(), ":Unknown command");
-		// this->reply(client, ERR_UNKNOWNCOMMAND, cmd->c_str(), ":Unknown k command");
 		return ;
 	}
 	(this->*cmd_ptr)(client, mess);
@@ -52,7 +50,6 @@ void	Server::reply(Client const &client, char const *cmd, char const *p1, char c
 	if (p2)
 		note = note + " " + p2;
 	note = note + "\r\n";
-	//the 4th para of send use default temporarily
 	send(client.getSock(), note.c_str(), note.size(), 0);
 	std::cout << "ERR: SERVER::REPLY" << std::endl;
 }
@@ -79,7 +76,6 @@ void	Server::broadcast(Client &client, char const *cmd, char const *p1, char con
 		if (i->second.getFullName() == src)
 			continue ;
 		client.reply(note.c_str());
-		// send(i->second.getSock(), note.c_str(), note.size(), 0);
 	}
 	return ;
 }
@@ -125,7 +121,6 @@ void	Server::force_quit(int sock, bool err)
 	if (err)
 	{
 		client->reply(ERR_INPUTTOOLONG, ":Input too long", NULL);
-		// reply(*client, ERR_INPUTTOOLONG, ":Input too long", NULL);
 	}
 	if (!client->isRegist())
 	{
@@ -170,7 +165,7 @@ void	Server::rmClient(Client &client)
 			break ;
 	}
 	close(client.getSock());
-	//erase clients from client list and poll list
+	/*erase clients from client list and poll list*/
 	if (i != _clients.end())
 		_clients.erase(i);
 	if (j != _server_sockets.end())

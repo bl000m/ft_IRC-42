@@ -7,19 +7,16 @@ void	Server::pass(Client &client, Message const &mess)
 	if (client.isRegist() || client.getNick())
 	{
 		client.reply(ERR_ALREADYREGISTERED, ":You may not reregister", NULL);
-		// this->reply(client, ERR_ALREADYREGISTERED, ":You may not reregister", NULL);
 		return ;
 	}
 	if (mess.getParamNum() < 1)
 	{
 		client.reply(ERR_NEEDMOREPARAMS, "PASS", ":Not enough parameters");
-		// this->reply(client,  ERR_NEEDMOREPARAMS, "PASS", ":Not enough parameters");
 		return ;
 	}
 	if (mess.getParam().front() != this->_password)
 	{
 		client.reply(ERR_PASSWDMISMATCH, ":wrong password", NULL);
-		// this->reply(client,  ERR_PASSWDMISMATCH, ":wrong password", NULL);
 		client.setPass(false);
 		return ;
 	}
@@ -33,20 +30,17 @@ void	Server::nick(Client &client, Message const &mess)
 	if (client.getPass() == false)
 	{
 		client.reply(ERR_UNKNOWNCOMMAND, "NICK", ":Unknown command");
-		// this->reply(client, ERR_UNKNOWNCOMMAND, "NICK", ":Unknown command");
 		return ;
 	}
 	if (mess.getParamNum() < 1)
 	{
 		client.reply(ERR_NONICKNAMEGIVEN, ":No nickname given", NULL);
-		// this->reply(client, ERR_NONICKNAMEGIVEN, ":No nickname given", NULL);
 		return ;
 	}
 	new_nick = mess.getParam().front();
 	if (nick_valid(new_nick) == false)
 	{
 		client.reply(ERR_ERRONEUSNICKNAME, new_nick.c_str(), ":Erroneus nickname");
-		// this->reply(client, ERR_ERRONEUSNICKNAME, new_nick.c_str(), ":Erroneus nickname");
 		return ;
 	}
 	if (client.getNick() && *client.getNick() == new_nick)
@@ -54,7 +48,6 @@ void	Server::nick(Client &client, Message const &mess)
 	if (nick_in_use(new_nick))
 	{
 		client.reply(ERR_NICKNAMEINUSE, ":Nickname is already in use", NULL);
-		// this->reply(client, ERR_NICKNAMEINUSE, ":Nickname is already in use", NULL);
 		return ;
 	}
 	if (client.isRegist())
@@ -70,22 +63,18 @@ void	Server::user(Client &client, Message const &mess)
 	if (client.isRegist())
 	{
 		client.reply(ERR_ALREADYREGISTERED, ":You may not reregister", NULL);
-		// this->reply(client, ERR_ALREADYREGISTERED, ":You may not reregister", NULL);
 		return ;
 	}
 	if (client.getNick() == NULL)
 	{
 		client.reply(ERR_UNKNOWNCOMMAND, "USER", ":Unknown command");
-		// this->reply(client, ERR_UNKNOWNCOMMAND, "USER", ":Unknown command");
 		return ;
 	}
 	if (param.size() < 4 || param[0].size() < 1)
 	{
 		client.reply(ERR_NEEDMOREPARAMS, "USER", ":Not enough parameters");
-		// this->reply(client, ERR_NEEDMOREPARAMS, "USER", ":Not enough parameters");
 		return ;
 	}
-	//trunc user name if required
 	client.setUser(param[0]);
 	client.setHost(param[3]);
 	client.beRegist();
@@ -113,8 +102,7 @@ void	Server::quit(Client &client, Message const &mess)
 	}
 	note = ":localhost ERROR :client quit";
 	client.reply(note.c_str());
-	// send(client.getSock(), note.c_str(), note.size(), 0);
-	rmClient(client);
+	client.beQuit();
 }
 
 void	Server::ping(Client &client, Message const &mess)
@@ -124,12 +112,10 @@ void	Server::ping(Client &client, Message const &mess)
 	if (mess.getParamNum() < 1)
 	{
 		client.reply(ERR_NEEDMOREPARAMS, "PING", ":Not enough parammeter");
-		// reply(client, ERR_NEEDMOREPARAMS, "PING", ":Not enough parammeter");
 		return ;
 	}
 	note = note + mess.getParam()[0];
 	client.reply(note.c_str());
-	// send(client.getSock(), note.c_str(), note.size(), 0);
 }
 
 void	Server::pong(Client &client, Message const &mess)
@@ -145,20 +131,16 @@ void	Server::oper(Client &client, Message const &mess)
 	if (mess.getParamNum() < 2)
 	{
 		client.reply(ERR_NEEDMOREPARAMS, "OPER", ":Not enough parammeter");
-		// reply(client, ERR_NEEDMOREPARAMS, "OPER", ":Not enough parammeter");
 		return ;
 	}
 	if (mess.getParam()[1] != _password)
 	{
 		client.reply(ERR_PASSWDMISMATCH, ":password incorrect", NULL);
-		// reply(client, ERR_PASSWDMISMATCH, ":password incorrect", NULL);
 		return ;
 	}
 	client.setServerOp(true);
 	client.reply(RPL_YOUREOPER, ":You are now an IRC operator", NULL);
 	client.reply("MODE", client.getMode().c_str(), NULL);
-	// reply(client, RPL_YOUREOPER, ":You are now an IRC operator", NULL);
-	// reply(client, "MODE", client.getMode().c_str(), NULL);
 }
 
 
@@ -203,13 +185,4 @@ static void	welcome_mess(Client &client)
 	client.reply(RPL_ISUPPORT, "CASEMAPPING=ascii CHANLIMIT=#&: CHANTYPES=#", ":are supported by this server");
 	client.reply(RPL_UMODEIS, client.getMode().c_str(), NULL);
 	client.reply(ERR_NOMOTD, "no MOTD", NULL);
-
-	// reply(client, RPL_WELCOME, ":Welcome to our network", NULL);
-	// reply(client, RPL_YOURHOST, ":Your host is ft_irc", NULL);
-	// reply(client, RPL_CREATED, ":This version is created yesterday", NULL);
-	// reply(client, RPL_MYINFO, "<servername> <version> <available user modes> <available channel modes>", NULL);
-	// reply(client, RPL_ISUPPORT,
-	// 	" CASEMAPPING=ascii CHANLIMIT=#&: CHANTYPES=# ", " :are supported by this server");
-	// reply(client,  RPL_UMODEIS, client.getMode().c_str(), NULL);
-	// reply(client,  ERR_NOMOTD, "no MOTD", NULL);
 }

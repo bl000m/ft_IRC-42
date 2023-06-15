@@ -12,7 +12,6 @@ Server::Server()
 
 Server::~Server() {
 	std::for_each(_server_sockets.begin(), _server_sockets.end(), closeSocket);
-	_clients.clear();
 }
 
 void    Server::initServer(const std::string &port, const std::string &password)
@@ -34,7 +33,6 @@ void	Server::run(void)
 	int			poll_ret;
 	pollfd		*current_poll;
 	char		buffer[MAX_BUFFER + 1];
-	Message		mess;
 
 	std::cout << "Running Server" << std::endl;
 	while (is_running)
@@ -53,34 +51,69 @@ void	Server::run(void)
 		for (size_t i = 1; i < _server_sockets.size(); i++)
 		{
 			current_poll = &_server_sockets[i];
+			if (IS_POLLOUT(current_poll->revents))
+			{
+				client_pollout(current_poll->fd);
+			}
 			if (IS_POLLIN(current_poll->revents))
 			{
-				memset(buffer, 0, MAX_BUFFER + 1);
-				std::cout << "new input" << std::endl;
-				int	ret;
-				ret = recv(current_poll->fd, buffer, MAX_BUFFER + 1, 0);
-				if (strchr(buffer, '\n') || ret <= CLOSE_SOCKET)
-				{
-					if (ret == CLOSE_SOCKET || ret >= MAX_BUFFER)
-						force_quit(current_poll->fd, false);
-					else
-					{
-						_clients.find(current_poll->fd)->second.catBuff(buffer, ret);
-						std::vector<std::string> cmds = splitCommands(_clients.find(current_poll->fd)->second.getBuff());
-						for (size_t j = 0; j < cmds.size(); j++)
-						{
-							if (mess.parse(cmds[j]))
-								execMessage(_clients.find(current_poll->fd)->second, mess);
-							_clients.find(current_poll->fd)->second.clearBuff();
-						}
-					}
-				}
-				else if (ret >= MAX_BUFFER)
-					force_quit(current_poll->fd, true);
-				else
-					_clients.find(current_poll->fd)->second.catBuff(buffer, ret);
+				std::cout << "POLLIN: ";
+				client_pollin(buffer, current_poll->fd);
 			}
+			if (IS_POLLHUP(current_poll->revents))
+			{
+				std::cout << "POLLHUP" << std::endl;
+				force_quit(current_poll->fd, false);
+			}
+			if (IS_POLLERR(current_poll->revents))
+			{
+				std::cout << "POLLERR" << std::endl;
+				force_quit(current_poll->fd, false);
+			}
+			current_poll->revents = 0;
 		}
+	}
+}
+
+void	Server::client_pollout(int sock)
+{
+	Client	*client;
+
+	client = &(_clients.find(sock)->second);
+	client->beSent();
+	if (client->isQuit())
+		rmClient(*client);
+}
+
+void	Server::client_pollin(char *buf, int sock)
+{
+	int							ret;
+	Client						*client;
+	Message						mess;
+	std::vector<std::string>	cmds;
+
+	client = &(_clients.find(sock)->second);
+	for (int i = 0; ; i++)
+	{
+		memset(buf, 0, MAX_BUFFER + 1);
+		ret = recv(sock, buf, MAX_BUFFER, 0);
+		if (ret <= CLOSE_SOCKET && i == 0)
+		{
+			std::cout << "force_quit" << std::endl;
+			force_quit(sock, false);
+			return ;
+		}
+		if (ret <= CLOSE_SOCKET)
+			break ;
+		std::cout << buf;
+		client->catBuff(buf, ret);
+	}
+	cmds = splitCommands(client->getBuff());
+	client->clearBuff();
+	for (size_t j = 0; j < cmds.size(); j++)
+	{
+		if (mess.parse(cmds[j]))
+			execMessage(_clients.find(sock)->second, mess);
 	}
 }
 
@@ -91,11 +124,13 @@ std::vector<std::string>	Server::splitCommands(std::string &buffer)
 	std::vector<std::string>	cmds;
 
 	ss << buffer;
-	while (getline(ss, parsed, '\n'))
+	while (true)
 	{
+		getline(ss, parsed, '\n');
+		if (ss.eof())
+			return (cmds);
 		cmds.push_back(parsed);
 	}
-	return (cmds);
 }
 
 bool	Server::initServerPoll(void)
@@ -140,7 +175,7 @@ bool	Server::newClientPoll(void)
 	if (fcntl(new_socket, F_SETFL, O_NONBLOCK) < 0)
 		return (close(new_socket) ,false);
 	new_poll.fd = new_socket;
-	new_poll.events = POLLIN | POLLHUP;
+	new_poll.events = POLLIN | POLLOUT | POLLERR | POLLHUP ;
 	new_poll.revents = 0;
 	_server_sockets.push_back(new_poll);
 	_clients.insert(std::pair<int, Client>(new_socket, Client(new_socket, client_size, client_addr)));
@@ -160,3 +195,4 @@ void    sigExit(int code)
 	is_running = false;
 	std::cout << "Exiting ..." << std::endl;
 }
+
