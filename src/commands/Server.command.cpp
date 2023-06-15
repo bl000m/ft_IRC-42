@@ -60,22 +60,19 @@ void	Server::reply(Client const &client, char const *cmd, char const *p1, char c
 */
 void	Server::broadcast(Client &client, char const *cmd, char const *p1, char const *p2)
 {
-	std::string	note;
-	std::string	src = client.getFullName();
-	client_map const	&clients = this->_clients;
+	std::string				note;
+	client_map::iterator	i;
 
-	note = ":" + src;
+	note = ":" + client.getFullName();
 	if (cmd)
 		note = note + " " + cmd;
 	if (p1)
 		note = note + " " + p1;
 	if (p2)
 		note = note + " " + p2;
-	for (client_map::const_iterator i = clients.begin(); i != clients.end(); i++)
+	for (i = _clients.begin(); i != _clients.end(); i++)
 	{
-		if (i->second.getFullName() == src)
-			continue ;
-		client.reply(note.c_str());
+		i->second.reply(note.c_str());
 	}
 	return ;
 }
