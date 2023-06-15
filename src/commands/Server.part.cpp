@@ -28,6 +28,11 @@ void 	Server::part(Client &client, Message const &mess){
 			channel->broadcastSenderIncluded(leavingMessage);
 			client.removeChannel(channelName);
 			channel->removeChannelUser(*(client.getNick()));
+			std::cout << "user remaining in channel: " << channel->getUsersCount() << std::endl;
+			if (channel->getUsersCount() > 0 && !channel->isThereAnyOperator())
+				channel->setOldestMemberUserAsOperator();
+			if (channel->getUsersCount() == 0)
+				_channels.erase(channelName);
 		}
 
 	}
