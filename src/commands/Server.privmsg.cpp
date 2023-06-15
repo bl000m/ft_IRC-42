@@ -82,7 +82,6 @@ bool	Server::sendToNick(Client &client, Message const &mess, std::string const &
 	}
 	note = ":" + client.getFullName() + " " + *(mess.getCommand()) + " " + *(target->getNick()) + " :" + mess.getParam()[1];
 	target->reply(note.c_str());
-	// send(target->getSock(), note.c_str(), note.size(), 0);
 	return (true);
 }
 
@@ -100,14 +99,12 @@ void	Server::sendToChan(Client &client, Message const &mess, std::string const &
 	{
 		if (response)
 			client.reply(ERR_NOSUCHCHANNEL, ":NO such channel", NULL);
-			// reply(client, ERR_NOSUCHCHANNEL, ":NO such channel", NULL);
 		return ;
 	}
 	if (chan->hasMode('n') && chan->isUserInChannel(*client.getNick()) == false)
 	{
 		if (response)
 			client.reply(ERR_CANNOTSENDTOCHAN, ":cannot send to channel", NULL);
-			// reply(client, ERR_CANNOTSENDTOCHAN, ":cannot send to channel", NULL);
 		return ;
 	}
 	note = ":" + client.getFullName() + " " + *mess.getCommand() \
