@@ -52,9 +52,15 @@ void	Server::run(void)
 		for (size_t i = 1; i < _server_sockets.size(); i++)
 		{
 			current_poll = &_server_sockets[i];
+			if (IS_POLLOUT(current_poll->revents))
+			{
+				;	
+			}
 			if (IS_POLLIN(current_poll->revents))
 			{
+				std::cout << "POLLIN start" << std::endl;
 				client_pollin(buffer, current_poll->fd);
+				std::cout << "POLLIN end" << std::endl;
 				// memset(buffer, 0, MAX_BUFFER + 1);
 				// std::cout << "new input" << std::endl;
 				// int	ret;
@@ -82,7 +88,12 @@ void	Server::run(void)
 			}
 			if (IS_POLLHUP(current_poll->revents))
 			{
-				std::cout << "force quit" << std::endl;
+				std::cout << "POLLHUP" << std::endl;
+				force_quit(current_poll->fd, false);
+			}
+			if (IS_POLLERR(current_poll->revents))
+			{
+				std::cout << "POLLERR" << std::endl;
 				force_quit(current_poll->fd, false);
 			}
 		}
@@ -109,7 +120,7 @@ void	Server::client_pollin(char *buf, int sock)
 		}
 		if (ret <= CLOSE_SOCKET)
 			break ;
-		std::cout << "POLLIN: " << buf;
+		std::cout << buf;
 		client->catBuff(buf, ret);
 	}
 	cmds = splitCommands(client->getBuff());

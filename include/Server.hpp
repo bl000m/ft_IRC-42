@@ -30,7 +30,7 @@
 #define MAX_PORT                65535
 #define MIN_ARGC                3
 #define CLOSE_SOCKET            0
-#define MAX_BUFFER	10//512
+#define MAX_BUFFER	512
 
 #define IS_POLLIN(revents)      (revents & POLLIN)
 #define IS_POLLHUP(revents)     (revents & POLLHUP)
