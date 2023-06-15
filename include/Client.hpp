@@ -77,6 +77,7 @@ class Client
 		bool	getWallop(void) const;
 		bool	isQuit(void) const;
 		std::string	getAway(void) const;
+		channelMap getChannels() const;
 
 		/* channel related */
 		void	addChannel(Channel *newChannel);

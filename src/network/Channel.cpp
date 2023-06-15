@@ -186,6 +186,16 @@ void Channel::setMemberLimit(const std::string& limit) {
 		_memberLimit = 4096;
 }
 
+void Channel::updateNickname(std::string oldNick, std::string newNick){
+	channelUsersIt it;
+	it = _channelUsers.find(oldNick);
+    if (it != _channelUsers.end()){
+		user keepUser = it->second;
+		_channelUsers.erase(it);
+		_channelUsers[newNick] = keepUser;
+	}
+}
+
 
 /*  <<<<<<<<<<<<<<<< SPECIFIC TO CHANNEL OPERATORS >>>>>>>>>>>>>>>>  */
 
@@ -375,7 +385,6 @@ void 	Channel::broadcast(std::string message, Client client){
 	for (it = _channelUsers.begin(); it != _channelUsers.end(); it++){
 		if (it->first != *(client.getNick()))
 			it->second.client->reply(message.c_str());
-			// send(it->second.client->getSock(), message.c_str(), message.size(), 0);
 	}
 }
 
@@ -383,7 +392,6 @@ void Channel::broadcastSenderIncluded(std::string message){
 	channelUsersIt it;
 	for (it = _channelUsers.begin(); it != _channelUsers.end(); it++){
 		it->second.client->reply(message.c_str());
-		// send(it->second.client->getSock(), message.c_str(), message.size(), 0);
 	}
 }
 

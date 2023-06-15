@@ -52,6 +52,7 @@ class Channel {
 		void setUserAsOperator(std::string nickname);
 		void removeUserAsOperator(std::string nickname);
 		void setMemberLimit(const std::string& limit);
+		void updateNickname(std::string oldNick, std::string newNick);
 
 		/* commands specific to channel operators */
 
@@ -60,7 +61,6 @@ class Channel {
 		void	removeMode(char mode);
 		bool	hasMode(char mode);
 		std::string getMode();
-		// bool	setMode(std::string mode);
 
 		/* invite */
 		void	inviteUser(std::string nickname);

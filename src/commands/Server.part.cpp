@@ -37,7 +37,6 @@ void 	Server::part(Client &client, Message const &mess){
 			if (channel->getUsersCount() == 0)
 				_channels.erase(channelName);
 		}
-
 	}
 }
 

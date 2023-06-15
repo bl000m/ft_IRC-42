@@ -26,6 +26,9 @@ void	Server::pass(Client &client, Message const &mess)
 void	Server::nick(Client &client, Message const &mess)
 {
 	std::string	new_nick;
+	std::string	old_nick;
+	std::map<std::string, Channel*> channels;
+	std::map<std::string, Channel*>::iterator it;
 
 	if (client.getPass() == false)
 	{
@@ -52,6 +55,15 @@ void	Server::nick(Client &client, Message const &mess)
 	}
 	if (client.isRegist())
 		broadcast(client, "NICK", new_nick.c_str(), NULL);
+	if (client.getNick() != NULL){
+		old_nick = *(client.getNick());
+		channels = client.getChannels();
+		for (it = channels.begin(); it != channels.end(); it++){
+			Channel *channel = getChannel(it->first);
+			if (channel->isUserInChannel(old_nick))
+				channel->updateNickname(old_nick, new_nick);
+		}
+	}
 	client.setNick(new_nick);
 }
 
@@ -90,7 +102,7 @@ void	Server::quit(Client &client, Message const &mess)
 	note = ":" + client.getFullName() + " QUIT Quit: ";
 	if (mess.getParamNum() > 0)
 	{
-		note += mess.getParam()[0].c_str();	
+		note += mess.getParam()[0].c_str();
 	}
 	for (i = _channels.begin(); i != _channels.end(); i++)
 	{
@@ -108,7 +120,7 @@ void	Server::quit(Client &client, Message const &mess)
 void	Server::ping(Client &client, Message const &mess)
 {
 	std::string	note = ":localhost PONG localhost ";
-	
+
 	if (mess.getParamNum() < 1)
 	{
 		client.reply(ERR_NEEDMOREPARAMS, "PING", ":Not enough parammeter");

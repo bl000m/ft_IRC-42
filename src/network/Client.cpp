@@ -85,7 +85,7 @@ void	Client::reply(char const *numeric, char const *p1, char const *p2)
 	if (_nick)
 		_envelope = _envelope + " " + *_nick;
 	else
-		_envelope = _envelope + " unknown"; 
+		_envelope = _envelope + " unknown";
 	if (p1)
 		_envelope = _envelope + " " + p1;
 	if (p2)
@@ -298,7 +298,7 @@ std::string	&Client::getBuff(void)
 void	Client::clearBuff(void)
 {
 	std::string::size_type	i;
-	
+
 	/*leave the last line if it's not finished*/
 	if (_readbuf[_readbuf.size() - 1] == '\n')
 	{
@@ -375,4 +375,8 @@ void Client::addChannel(Channel *newChannel){
 
 void Client::removeChannel(const std::string &channelName){
 	_channelsMember.erase(channelName);
+}
+
+Client::channelMap Client::getChannels() const{
+	return _channelsMember;
 }
