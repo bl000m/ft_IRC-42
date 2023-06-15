@@ -10,7 +10,8 @@ void Server::kick(Client &client, const Message &mess) {
 		Checks if the number of parameters in the kick message is sufficient
 	*/
     if (mess.getParamNum() < 2) {
-        this->reply(client,  ERR_NEEDMOREPARAMS, "KICK", ":Not enough parameters");
+		client.reply(ERR_NEEDMOREPARAMS, "KICK", ":Not enough parameters");
+        // this->reply(client,  ERR_NEEDMOREPARAMS, "KICK", ":Not enough parameters");
         return;
     }
 
@@ -21,7 +22,8 @@ void Server::kick(Client &client, const Message &mess) {
 	*/
     Channel *channel = this->getChannel(channelName);
     if (channel == NULL) {
-        this->reply(client,  ERR_NOSUCHCHANNEL, channelName.c_str(), ":No such channel");
+		client.reply(ERR_NOSUCHCHANNEL, channelName.c_str(), ":No such channel");
+        // this->reply(client,  ERR_NOSUCHCHANNEL, channelName.c_str(), ":No such channel");
         return;
     }
 
@@ -29,7 +31,8 @@ void Server::kick(Client &client, const Message &mess) {
 		Checks if the client performing the kick action is a member of the channel.
 	*/
     if (!channel->isUserInChannel(*(client.getNick()))) {
-        this->reply(client,  ERR_NOTONCHANNEL, channelName.c_str(), ":You're not on that channel");
+		client.reply(ERR_NOTONCHANNEL, channelName.c_str(), ":You're not on that channel");
+        // this->reply(client,  ERR_NOTONCHANNEL, channelName.c_str(), ":You're not on that channel");
         return;
     }
 
@@ -37,7 +40,8 @@ void Server::kick(Client &client, const Message &mess) {
 		Checks if the client performing the kick action is a channel operator.
 	*/
     if (!channel->isUserOperator(*(client.getNick()))) {
-        this->reply(client, ERR_CHANOPRIVSNEEDED, channelName.c_str(), ":You're not channel operator");
+		client.reply(ERR_CHANOPRIVSNEEDED, channelName.c_str(), ":You're not channel operator");
+        // this->reply(client, ERR_CHANOPRIVSNEEDED, channelName.c_str(), ":You're not channel operator");
         return;
     }
 
@@ -59,14 +63,16 @@ void Server::kick(Client &client, const Message &mess) {
 			Otherwise, sends a kick message to the user and removes them from the channel.
 		*/
 		if (!channel->isUserInChannel(*it)) {
-			this->reply(client, ERR_USERNOTINCHANNEL, channelName.c_str(), ":They aren't on that channel");
+			client.reply(ERR_USERNOTINCHANNEL, channelName.c_str(), ":They aren't on that channel");
+			// this->reply(client, ERR_USERNOTINCHANNEL, channelName.c_str(), ":They aren't on that channel");
 			return;
 		}
 		else{
 			Client *kickedUser = this->getClient(*it);
 			std::string kickMessage = ":" + client.getFullName() + " KICK "\
 						+ channelName + " " + *it + " " + reason + "\r\n";
-			send(kickedUser->getSock(), kickMessage.c_str(), kickMessage.size(), 0);
+			kickedUser->reply(kickMessage.c_str());
+			// send(kickedUser->getSock(), kickMessage.c_str(), kickMessage.size(), 0);
 			channel->removeChannelUser(*it);
 			channel->broadcastSenderIncluded(kickMessage);
 		}

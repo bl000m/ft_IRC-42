@@ -54,6 +54,8 @@ bool	Message::parse(std::string cmd)
 		return (false);
 	if (cmd[cmd.size() - 1] == '\r')
 		cmd = cmd.substr(0, cmd.size() - 1);
+	if (cmd.size() > 510)
+		cmd = cmd.substr(0, 510);
 	pos = 0;
 	this->setSource(cmd, pos);
 	this->setCommand(cmd, pos);
