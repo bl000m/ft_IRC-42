@@ -9,14 +9,16 @@ void Server::topic(Client &client, const Message &mess) {
     const std::string channelName = mess.getParam()[0];
     Channel *channel = this->getChannel(channelName);
 	if (channel == NULL) {
-        this->reply(client,  ERR_NOSUCHCHANNEL, channelName.c_str(), ":No such channel");
+		client.reply(ERR_NOSUCHCHANNEL, channelName.c_str(), ":No such channel");
+        // this->reply(client,  ERR_NOSUCHCHANNEL, channelName.c_str(), ":No such channel");
         return;
     }
 	/**
 	Checks if Client trying to set the topic is a channel member.
 	*/
     if (!channel->isUserInChannel(*(client.getNick()))) {
-        this->reply(client,  ERR_NOTONCHANNEL, channelName.c_str(), ":You're not on that channel");
+		client.reply(ERR_NOTONCHANNEL, channelName.c_str(), ":You're not on that channel");
+        // this->reply(client,  ERR_NOTONCHANNEL, channelName.c_str(), ":You're not on that channel");
         return;
     }
 
@@ -34,8 +36,10 @@ void Server::topic(Client &client, const Message &mess) {
 				+ ":" + channel->getTopic().c_str() + "\r\n";
 			std::string topicWhoTimeMessage = std::string(":FT_IRC ") + RPL_TOPICWHOTIME + " " + *(client.getNick()) + " " + channelName + " " \
 				+ channel->getNickCreationTopic() + " " + channel->getTimeCreationTopic() + "\r\n";
-	        send(client.getSock(), topicMessage.c_str(), topicMessage.size(), 0);
-	        send(client.getSock(), topicWhoTimeMessage.c_str(), topicWhoTimeMessage.size(), 0);
+	        client.reply(topicMessage.c_str());
+	        client.reply(topicWhoTimeMessage.c_str());
+			// send(client.getSock(), topicMessage.c_str(), topicMessage.size(), 0);
+	        // send(client.getSock(), topicWhoTimeMessage.c_str(), topicWhoTimeMessage.size(), 0);
         }
         return;
     }
@@ -45,7 +49,8 @@ void Server::topic(Client &client, const Message &mess) {
 	Checks if the channel exist
 	*/
     if (channel == NULL) {
-        this->reply(client,  ERR_NOSUCHCHANNEL, channelName.c_str(), ":No such channel");
+		client.reply(ERR_NOSUCHCHANNEL, channelName.c_str(), ":No such channel");
+        // this->reply(client,  ERR_NOSUCHCHANNEL, channelName.c_str(), ":No such channel");
         return;
     }
 
@@ -54,7 +59,8 @@ void Server::topic(Client &client, const Message &mess) {
 	Checks if Client trying to set the topic for a protected topic channel has operator privileges.
 	*/
 	if (channel->hasMode('t') &&  !channel->isUserOperator(*(client.getNick()))) {
-        this->reply(client,  ERR_CHANOPRIVSNEEDED, channelName.c_str(), ":You're not channel operator");
+		client.reply(ERR_CHANOPRIVSNEEDED, channelName.c_str(), ":You're not channel operator");
+        // this->reply(client,  ERR_CHANOPRIVSNEEDED, channelName.c_str(), ":You're not channel operator");
 		return;
 	}
 
