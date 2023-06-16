@@ -372,9 +372,13 @@ std::ostream	&operator<<(std::ostream &out, Client const &client)
 
 /* channel related */
 
-void Client::addChannel(Channel *newChannel){
-	_channelsMember[newChannel->getName()] = newChannel;
-
+void Client::addChannel(Channel *newChannel, std::string channelName){
+	_channelsMember[channelName] = newChannel;
+	std::cout << "channel: " << channelName << "has been added to " << *(this->getNick()) << " channels list" << std::endl;
+	std::cout << *(this->getNick()) << " channels list updated:" << std::endl;
+	for (channelMapIt it = _channelsMember.begin(); it != _channelsMember.end(); it++){
+			std::cout << it->first << "\n" << std::endl;
+		}
 }
 
 void Client::removeChannel(const std::string &channelName){

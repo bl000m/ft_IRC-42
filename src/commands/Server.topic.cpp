@@ -10,23 +10,14 @@ void Server::topic(Client &client, const Message &mess) {
     Channel *channel = this->getChannel(channelName);
 	if (channel == NULL) {
 		client.reply(ERR_NOSUCHCHANNEL, channelName.c_str(), ":No such channel");
-        // this->reply(client,  ERR_NOSUCHCHANNEL, channelName.c_str(), ":No such channel");
-        return;
-    }
-	/**
-	Checks if Client trying to set the topic is a channel member.
-	*/
-    if (!channel->isUserInChannel(*(client.getNick()))) {
-		client.reply(ERR_NOTONCHANNEL, channelName.c_str(), ":You're not on that channel");
-        // this->reply(client,  ERR_NOTONCHANNEL, channelName.c_str(), ":You're not on that channel");
         return;
     }
 
-	/**
-	Checks if the topic is in present in parameters. If not  the client is notified:
-	- if the channel has already a topic, which topic
-	- if not, topic not set
-	*/
+    if (!channel->isUserInChannel(*(client.getNick()))) {
+		client.reply(ERR_NOTONCHANNEL, channelName.c_str(), ":You're not on that channel");
+        return;
+    }
+
     if (mess.getParamNum() < 2) {
         if (channel->getTopic().empty()){
             this->reply(client,  RPL_NOTOPIC, channelName.c_str(), ":No topic is set");
@@ -38,35 +29,22 @@ void Server::topic(Client &client, const Message &mess) {
 				+ channel->getNickCreationTopic() + " " + channel->getTimeCreationTopic() + "\r\n";
 	        client.reply(topicMessage.c_str());
 	        client.reply(topicWhoTimeMessage.c_str());
-			// send(client.getSock(), topicMessage.c_str(), topicMessage.size(), 0);
-	        // send(client.getSock(), topicWhoTimeMessage.c_str(), topicWhoTimeMessage.size(), 0);
         }
         return;
     }
 
     std::string topic = mess.getParam()[1];
-	/**
-	Checks if the channel exist
-	*/
+
     if (channel == NULL) {
 		client.reply(ERR_NOSUCHCHANNEL, channelName.c_str(), ":No such channel");
-        // this->reply(client,  ERR_NOSUCHCHANNEL, channelName.c_str(), ":No such channel");
         return;
     }
 
-
-	/**
-	Checks if Client trying to set the topic for a protected topic channel has operator privileges.
-	*/
 	if (channel->hasMode('t') &&  !channel->isUserOperator(*(client.getNick()))) {
 		client.reply(ERR_CHANOPRIVSNEEDED, channelName.c_str(), ":You're not channel operator");
-        // this->reply(client,  ERR_CHANOPRIVSNEEDED, channelName.c_str(), ":You're not channel operator");
 		return;
 	}
 
-	/**
-	Creates message to be broadcasted to all the channel members when a topic is set/changed/cleared (if topic == "")
-	*/
 	channel->setTopic(topic, (*(client.getNick())));
 	std::string changeTopicMessage = ":" + *(client.getNick()) + " TOPIC " + channelName + " :" + topic + "\r\n";
 	channel->broadcastSenderIncluded(changeTopicMessage);
