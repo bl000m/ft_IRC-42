@@ -1,8 +1,5 @@
 #include "Server.hpp"
 
-/*  doubts:
-- when operator PART a channel should another member be automatically set as operator?
-*/
 void 	Server::part(Client &client, Message const &mess){
 	 if (mess.getParamNum() < 1) {
         client.reply(ERR_NEEDMOREPARAMS, "PART", ":Not enough parameters");
@@ -24,16 +21,11 @@ void 	Server::part(Client &client, Message const &mess){
 		}
 		else{
 			std::string leavingMessage = ":" + client.getFullName() + " PART " + channelName + " " + reason + "\r\n";
-			std::cout << "is the only operator? " << channel->isTheOnlyOperator(*(client.getNick())) << std::endl;
 			if (channel->getUsersCount() > 1 && channel->isTheOnlyOperator(*(client.getNick()))){
-				// channel->setOldestMemberUserAsOperator();
-				std::cout << "oldest: " << channel->getOldestMemberUser(*(client.getNick())) << std::endl;
-				std::cout << "CHANNEL NAME: " << channel->getName()<< std::endl;
 				std::string cmd = "MODE " + channel->getName() + " +o " + channel->getOldestMemberUser(*(client.getNick()));
 				Message mess;
 				mess.parse(cmd);
 				execMessage(client, mess);
-				// leavingMessage += " and new operator privileges assigned to " + channel->getOldestMemberUser() + "\r\n";
 			}
 			channel->broadcastSenderIncluded(leavingMessage);
 			client.removeChannel(channelName);

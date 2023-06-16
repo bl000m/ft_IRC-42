@@ -154,28 +154,15 @@ std::string Channel::getOldestMemberUser(std::string exceptThisNick){
 	std::string oldestMemberUserNick;
 	time_t isBefore = (it->second.joinedTime);
 	oldestMemberUserNick = it->first;
-	// std::cout << "isBefore: " << isBefore << std::endl;
 	for (it = _channelUsers.begin(); it != _channelUsers.end(); it++){
-		// std::cout << "nick: "<< it->first << " joined time: " << it->second.joinedTime << std::endl;
 		if (it->second.joinedTime < isBefore && it->first != exceptThisNick){
 			isBefore = it->second.joinedTime;
-			// std::cout << "in IF isBefore: " << isBefore << std::endl;
-			// std::cout << "it->first = " << it->first << std::endl;
 			oldestMemberUserNick = it->first;
 		}
 	}
-	std::cout << "the oldest return in getOldest: " << oldestMemberUserNick << std::endl;
+	std::cout << "the oldest remaining user: " << oldestMemberUserNick << std::endl;
 	return oldestMemberUserNick;
 }
-
-// void	Channel::setOldestMemberUserAsOperator(){
-// 	channelUsersIt it;
-// 	std::string oldestUserNick = getOldestMemberUser();
-// 	std::cout << "the oldest user is: " << oldestUserNick << std::endl;
-// 	it = _channelUsers.find(oldestUserNick);
-// 	if (it != _channelUsers.end())
-//         it->second.prefix = "@";
-// }
 
 void Channel::removeUserAsOperator(std::string nickname){
 	channelUsersIt it;

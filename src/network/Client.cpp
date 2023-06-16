@@ -329,11 +329,6 @@ void	Client::catBuff(char *buff, int size)
 		std::cout << "Client: catbuff: input has no \\0" << std::endl;
 	else
 		_readbuf += buff;
-	// int	nbuff_size;
-
-	// nbuff_size = size + strlen(_buff);
-	// (void)nbuff_size;
-	// _strbuff += buff;
 }
 
 /*	private function	*/

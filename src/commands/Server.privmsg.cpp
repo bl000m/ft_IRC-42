@@ -82,7 +82,6 @@ bool	Server::sendToNick(Client &client, Message const &mess, std::string const &
 	}
 	note = ":" + client.getFullName() + " " + *(mess.getCommand()) + " " + *(target->getNick()) + " :" + mess.getParam()[1];
 	target->reply(note.c_str());
-	//check away
 	if (*mess.getCommand() == "PRIVMSG" && !target->getAway().empty())
 	{
 		client.reply(RPL_AWAY, nick.c_str(), target->getAway().c_str());
