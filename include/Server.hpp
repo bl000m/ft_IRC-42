@@ -18,7 +18,6 @@
 #include <string.h>
 #include <sstream>
 #include <map>
-#include "global.hpp"
 
 #include "Message.hpp"
 #include "Client.hpp"
@@ -37,6 +36,9 @@
 #define IS_POLLHUP(revents)     (revents & POLLHUP)
 #define IS_POLLOUT(revents)     (revents & POLLOUT)
 #define IS_POLLERR(revents)     (revents & POLLERR)
+
+/*	global variable	*/
+extern bool    is_running;
 
 class Channel;
 class Client;

@@ -67,26 +67,22 @@ void	Server::mode_channel(Client &client, Message const &mess, std::string targe
 
 	if (channel == NULL) {
 		client.reply(ERR_NOSUCHCHANNEL, target.c_str(), ":No such channel");
-        // this->reply(client,  ERR_NOSUCHCHANNEL, target.c_str(), ":No such channel");
         return;
     }
 
 	if (mess.getParamNum() < 2){
 		client.reply(RPL_CHANNELMODEIS , target.c_str(), channel->getMode().c_str());
-		// reply(client,  RPL_CHANNELMODEIS , target.c_str(), channel->getMode().c_str());
 		return ;
 	}
 
 	modeOptions = mess.getParam()[1];
 	if (!parseChannelModes(modeOptions, mess)){
 		client.reply(ERR_NEEDMOREPARAMS, target.c_str(), ":Not enough parameters");
-		// this->reply(client,  ERR_NEEDMOREPARAMS, target.c_str(), ":Not enough parameters");
 		return;
 	}
 
 	if (!channel->isUserOperator(*(client.getNick()))) {
 		client.reply(ERR_CHANOPRIVSNEEDED, target.c_str(), ":You're not channel operator");
-        // this->reply(client,  ERR_CHANOPRIVSNEEDED, target.c_str(), ":You're not channel operator");
 		return;
 	}
 
@@ -260,16 +256,14 @@ void Server::handleLMode(channelModeListIt it, Channel* channel, Client& client)
 		int limitValue;
 		ss << it->second;
 		ss >> limitValue;
+		if (ss.fail())
+			return;
         channel->setMemberLimit(it->second);
         channel->addMode('l');
-		if (limitValue > 4096){
-			client.reply("+l 4096 => WARNING: when the limit is set to a value higher than the max limit, max limit value is used");
+		if (limitValue > 4096)
         	message = buildModeMessage(channel, client, it->first + " " + "4096");
-		}
-		else if (limitValue <= 0){
-			client.reply("+l 1 => WARNING: when the limit is set to a value lower than the min limit, min limit value is used");
-        	message = buildModeMessage(channel, client, it->first + " " + "1");
-		}
+		else if (limitValue <= 0)
+		    message = buildModeMessage(channel, client, it->first + " " + "1");
 		else
         	message = buildModeMessage(channel, client, it->first + " " + it->second);
         channel->broadcastSenderIncluded(message);

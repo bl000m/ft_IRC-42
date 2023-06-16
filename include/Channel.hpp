@@ -35,8 +35,8 @@ class Channel {
 		bool	isUserInChannel(const std::string nickname);
 		bool	isUserOperator(const std::string nickname);
 		bool	isThereAnyOperator();
-		std::string	getOldestMemberUser();
-		void	setOldestMemberUserAsOperator();
+		bool 	isTheOnlyOperator(std::string nickname);
+		std::string	getOldestMemberUser(std::string exceptThisNick);
 
 		/* Channel data related getters*/
 		const std::string&  	getName();

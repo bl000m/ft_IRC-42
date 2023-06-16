@@ -10,7 +10,6 @@
 # include <netinet/in.h>
 # include <netinet/ip.h>
 # include "Channel.hpp"
-# define MAX_BUFFER	512
 
 class Channel;
 /*
@@ -80,7 +79,7 @@ class Client
 		channelMap getChannels() const;
 
 		/* channel related */
-		void	addChannel(Channel *newChannel);
+		void	addChannel(Channel *newChannel, std::string channelName);
 		void	removeChannel(const std::string &channelName);
 
 		std::string const	*getNick(void) const;

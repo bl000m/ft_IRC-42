@@ -57,11 +57,14 @@ void	Server::nick(Client &client, Message const &mess)
 		broadcast(client, "NICK", new_nick.c_str(), NULL);
 	if (client.getNick() != NULL){
 		old_nick = *(client.getNick());
+		std::cout << "old nick: " << old_nick << std::endl;
 		channels = client.getChannels();
 		for (it = channels.begin(); it != channels.end(); it++){
 			Channel *channel = getChannel(it->first);
-			if (channel->isUserInChannel(old_nick))
+			if (channel->isUserInChannel(old_nick)){
 				channel->updateNickname(old_nick, new_nick);
+				std::cout << channel->getName() << ": updated members list: " << channel->getClientList() << std::endl;
+			}
 		}
 	}
 	client.setNick(new_nick);
