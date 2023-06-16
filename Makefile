@@ -62,7 +62,7 @@ $(OBJDIR):
 
 $(OBJ): $(DEPS)
 
-bot: $(BOT_FILE)
+bot: $(BOT_FILE) ircbot.out
 	@$(CC) $(FLAGS) $(BOT_FILE) -o ircbot.out
 	@printf "bot is ready\n"
 
@@ -72,6 +72,7 @@ clean:
 
 fclean: clean
 	@$(RM) $(NAME)
+	@$(RM) ircbot.out
 	@printf "I removed the executable as you asked\n\n"
 
 re: fclean all
