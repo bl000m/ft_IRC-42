@@ -10,7 +10,6 @@
 # include <netinet/in.h>
 # include <netinet/ip.h>
 # include "Channel.hpp"
-# define MAX_BUFFER	512
 
 class Channel;
 /*

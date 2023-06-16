@@ -260,7 +260,7 @@ void Server::handleLMode(channelModeListIt it, Channel* channel, Client& client)
 		int limitValue;
 		ss << it->second;
 		ss >> limitValue;
-		if (!ss.fail())
+		if (ss.fail())
 			return;
         channel->setMemberLimit(it->second);
         channel->addMode('l');
