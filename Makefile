@@ -62,7 +62,7 @@ $(OBJDIR):
 
 $(OBJ): $(DEPS)
 
-bot: $(BOT_FILE) ircbot.out
+bot: $(BOT_FILE)
 	@$(CC) $(FLAGS) $(BOT_FILE) -o ircbot.out
 	@printf "bot is ready\n"
 
