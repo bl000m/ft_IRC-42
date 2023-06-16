@@ -25,15 +25,21 @@ void 	Server::part(Client &client, Message const &mess){
 		else{
 			std::string leavingMessage = ":" + *(client.getNick()) + "!" + *(client.getUser()) + "@" \
 				+ "localhost" + " PART " + channelName + " " + reason + "\r\n";
-			channel->broadcastSenderIncluded(leavingMessage);
+			std::cout << "is the only operator? " << channel->isTheOnlyOperator(*(client.getNick())) << std::endl;
+			if (channel->getUsersCount() > 0 && channel->isTheOnlyOperator(*(client.getNick()))){
+				// channel->setOldestMemberUserAsOperator();
+				std::cout << "oldest: " << channel->getOldestMemberUser(*(client.getNick())) << std::endl;
+				std::cout << "CHANNEL NAME: " << channel->getName()<< std::endl;
+				std::string cmd = "MODE +o " + channel->getName() + " " + channel->getOldestMemberUser(*(client.getNick()));
+				Message mess;
+				mess.parse(cmd);
+				execMessage(client, mess);
+				// leavingMessage += " and new operator privileges assigned to " + channel->getOldestMemberUser() + "\r\n";
+			}
 			client.removeChannel(channelName);
 			channel->removeChannelUser(*(client.getNick()));
 			std::cout << "user remaining in channel: " << channel->getUsersCount() << std::endl;
-			if (channel->getUsersCount() > 0 && !channel->isThereAnyOperator()){
-				channel->setOldestMemberUserAsOperator();
-				std::string newOperMessage = ":localhost " + channelName + " new operator privileges assigned to " + channel->getOldestMemberUser() + "\r\n";
-				channel->broadcastSenderIncluded(newOperMessage);
-			}
+			channel->broadcastSenderIncluded(leavingMessage);
 			if (channel->getUsersCount() == 0)
 				_channels.erase(channelName);
 		}
