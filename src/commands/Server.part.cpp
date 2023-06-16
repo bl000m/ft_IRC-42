@@ -30,7 +30,7 @@ void 	Server::part(Client &client, Message const &mess){
 				// channel->setOldestMemberUserAsOperator();
 				std::cout << "oldest: " << channel->getOldestMemberUser(*(client.getNick())) << std::endl;
 				std::cout << "CHANNEL NAME: " << channel->getName()<< std::endl;
-				std::string cmd = "MODE +o " + channel->getName() + " " + channel->getOldestMemberUser(*(client.getNick()));
+				std::string cmd = "MODE " + channel->getName() + " +o " + channel->getOldestMemberUser(*(client.getNick()));
 				Message mess;
 				mess.parse(cmd);
 				execMessage(client, mess);
