@@ -46,7 +46,7 @@ void Server::kick(Client &client, const Message &mess) {
     }
 
 	std::string reason = mess.getParamNum() > 2 ? mess.getParam()[2] : "";
-   
+
     std::stringstream					ss;
 	std::string							nick;
 	std::vector<std::string>			victims;

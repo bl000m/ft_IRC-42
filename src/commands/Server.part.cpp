@@ -23,8 +23,7 @@ void 	Server::part(Client &client, Message const &mess){
 			return;
 		}
 		else{
-			std::string leavingMessage = ":" + *(client.getNick()) + "!" + *(client.getUser()) + "@" \
-				+ "localhost" + " PART " + channelName + " " + reason + "\r\n";
+			std::string leavingMessage = ":" + client.getFullName() + " PART " + channelName + " " + reason + "\r\n";
 			std::cout << "is the only operator? " << channel->isTheOnlyOperator(*(client.getNick())) << std::endl;
 			if (channel->getUsersCount() > 0 && channel->isTheOnlyOperator(*(client.getNick()))){
 				// channel->setOldestMemberUserAsOperator();
