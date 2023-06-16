@@ -24,6 +24,8 @@ FILES      := main network/Server network/Client \
 			 commands/Server.who \
 			 commands/Server.away
 
+BOT_FILE	:= ./src/bot.cpp
+
 SRC        := $(FILES:%=$(SRCSDIR)/%.cpp)
 OBJ        := $(addprefix $(OBJDIR)/, $(FILES:%=%.o))
 DEPS       := $(wildcard $(HEADDIR)/*.hpp)
@@ -59,6 +61,10 @@ $(OBJDIR):
 	@mkdir -p $(OBJDIR)
 
 $(OBJ): $(DEPS)
+
+bot: $(BOT_FILE)
+	@$(CC) $(FLAGS) $(BOT_FILE) -o ircbot.out
+	@printf "bot is ready\n"
 
 clean:
 	@$(RM) $(OBJDIR)
