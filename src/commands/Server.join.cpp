@@ -12,7 +12,6 @@ bool	Server::createChan(std::string &name, std::string &pass, Client &client)
 	if (pass.size() > 0)
 		chan.addMode('k');
 	_channels.insert(std::pair<std::string, Channel>(name, chan));
-	std::cout << "Adding channel to channel list in CREATECHAN" << std::endl;
 	client.addChannel(&_channels.at(name), name);
 	/*IRC*/
 	join_message.append(":" + *(client).getNick() + " JOIN " + name );
@@ -52,7 +51,6 @@ void	Server::joinChan(std::string &name, std::string &pass, Client &client)
 		return ;
 	}
 	_channels.at(name).addClient(&client);
-	std::cout << "Adding channel to channel list in JOINCHAN" << std::endl;
 	client.addChannel(&_channels.at(name), name);
 	join_message.append(":" + *(client).getNick() + " JOIN " + name + "\r\n");
 	namreply_message.append("= " + name);
