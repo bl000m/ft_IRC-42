@@ -4,7 +4,9 @@
 #include <strings.h>
 #include <unistd.h>
 #include <string.h>
+#include <sstream>
 #include <fcntl.h>
+#include <stdlib.h>
 
 /*
 	args: <ip> <port> <pass>
@@ -29,6 +31,22 @@ bool doCommand(int socket, std::string command)
 	return (true);
 }
 
+void execCommand(std::string reply, int socket, std::string &b)
+{
+	std::string command;
+	std::string chan;
+	std::stringstream	ss;
+
+	ss << b;
+	while (std::getline(ss, chan, ' '))
+	{
+		if (chan[0] == '#')
+			break ;
+	}
+	command.append("PRIVMSG " + chan + " " + reply + "\r\n");
+	send(socket, command.c_str(), command.size(), 0);
+}
+
 void checkCommand(int socket, char *buff)
 {
 	std::string b = buff;
@@ -42,11 +60,9 @@ void checkCommand(int socket, char *buff)
 		send(socket, command.c_str(), command.size(), 0);
 	}
 	if (b.find("!ping") != std::string::npos)
-	{
-		std::string command;
-		command.append("PRIVMSG " + b.substr(b.find("#"), b.size() - b.find("ping")) + " Pong\r\n");
-		send(socket, command.c_str(), command.size(), 0);
-	}
+		execCommand("Pong", socket, b);
+	if (b.find("!42") != std::string::npos)
+		execCommand("FREEEEZEEEEE !", socket, b);
 }
 
 int main(int argc, char **argv)
@@ -56,13 +72,15 @@ int main(int argc, char **argv)
 	bool		regi = false;
 	char		buff[MAXBUFFER];
 	int			read_size;
+	int			port;
 
 	(void)argv;
-	if (argc < 2)
+	if (argc < 3)
 	{
-		std::cerr << "args: <pass> <port> [ip]" << std::endl;
+		std::cerr << "args: <pass> <port> <ip>" << std::endl;
         return (0);
     }
+	port = atoi(argv[2]);
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0)
 	{
@@ -71,8 +89,8 @@ int main(int argc, char **argv)
     }
     bzero(&servadd, sizeof(servadd));
     servadd.sin_family = AF_INET;
-    servadd.sin_addr.s_addr = inet_addr(IP);
-    servadd.sin_port = htons(PORT);
+    servadd.sin_addr.s_addr = inet_addr(argv[3]);
+    servadd.sin_port = htons(port);
     if (connect(sockfd, (sockaddr*)&servadd, sizeof(servadd)) != 0)
 	{
 		std::cerr << 
@@ -81,7 +99,7 @@ int main(int argc, char **argv)
 		close(sockfd);
         return (0);
     }
-    std::cout << "Connected on localhost:4444" << std::endl;
+    std::cout << "Connected on localhost:" << argv[2] << std::endl;
 	std::cout << "Listing" << std::endl;
     while (1)
 	{
