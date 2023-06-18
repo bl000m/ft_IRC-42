@@ -11,9 +11,7 @@
 /*
 	args: <ip> <port> <pass>
 */
-#define PORT 4444
 #define MAXBUFFER  512
-#define IP	 "127.0.0.1"
 
 bool doCommand(int socket, std::string command)
 {
@@ -63,6 +61,8 @@ void checkCommand(int socket, char *buff)
 		execCommand("Pong", socket, b);
 	if (b.find("!42") != std::string::npos)
 		execCommand("FREEEEZEEEEE !", socket, b);
+	if (b.find("!help") != std::string::npos)
+		execCommand("Commands:invite,mode,topic,kick", socket, b);
 }
 
 int main(int argc, char **argv)
@@ -99,12 +99,12 @@ int main(int argc, char **argv)
 		close(sockfd);
         return (0);
     }
-    std::cout << "Connected on localhost:" << argv[2] << std::endl;
+    std::cout << "Connected on " << argv[3] << ":" << argv[2] << std::endl;
 	std::cout << "Listing" << std::endl;
     while (1)
 	{
 		bzero(buff, sizeof(buff));
-		while (regi == false)
+		if (regi == false)
 		{
 			std::cout << "Try to register" << std::endl;
 			if (doCommand(sockfd, std::string("PASS ") + argv[1] + "\r\n") == false)
