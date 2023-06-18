@@ -30,3 +30,4 @@
 
 # Executables
 ircserv
+*.out
