@@ -1,4 +1,5 @@
 NAME       := ircserv
+BOT_NAME   := ircbot.out
 CC         := c++
 FLAGS      := -Wall -Wextra -Werror -std=c++98
 RM         := rm -rf
@@ -24,7 +25,7 @@ FILES      := main network/Server network/Client \
 			 commands/Server.who \
 			 commands/Server.away
 
-BOT_FILE	:= ./src/bot.cpp
+BOT_FILE	:= ./srcbot/bot.cpp
 
 SRC        := $(FILES:%=$(SRCSDIR)/%.cpp)
 OBJ        := $(addprefix $(OBJDIR)/, $(FILES:%=%.o))
@@ -62,8 +63,11 @@ $(OBJDIR):
 
 $(OBJ): $(DEPS)
 
-bot: $(BOT_FILE)
-	@$(CC) $(FLAGS) $(BOT_FILE) -o ircbot.out
+bot: $(BOT_NAME)
+
+ircbot.out: $(BOT_FILE)
+	@printf "Compile bot\n"
+	@$(CC) $(FLAGS) $(BOT_FILE) -o $(BOT_NAME)
 	@printf "bot is ready\n"
 
 clean:
