@@ -62,7 +62,7 @@ void checkCommand(int socket, char *buff)
 	if (b.find("!42") != std::string::npos)
 		execCommand("FREEEEZEEEEE !", socket, b);
 	if (b.find("!help") != std::string::npos)
-		execCommand("Commands:invite,mode,topic,kick", socket, b);
+		execCommand("Commands:invite,mode,topic,kick,part,who,away", socket, b);
 }
 
 int main(int argc, char **argv)
