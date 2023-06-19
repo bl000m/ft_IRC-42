@@ -63,6 +63,8 @@ void checkCommand(int socket, char *buff)
 		execCommand("FREEEEZEEEEE !", socket, b);
 	if (b.find("!help") != std::string::npos)
 		execCommand("Commands:invite,mode,topic,kick,part,who,away", socket, b);
+	if (b.find("!chat") != std::string::npos)
+		execCommand("MEOW!", socket, b);
 }
 
 int main(int argc, char **argv)
@@ -110,10 +112,10 @@ int main(int argc, char **argv)
 			if (doCommand(sockfd, std::string("PASS ") + argv[1] + "\r\n") == false)
 				break;
 			sleep(1);
-			if (doCommand(sockfd, std::string("NICK ircbot\r\n")) == false)
+			if (doCommand(sockfd, std::string("NICK maomi\r\n")) == false)
 				break;
 			sleep(1);
-			if (doCommand(sockfd, std::string("USER ircbot * 0 bot\r\n")) == false)
+			if (doCommand(sockfd, std::string("USER maomi * 0 kitty\r\n")) == false)
 				break;
 			sleep(1);
 			std::cout << "Register success" << std::endl;
@@ -128,7 +130,7 @@ int main(int argc, char **argv)
 		read_size = recv(sockfd, buff, MAXBUFFER, MSG_DONTWAIT);
 		if (read_size > 0)
 		{
-			std::cout << "from serv: " << buff << std::endl;
+			std::cout << "Serv: " << buff << std::endl;
 			checkCommand(sockfd, buff);
 		}
 		sleep(1);
